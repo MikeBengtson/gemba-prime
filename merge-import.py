@@ -6,7 +6,7 @@ Beads store without re-initializing.
 Use this when `gt rig add` has already set up the rig with infrastructure
 beads (rig identity, patrols, etc.) that you want to preserve. The
 validator's `--target` path wants a clean .beads/; this script instead
-layers our 55 beads on top of whatever's there.
+layers the Gemba work package beads on top of whatever's there.
 
 Usage:
     ./merge-import.py --target ~/gt/gemba

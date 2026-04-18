@@ -1,8 +1,8 @@
-# Landscape Survey: Generalizing Gemba
+# Landscape Survey
 
 **Author:** Principal architect research pass
 **Date:** 2026-04-18
-**Purpose:** Evidence-backed landscape survey of agentic software-development orchestration systems and work-tracking platforms, to inform design of a generalized abstraction layer for Gemba. Research only — no design decisions made here.
+**Purpose:** Evidence-backed landscape survey of agentic software-development orchestration systems and work-tracking platforms, grounding the two-plane abstraction in `domain.md`. Research only — no design decisions made here.
 
 **Assumptions stated up front:**
 - "Latest release / commit" reflects what public search surfaced on 2026-04-18; private roadmaps are unknown.

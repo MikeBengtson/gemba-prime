@@ -1,108 +1,139 @@
 # Gemba — Import Package
 
-An Atlassian-style web UI for multi-agent orchestration. Ships against [Gas Town v1.0](https://github.com/gastownhall/gastown) today because it's the stable, production-ready runtime. Architected around [Gas City](https://github.com/gastownhall/gascity) because that's where the ecosystem is going. Packaged for direct import into a Beads database so a Mayor (or, once Gas City stabilizes, any orchestrator on any Gas City pack) can decompose and execute the build.
+A browser-based, Atlassian-style UI for multi-agent orchestration. Renders any **Work Coordination Plane** (Beads, Jira, Linear, GitHub Projects, Azure DevOps, Shortcut, Plane, …) over any **Agent Orchestration Plane** (Gas Town, Gas City, LangGraph, CrewAI, OpenHands, Devin, Factory, …) without UI changes.
 
-## What this is
+This directory is the work package: the design docs, the work breakdown (`issues.jsonl`), the molecule formulas, and the import tooling that drops it all into a Beads database so an orchestrator can decompose and execute the build.
 
-A complete work package for building **Gemba** (`gemba`), a browser-based control surface that serves Gas Town v1 deployments today and, via a thin adapter flip, will serve any Gas City workspace — including the `gastown`, `ccat`, `ralph`, `wasteland-feeder`, and user-authored packs — when Gas City reaches GA.
+## What Gemba is
 
-## Stability posture (read this first)
+A single-binary Go service with an embedded React SPA that pairs *exactly one* WorkPlane adaptor with *exactly one* OrchestrationPlane adaptor in any active configuration, and renders everything they declare. Adaptors arrive via a typed contract; the UI consumes capability manifests, never role/pack vocabulary.
 
-- **Gas Town is v1.0 stable** (released April 3, 2026). Production-ready. This is the v1 runtime target.
-- **Gas City is in alpha**, on track for "fast GA" per Steve's April 2026 announcement. Not a runtime target yet.
-- **Gemba's architecture is Gas-City-shaped** so that when Gas City stabilizes, the primary adapter flips from `internal/adapter/gt/` to `internal/adapter/gc/` as a configuration change, not a rewrite.
-
-The practical consequence: every locked decision below is worded in a runtime-neutral way. When a decision references `gc` behavior that doesn't exist in Gas Town (e.g., `city.toml` watching, pluggable providers, pack browsing), it means "stub-rendered against Gas Town today, comes alive when Gas City arrives." Nothing in the work package asks a Phase 1 or Phase 2 worker to depend on a Gas City feature that isn't shipped yet.
-
-## Architectural summary (locked decisions)
-
-Non-negotiable decisions baked into every bead's context. Changing one requires an escalation, not a local edit.
-
-1. **Topology**: standalone sidecar, not a plugin for either runtime. Separate repo, separate binary (`gemba`). In v1: talks to `gt --json` and `bd --json` against a Gas Town workspace; reads `~/gt/` state. The `internal/adapter/gc/` package is designed and stubbed from day one so the primary runtime flips to `gc` at Gas City GA via configuration.
-2. **Backend**: Go. Single binary. `go:embed` ships the built SPA. Cobra for CLI. chi for routing. SSE (not WebSockets) for live updates.
-3. **Frontend**: React + TypeScript + Vite. shadcn/ui + Tailwind for the shell. @tanstack/react-query for data. @tanstack/react-table for virtualized grids. @dnd-kit/core for Kanban drag-drop. React Flow for the dep graph. cmdk for the command palette.
-4. **Pack-agnostic UI**: No role name, column header, or panel hardcodes a specific pack's vocabulary — even though Gas Town v1 has fixed roles (Mayor, Witness, Refinery, Polecats, Deacon). Columns are derived from detected agents. Today this renders Gas Town's fixed role set; the moment Gas City lands, the same code renders `ccat`, `ralph`, any user pack.
-5. **Provider-aware (pluggable from day one)**: Gas Town v1 runs agents in tmux. Gas City generalizes to tmux/k8s/subprocess/exec. The agent detail view is built pluggable now so no rework is needed when Gas City arrives. Each provider gets a distinct affordance set (tmux → Attach; k8s → Peek + pod status; subprocess → process tree; exec → last command + exit code).
-6. **Multi-rig, not-yet-federated**: Multiple rigs within a single workspace for v1. Not Wasteland-federated. Identity types carry `WorkspaceID + RigID` (workspace = town today, city tomorrow). Labels mark `fed:safe` / `fed:bridge` / `fed:blocked`.
-7. **Mutation model**: Full mutation surface, confirmation-gated by default. Every mutation requires server-enforced confirmation via `X-GEMBA-Confirm` nonce. `--dangerously-skip-permissions` (name copied verbatim from Claude Code, not softened) disables confirmations for the session.
-8. **Auth**: Localhost-bound, no auth, by default. Binding a non-loopback interface without `--auth` is a startup error. Token auth: 256-bit, argon2id hashed, printed once. TLS via user certs or `--tls-self-signed`. OIDC stubbed for v1.1.
-9. **Data integrity**: Never write to Dolt, JSONL, `.gt/`, `.gc/`, or any controller socket directly. Every mutation round-trips through `gt`/`gc`/`bd` CLIs or through a watched config-file edit that the runtime reconciles.
-10. **Declarative UX (full on Gas City, stubbed on Gas Town)**: Once Gas City lands, the UI shows `city.toml` (desired) alongside `.gc/agents/` (actual) with drift highlighted. Against Gas Town today, the view renders the implicit "desired" derived from Gas Town's fixed role set — useful, but not the full surface. Designing for this now means no rework later.
-11. **ZFC for the UI**: Gemba presents data and offers actions. It does not embed decision logic. "Why is this agent stuck?" is a question for the operator reading the session peek, not for the UI to answer. This mirrors Gas City's Go-layer principle applied to our TypeScript.
-12. **Distribution**: Homebrew tap, npm wrapper, GitHub Releases binaries for macOS (Intel + Apple Silicon), Linux (amd64 + arm64), Windows, FreeBSD.
-
-## How to import
-
-Run `validate-import.py --dry-run` first (described below). Once it's clean:
-
-```bash
-# Recommended: use validate-import.py to do the import
-./validate-import.py --target ~/gt/gemba --prefix bc
-
-# What that does under the hood:
-# 1. bd init --prefix bc in the target dir (creates .beads/)
-# 2. Two-pass import: bd create --id for each bead, then bd dep add for each edge
-# 3. Copies formulas/*.toml into .beads/formulas/
-# 4. Sanity-checks with bd list, bd ready, bd show
-
-# After import:
-cd ~/gt/gemba
-bd stats
-bd list --status open --json | jq 'length'   # expect 54
-bd ready --json | jq 'length'                # expect the Phase 1 starters
+```
+brew install YOUR_ORG/tap/gemba
+cd <a workspace whose adaptors Gemba can detect>
+gemba serve
+# -> http://localhost:7666
 ```
 
-The import target shown above assumes a Gas Town v1 workspace at `~/gt/`. If you're on Gas City (alpha) the same command works — substitute `~/my-city/rigs/gemba`. The validator detects which runtime you're on.
+The product is the abstraction. Beads is the first reference WorkPlane. Gas Town is the first reference OrchestrationPlane. Both are demoted from "the runtime" to "the proof the contract works." Jira (forcing-function WorkPlane) and LangGraph (forcing-function OrchestrationPlane) are the second-mover adaptors that prove the contract isn't accidentally Beads/Gas-Town-shaped.
 
-Why not `bd init --from-jsonl`? That path has known bugs in current Beads versions (see gastownhall/beads#2433, March 2026) and doesn't preserve the `gm-eN.M` hierarchical IDs this package depends on. The two-pass `bd create --id` strategy sidesteps both problems.
+## Twelve locked architectural decisions
+
+Non-negotiable. Changing one requires an escalation, not a local edit.
+
+1. **Topology.** Standalone sidecar binary (`gemba`). Separate repo, separate process. Not a plugin for any backend. Talks to one configured `WorkPlaneAdaptor` and one configured `OrchestrationPlaneAdaptor`. Default configuration discovers the adaptors a workspace can satisfy.
+2. **Backend.** Go single binary. `go:embed` ships the SPA. Cobra for CLI. chi for routing. SSE (not WebSockets) for live updates.
+3. **Frontend.** React + TypeScript + Vite. shadcn/ui + Tailwind. TanStack Query/Table. @dnd-kit. React Flow. cmdk.
+4. **Adaptor-agnostic UI.** No role name, column header, panel, or string literal in the SPA hardcodes vocabulary from a specific WorkPlane or OrchestrationPlane. All vocabulary arrives through `CapabilityManifest`. Any backend-specific rendering lives in `web/src/extensions/<adaptor-id>/` behind a capability gate.
+5. **Pluggable workspaces from day one.** `Workspace.kind` is declared by the active OrchestrationPlane adaptor (`worktree | container | k8s_pod | vm | exec | subprocess`). The agent detail view is built pluggable; no adaptor's workspace shape is assumed by core.
+6. **Multi-workspace, not-yet-federated.** Gemba can attach to multiple workspaces in v1. Wasteland-style federation is out of scope. Every identity carries `WorkspaceID`; labels mark `fed:safe` / `fed:bridge` / `fed:blocked`.
+7. **Mutation model.** Full mutation surface, server-enforced confirmation via `X-GEMBA-Confirm` nonce. `--dangerously-skip-permissions` (name copied verbatim from Claude Code, not softened) disables for the session.
+8. **Auth.** Localhost-bound by default. Non-loopback bind without `--auth` is a startup error. Token auth: 256-bit, argon2id, printed once. TLS via user certs or `--tls-self-signed`. OIDC stubbed for v1.1.
+9. **Data integrity.** Never write any backend's private storage directly (Dolt files, Jira databases, Linear internal APIs, controller sockets, JSONL on disk, `.gt/` / `.gc/` directories, …). Every mutation round-trips through the adaptor, which uses the backend's public CLI/API.
+10. **Declarative UX.** The UI shows `OrchestrationPlaneAdaptor.declared_state()` (desired) vs `observed_state()` (actual) with drift highlighted. Adaptors that lack a declarative source render the implicit-desired derived from their capability manifest.
+11. **ZFC for the UI.** Gemba presents data and offers actions. It does not embed decision logic about what agents should do. Same principle Gas City applies to Go, applied to TypeScript.
+12. **Distribution.** Homebrew tap, npm wrapper, GitHub Releases for macOS / Linux / Windows / FreeBSD.
+
+## The two planes
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      Gemba SPA (React/TS)                        │
+│        no role names · no pack vocabulary · capability-driven    │
+└─────────────────────────────────────────────────────────────────┘
+                                ▲
+                  HTTP / SSE — capability-negotiated
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     Gemba core (Go binary)                       │
+│   types: WorkItem · AgentRef · Relationship · Evidence · DoD     │
+│          Sprint · TokenBudget · CostMeter · EscalationRequest    │
+└─────────────────────────────────────────────────────────────────┘
+        ▲                                              ▲
+        │   WorkPlaneAdaptor                           │   OrchestrationPlaneAdaptor
+        │   (CRUD, query, transition,                  │   (agents, groups, workspaces,
+        │    edges, evidence, sprints, budgets)        │    sessions, cost, escalations)
+        ▼                                              ▼
+  ┌───────────────────────┐                   ┌───────────────────────────┐
+  │  v1 reference: Beads  │                   │  v1 reference: Gas Town   │
+  │  forcing fn:   Jira   │                   │  forcing fn:  LangGraph   │
+  │  (Linear, GH, …)      │                   │  (Gas City, OpenHands, …) │
+  └───────────────────────┘                   └───────────────────────────┘
+```
+
+Adaptors declare a `transport` (`api | jsonl | mcp`) and a `CapabilityManifest`. Capability manifests carry `state_map`, `edge_extensions`, `field_extensions`, `relationship_extensions`, plus boolean capabilities (`sprint_native`, `token_budget_enforced`, `evidence_synthesis_required`, …). The UI hides controls and columns the manifest does not advertise.
+
+## Cross-cutting primitives
+
+Every adaptor sees these core types. Adaptors with native equivalents wire them through; adaptors without synthesize them.
+
+- **`WorkItem`** — the unit of work. Six core fields + adaptor extensions. `state_category ∈ Backlog | Unstarted | Started | Completed | Canceled` is canonical; per-state names are adaptor-declared.
+- **`AgentRef`** — first-class agent identity (`agent_id`, `display_name`, `role`, `parent_id?`, `agent_kind ∈ agent | human`). Adaptors that model agents only as users/bots/claims federate at the edge.
+- **`Relationship`** — three core edge types (`blocks`, `parent_child`, `relates_to`) plus adaptor-declared extensions. The dep graph renders core edges always; extensions render only if declared.
+- **`Evidence`** — links to PRs, commits, runs, traces, artifacts. Adaptors without native evidence synthesize from git/CI; the UI marks synthesized evidence with `synthesized: true`.
+- **`DefinitionOfDone`** — informational-only in v1. Free-text `acceptance_criteria` + `notes` + `version`. No enforcement.
+- **`Sprint` + `TokenBudget`** — sprint-as-token-budget. Three-tier `inform | warn | stop` thresholds at epic and sprint scope. The first non-deferred enforced budget axis. `dollars` and `wallclock` rendered, not gating.
+- **`CostMeter`** — token / dollar / wallclock rollups at assignment, work item, agent, group, epic, and sprint scope.
+- **`EscalationRequest`** — orchestrator-paused sessions, budget threshold crossings, rate-limit waits, HITL interrupts. Surfaces in the `/escalations` inbox with one-click ack.
+- **`CapabilityManifest`** — adaptor declares what it can do at registration; UI consumes at runtime.
+
+See `domain.md` for the full type system and adaptor interfaces.
+
+## Three concrete user workflows
+
+Every architectural decision exists to make these three workflows fast.
+
+### 1. Plan & refine — work the backlog like a PM tool, not an agent console
+
+10k-WorkItem virtualized grid across every workspace; saved filters; column presets; bulk JSONL import; click any row for a Jira-style detail drawer with labels, edges, activity, and actions. Author molecule formulas as DAGs before any agent is dispatched.
+
+### 2. Scrum / day-of ops — Kanban is the home screen
+
+`AgentGroup` board (`mode: static | pool | graph`) with WIP limits, swimlanes, filter chips, cmdk keyboard nav. Drag-drop round-trips through `WorkPlaneAdaptor.transition`. Dispatch through `OrchestrationPlaneAdaptor.acquire_workspace + start_session`. Desired-vs-actual drift tints column headers. Provider-aware agent peek for the "why is this one stuck" moment. Every mutation `X-GEMBA-Confirm` nonce-gated.
+
+### 3. Retro & release — landed-work review, replay, insights
+
+Landed-`AgentGroup` review; molecule step-by-step replay (prompts + outputs + checkpoints); insights panel from OTEL + adaptor-supplied `CostMeter` (token spend, sprint burn-down, stuck-session minutes, merge-queue latency).
 
 ## Work graph shape
 
-- **1 root epic** (`gm-root`) — holds the twelve locked decisions above
-- **9 phase epics** (`gm-e1` through `gm-e8` + post-v2 additions) — foundation, adapters, auth, beads/agents UI, boards/mutations, graph/insights/mail, molecules, release
-- **42 tasks/features + 3 bugs** nested under phase epics with hierarchical IDs (`gm-e1.1`, `gm-e1.1.1`, etc.)
-- **5 molecule formulas** (TOML) for multi-step, checkpoint-recoverable workflows
-- **Three Gas City-native beads** (gm-e5.7, gm-e5.8, gm-e5.9) that stub-render against Gas Town and light up when Gas City is stable
-- **Rich taxonomy** via labels (see below)
+- **1 root epic** (`gm-root`) — holds the twelve locked decisions
+- **13 phase epics** (`gm-e1` … `gm-e13`) — foundation, validation, core contracts, transport, auth, reference adaptors (Beads + Gas Town), forcing-function adaptors (Jira + LangGraph), Gas City stub, cross-cutting features, UI, molecules, release
+- **~75 tasks** nested under phase epics with hierarchical IDs (`gm-e3.1`, `gm-e5.1.1`, …)
+- **3 bugs** (`gm-b1`–`gm-b3`)
+
+Molecule formulas (TOML, multi-step checkpoint-recoverable workflows) are introduced under Phase 13 once the cross-cutting capability surface lands; none are pre-authored in the import package.
 
 ## Tagging taxonomy
 
 Every issue carries labels from these orthogonal dimensions.
 
 ### Surface (pick one)
-- `surface:backend` — Go code in `cmd/` or `internal/`
+- `surface:backend` — Go in `cmd/` or `internal/`
 - `surface:frontend` — React/TS in `web/`
 - `surface:infra` — build, CI, release, packaging
 - `surface:docs` — user docs, architecture docs, READMEs
 - `surface:protocol` — wire types shared between backend & frontend
 
 ### Layer (for backend; pick one or more)
-- `layer:adapter-gc` — wraps `gc` CLI (Gas City — primary)
-- `layer:adapter-bd` — wraps `bd` CLI
-- `layer:adapter-fs` — reads `.gc/` runtime state
+- `layer:core` — adaptor-agnostic domain types, conformance suite, registration
+- `layer:adapter-workplane` — any WorkPlane adaptor implementation
+- `layer:adapter-orchestration` — any OrchestrationPlane adaptor implementation
+- `layer:transport` — `api` / `jsonl` / `mcp` shims
 - `layer:api` — HTTP handlers
-- `layer:events` — SSE fan-out
+- `layer:events` — SSE fan-out, OTEL trace propagation
 - `layer:auth` — authentication, authorization, TLS
-- `layer:controller-watch` — `city.toml` + `.gc/` fsnotify integration (new for Gas City)
 
-### Feature area (pick one)
-- `area:agents`
-- `area:beads`
-- `area:rigs`
-- `area:packs` (new for Gas City)
-- `area:desired-vs-actual` (new for Gas City)
-- `area:formulas`
-- `area:mail`
-- `area:graph`
-- `area:insights`
-- `area:search`
-- `area:settings`
+### Feature area (pick one or more)
+- `area:work-items` · `area:agents` · `area:groups` · `area:workspaces`
+- `area:sessions` · `area:graph` · `area:budget` · `area:escalations`
+- `area:evidence` · `area:capability` · `area:insights` · `area:mail`
 
-### Provider awareness (for agent-view work; pick one or more)
-- `provider:tmux`
-- `provider:k8s`
-- `provider:subprocess`
-- `provider:exec`
+### Adaptor (when work targets a specific adaptor)
+- `adaptor:beads` · `adaptor:gastown` · `adaptor:jira` · `adaptor:langgraph` · `adaptor:gascity` · `adaptor:noop`
+
+### Workspace kind (for agent-detail work; pick one or more)
+- `workspace:worktree` · `workspace:container` · `workspace:k8s_pod` · `workspace:vm` · `workspace:exec` · `workspace:subprocess`
 
 ### Skill tier (pick one)
 - `tier:haiku` — mechanical, well-specified work
@@ -112,39 +143,49 @@ Every issue carries labels from these orthogonal dimensions.
 ### Risk (pick one)
 - `risk:low` — pure additive, well-tested area
 - `risk:medium` — touches shared code, needs review
-- `risk:high` — mutations against live `gc`/`bd`, auth surface, data integrity
+- `risk:high` — mutations against a live backend, auth surface, data integrity
 
-### Federation-readiness (pick one)
-- `fed:safe` — decision does not constrain future Wasteland support
-- `fed:bridge` — requires explicit multi-city consideration
-- `fed:blocked` — would need rework if we go federated; avoid
+### Federation readiness (pick one)
+- `fed:safe` — does not constrain a future Wasteland-style federation
+- `fed:bridge` — requires explicit multi-workspace consideration
+- `fed:blocked` — would need rework to federate; avoid
 
 ## Conventions for the orchestrator
 
 - Every parent epic uses `issue_type: "epic"`. Children use the right leaf type (`task`, `feature`, `bug`, `story`).
-- Every task has a detailed `description` with: **Goal**, **Inputs**, **Outputs**, **Definition of Done**. Agents do worse work when context is thin.
-- `blocks` edges enforce ordering. `parent-child` is epic → child hierarchy. `discovered-from` is reserved for issues filed during execution.
+- Every task has a detailed `description` with: **Goal**, **Inputs**, **Outputs**, **Definition of Done**, and a trailing **Resolves DDs:** line citing the design decisions it satisfies.
+- `blocks` enforces ordering. `parent_child` is epic → child. `discovered_from` is reserved for issues filed during execution. `relates_to` is for advisory cross-references.
 - Honor `tier:*` when routing work. `tier:opus` should not be handed to Haiku.
 - Ambiguity in any locked decision triggers an escalation, not a local call.
-- When rendering agent-specific UI, honor `provider:*` — don't ship a tmux-only Attach flow to a k8s deployment.
+- When rendering adaptor-specific UI, honor `adaptor:*` — never ship Gas-Town-shaped affordances to a Jira+LangGraph workspace.
+
+## How to import
+
+```bash
+# 1. Validate (no writes)
+./validate-import.py --dry-run
+
+# 2. Import into a target Beads-backed workspace
+./validate-import.py --target ~/gt/gemba --prefix gm
+
+# After import:
+cd ~/gt/gemba
+bd stats
+bd list --status open --json | jq 'length'   # expect ~80
+bd ready --json | jq 'length'                # Phase 1 starters
+```
 
 ## Files in this package
 
 ```
 .
-├── README.md                    # this file
-├── issues.jsonl                 # all epics, tasks, bugs (one JSON per line)
-├── validate-import.py           # prereq + schema + dry-run validator
-├── bootstrap-prompt.md          # Mayor/controller bootstrap prompt
-├── convoys.json                 # suggested convoy groupings
-├── generate.py                  # regenerator for issues.jsonl
-├── formulas/
-│   ├── gm-m1-foundation.toml    # scaffold repo, CI, skeleton binary
-│   ├── gm-m2-auth.toml          # localhost + token + TLS auth
-│   ├── gm-m3-board.toml         # Kanban board with drag-drop
-│   ├── gm-m4-graph.toml         # dependency graph visualization
-│   └── gm-m5-release.toml       # release workflow
-├── RFC.md                       # community RFC
-├── discord-post.md              # Discord-ready short-form RFC
-└── scaffold/                    # starter Go+React repo, buildable as-is
+├── README.md            # this file
+├── RFC.md               # community RFC
+├── domain.md            # full domain model + adaptor interfaces
+├── landscape.md         # evidence-grounded landscape survey (Phase 1 input)
+├── issues.jsonl         # all epics, tasks, bugs (one JSON per line)
+├── validate-import.py   # prereq + schema + dry-run validator
+├── merge-import.py      # merge JSONL into an existing Beads store
+├── bootstrap-prompt.md  # orchestrator bootstrap prompt
+└── discord-post.md      # short-form community pitch
 ```

@@ -1,9 +1,9 @@
-# Domain Model: Generalized Gemba
+# Domain Model
 
-**Author:** Principal architect, Phase 2
+**Author:** Principal architect
 **Date:** 2026-04-18
 **Status:** Design proposal (implementable)
-**Depends on:** `landscape-generalized-gemba.md` (Phase 1 evidence), `RFC.md` (product vision)
+**Depends on:** `landscape.md` (evidence survey), `RFC.md` (product vision)
 
 ## Preamble
 
@@ -1155,7 +1155,7 @@ interface OrchestrationCapabilityManifest {
 
 ```json
 {
-  "$schema": "https://bullet.city/schemas/dod/1.0.json",
+  "$schema": "https://gemba.dev/schemas/dod/1.0.json",
   "version": "1.0",
   "acceptance_criteria": "Users can click 'Export CSV' on the Work Grid and receive a file containing all currently-filtered rows.",
   "notes": "Edge case: empty result set should still download a header-only CSV."
@@ -1264,7 +1264,7 @@ Each resolution writes a nonce-gated mutation (RFC §Locked 6). `modify` require
 **Event schema (adaptor-agnostic):**
 
 ```typescript
-interface BulletCityEvent {
+interface GembaEvent {
   event_id: string;
   at: string;
   kind: string;                // "workitem.state_changed" | "session.started" | ...

@@ -229,7 +229,7 @@ def check_schema():
     # CRITICAL: --id flag on bd create. Without this, our gm-eN.M IDs
     # won't survive import (Beads defaults to hash IDs like bd-a1b2).
     if re.search(r"(?m)^\s*--id\b", help_text) or "--id " in help_text:
-        ok("bd create --id is supported (our stable bc-* IDs will survive import)")
+        ok("bd create --id is supported (our stable gm-* IDs will survive import)")
     else:
         fail("bd create --id flag not found in help output")
         fail("  Without explicit IDs, Beads auto-generates hash IDs (bd-a1b2)")
@@ -502,7 +502,7 @@ def dry_run_import(issues, keep=False):
         #    import sets everything to "open", so this isn't usually the
         #    problem for us, but it's worth being explicit).
         # 2) A default page limit (observed at 50 in bd v1 releases). At
-        #    55 beads we blow past it and get a short count.
+        #    100+ beads we blow past it and get a short count.
         # We pass --all and --limit 0 to sidestep both. Older bd versions
         # that don't recognize these flags will fall back to the old
         # behavior — if that happens, we retry without them.

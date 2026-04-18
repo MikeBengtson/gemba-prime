@@ -1,200 +1,216 @@
-# RFC: Gemba — an Kanban-style web UI for Gas Town, designed for the Gas City transition
+# RFC: Gemba — a generalized Kanban-style web UI for any work tracker × any agent orchestrator
 
 **Status:** Proposal / seeking feedback
-
 **Author:** Mike Bengtson (@mikebengtson)
+**Target audience:** maintainers and operators of work trackers (Beads, Jira, Linear, GitHub Projects, Azure DevOps, Shortcut, Plane, …) and agent orchestrators (Gas Town, Gas City, LangGraph, CrewAI, OpenHands, Devin, Factory, …).
+**Type:** Sidecar tool (standalone, not upstream into any backend).
 
-**Target audience:** Gas Town v1.0 users today, Gas City maintainers for sequencing input
-
-**Type:** Sidecar tool (standalone, not upstream)
-
-Posting this to gather feedback before committing to the build. Looking for architectural gut-checks, prior-art I've missed, and "don't do that" signals from people deeper in the ecosystem than I am — particularly from the Gas City team, since the design hinges on aligning with Gas City's declarative philosophy even though the v1 runtime is Gas Town.
+Posting this to gather feedback before committing further build cycles. Looking for architectural gut-checks, prior art I've missed, and "don't do that" signals from people deeper in the ecosystem than I am — particularly from work-tracker and orchestrator maintainers whose contracts I'm proposing to map onto a shared abstraction.
 
 ## TL;DR
 
-**Gemba** (`gemba`) is a browser-based Kanban-style UI for multi-agent orchestration. Single Go binary, embedded React SPA. **The v1 primary target is Gas Town 1.0** — the stable, production-ready runtime the community is using today. The architecture is designed around Gas City's declarative philosophy so that when Gas City reaches GA, switching the primary backend from `gt` to `gc` is a configuration change, not a rewrite.
+**Gemba** (`gemba`) is a single-binary Go service with an embedded React SPA that pairs *exactly one* **Work Coordination Plane** adaptor (the work tracker — Beads, Jira, Linear, …) with *exactly one* **Agent Orchestration Plane** adaptor (the runtime — Gas Town, Gas City, LangGraph, …) and renders whatever the two planes declare. The UI is adaptor-agnostic: no role name, column header, panel, or string literal in the SPA hardcodes vocabulary from a specific backend.
 
-Pack-agnostic — it renders whatever agents the active topology declares, so one binary serves Gas Town's built-in roles today and (once Gas City is stable) will serve `gastown`, `ccat`, `ralph`, `wasteland-feeder`, and user-authored packs without UI changes.
-
-Key surfaces: work grid (10k beads, virtualized, saved filters); Kanban where drag-drop round-trips through mutations; dep graph over all Beads edge types; molecule progress; **desired-vs-actual view** (shipping with Gas City support; designed from day one so it's ready when Gas City stabilizes).
+Beads and Gas Town are the **reference adaptors** for v1 (the simplest path to a working release). Jira (WorkPlane) and LangGraph (OrchestrationPlane) are the **forcing-function adaptors** for v1 — picked because their quirks are supersets of the easier members of their categories. If the contract handles Jira's workflow FSM, Linear is easy. If it handles LangGraph's checkpoint-and-graph topology, OpenHands is easy.
 
 ```
 brew install YOUR_ORG/tap/gemba
-cd ~/gt         # Gas Town today
+cd <a workspace whose adaptors Gemba can detect>
 gemba serve
 # -> http://localhost:7666
 ```
 
-Phase 1 scaffold (foundation + CI) builds and tests clean locally. Before I commit to Phase 2, I want to know if the framing is right, and — most importantly — whether the Gas City team has a preference on sequencing.
+The phase-1 scaffold (foundation + CI) builds clean. Before I commit to phase 2, I want to know if the abstraction is right. Specifically: whether the four hardest open questions (DD-1, DD-9, DD-13, DD-14 below) are answered the way the people running these backends would want them answered.
 
-## What it looks like in practice — three concrete use cases
+## What it looks like in practice — three concrete user workflows
 
-Before the architectural detail, here's what Gemba is actually for. Every other decision in this RFC exists to make these three workflows fast.
+Every other decision in this RFC exists to make these three workflows fast.
 
-### 1. Planning & Refinement — work the backlog like a PM tool, not an agent console
+### 1. Plan & refine — work the backlog like a PM tool, not an agent console
 
-Review the backlog — stories, tasks, epics, bugs — across every rig in the town (or city, at Gas City GA) from one screen.
+Review the backlog — stories, tasks, epics, bugs — across every workspace from one screen.
 
-- **Cross-rig work grid** — 10k beads, virtualized, column presets, saved filters. Jira/Linear ergonomics sized for agent-generated bead volume.
-- **Edit inline or bulk-import** — update descriptions, labels (`surface:*`, `tier:*`, `risk:*`, `fed:*`, `provider:*`), priorities, acceptance criteria directly; import whole epics from JSONL for RFC-driven work packages.
-- **Dep graph over all seven Beads edge types** — `blocks`, `related`, `parent-child`, `discovered-from`, `waits-for`, `replies-to`, `conditional-blocks`, each visually distinct, with cycle highlighting and critical-path mode.
-- **Molecule formula authoring** — build multi-step checkpoint-recoverable workflow DAGs before a single agent is dispatched; per-step prompt rendering so work is legible, not opaque.
+- **Cross-workspace work grid.** 10k WorkItems, virtualized, column presets, saved filters. Jira/Linear ergonomics sized for agent-generated volume.
+- **Edit inline or bulk-import.** Update descriptions, labels, priorities, acceptance criteria; import whole epics from JSONL for RFC-driven work packages.
+- **Dep graph over the three core edge types** (`blocks`, `parent_child`, `relates_to`) plus any extension edges declared by the active WorkPlane (Beads's `discovered_from`, `waits_for`, `replies_to`, `conditional_blocks`; Jira's `clones`, `causes`, `is_caused_by`; …) — each visually distinct, with cycle highlighting and critical-path mode.
 
-Every mutation round-trips through `bd --json`. Dolt is never written directly.
+### 2. Scrum / day-of ops — Kanban is the home screen
 
-### 2. Scrum / Day-of Ops — drive the standup from one screen instead of tailing tmux panes
+The `AgentGroup` board is what opens on `gemba serve` — drag-drop status changes round-trip through `WorkPlaneAdaptor.transition`; multi-select cards to dispatch via `OrchestrationPlaneAdaptor.acquire_workspace + start_session`.
 
-Review current state across all rigs and push work forward without context-switching between terminals.
+- **AgentGroup board.** Columns derive from `state_category` (canonical, five values) with names from `CapabilityManifest.state_map`. WIP limits, swimlanes by group/assignee/label, filter chips, cmdk keyboard.
+- **Desired-vs-actual.** Tints column headers when `OrchestrationPlaneAdaptor.declared_state()` and `observed_state()` diverge. Adaptors without a declarative source render the implicit-desired derived from their capability manifest.
+- **Provider-aware agent peek.** `Workspace.kind` (`tmux | container | k8s_pod | vm | exec | subprocess`) drives the agent detail surface. Each kind gets a distinct affordance set (tmux → Attach; k8s → Peek + pod status; subprocess → process tree; exec → last command + exit code).
+- **Mutation safety.** Every mutation `X-GEMBA-Confirm` nonce-gated. `--dangerously-skip-permissions` (name copied verbatim from Claude Code, not softened) disables for the session.
 
-- **Convoy Kanban** — drag Planned → In Progress; status round-trips through `bd update --status`. Multi-select to "create convoy" and dispatch a batch. Slinging goes through `gt sling` today, `gc` at Gas City GA — same UI, adapter flips via config.
-- **Desired-vs-actual view** — on Gas City: `city.toml` declared state alongside `.gc/agents/` running sessions, drift highlighted, per-drift or global "reconcile" action. On Gas Town v1: useful-but-partial, derived from the implicit fixed-role structure. The component tree does not change when Gas City arrives.
-- **Provider-aware agent detail** — tmux session, k8s pod, subprocess, exec script all render differently. Peek into a running agent, read its session, see its elastic-pool check output. Pluggable from day one.
-- **Confirmation-gated mutations** — every state change requires a server-enforced `X-GEMBA-Confirm` nonce; duplicate confirmations rejected so retries don't double-mutate. `--dangerously-skip-permissions` (name copied verbatim from Claude Code) unlocks a session.
+### 3. Retro & release — landed-work review, replay, insights
 
-### 3. Retro & Release — close the loop after work lands
+- **Landed-AgentGroup review.** What shipped, with full activity log and synthesized evidence (PR links, commit SHAs, run IDs).
+- **Molecule progress + replay.** Multi-step workflow DAGs with checkpoint state; step-by-step replay of prompts and outputs.
+- **Insights panel.** Fed from OTEL + adaptor-supplied `CostMeter`: spawn rate, completion rate, sprint burn-down, stuck-session minutes, token spend, escalation backlog.
+- **EscalationRequest inbox.** `/escalations` surfaces orchestrator-paused sessions, budget threshold crossings, rate-limit waits, HITL interrupts. One-click ack.
 
-Finished convoys, shipped molecules, and completed releases are first-class objects, not an afterthought in a log file.
+## Why a sidecar, why now
 
-- **Completed-work filters** — saved queries for "past sprint," "last release," "landed convoys by rig," "molecules that failed a step." Same grid, scoped by time window and status.
-- **Molecule replay** — walk a completed formula step-by-step: per-step prompts, outputs, checkpoint state, failure modes. Informs rework without archaeology.
-- **Insights panel** — fed from OTEL metrics plus `bd stats`: spawn rate, completion rate, stuck-agent minutes, token cost, merge-queue latency. The signals retros actually need.
-- **Truthful audit log** — nonce-idempotent mutations mean history is comparable across runs and safe to replay. Retro conclusions rest on data, not reconstructed narrative.
-
-## Stability posture: Gas Town now, Gas City ready
-
-Gas Town hit **v1.0 on April 3, 2026** after 14 releases of iterative hardening. It's stable, it's what people are running in production, and it's what v1 of Gemba ships against. Gas City is **in alpha, on track for a fast GA** but not stable today — so I'm not going to hand users a UI whose primary runtime is still-in-flux.
-
-At the same time, I don't want to build a Gas Town-shaped UI and then have to rip it apart when Gas City stabilizes. The Gas City architecture — pack-agnostic agents, declarative `city.toml`, pluggable providers, progressive capability levels — tells me exactly what shape the UI needs to be so it survives the transition.
-
-So: **Gas Town is the stable runtime Gemba runs against today. Gas City is the architectural compass.** Every locked decision is derived from Gas City's design principles (ZFC, GUPP, NDI, SDK Self-Sufficiency, Bitter Lesson exclusions) applied to the UI layer. The adapter at `internal/adapter/gc/` is designed but thin in v1; its counterpart `internal/adapter/gt/` is the one that does real work while Gas City is pre-GA. When `gc` goes stable, Gemba flips which adapter is primary — no UI rework.
-
-This pivots from my first draft, which framed this as "a UI for Gas Town" with Gas City as a future concern. That was too shallow. Gas City's declarative architecture is different enough from Gas Town's imperative one that retrofitting would be painful. Building to Gas City's shape now, running against Gas Town today, is the right ordering.
-
-## Why another UI?
-
-`gt dashboard` was intentionally htmx-light and Gas Town is in maintenance mode at v1.0 — the in-tree dashboard won't grow drag-drop Kanban or a graph view. More importantly, nothing I've found is designed to survive the Gas City transition:
-
-- **Desired-vs-actual view.** Kubernetes has had this for a decade; Gas City's architecture implies it; no existing tool ships it. When Gas City stabilizes, read `city.toml`, show declared agents alongside what's actually running, highlight drift. The view can be stubbed against Gas Town's implicit role structure in the meantime.
-- **Pack picker + pack-scoped views.** Browse `packs/`, stamp a pack onto a rig, see overrides as diffs against the base. This is Kustomize-for-agents. Only meaningful against Gas City, but the UI shell renders today against Gas Town's single "built-in pack."
-- **Provider-aware agent detail.** A tmux session is not a k8s pod is not a subprocess is not an exec script. Gas Town runs agents in tmux today; Gas City generalizes the model. Designing the detail view for pluggable providers now means zero rework when Gas City arrives.
-- **Elastic pool visualization.** `[agents.pool]` with a shell `check` command is a Gas City primitive — live graph of check-result versus actual count, queue-depth overlay. Stub-renders against Gas Town's fixed polecat pool; comes fully alive with Gas City.
-
-There's real prior art in the sidecar lane already:
+There's already prior art in the in-tree-dashboard lane (`gt dashboard`, `gc dashboard` planned, Jira's native UI, Linear's native UI). They each have the same shape: tightly coupled to one backend, one work model, one set of vocabulary. The gap Gemba fills is **one UI that renders the full surface across both planes** — work tracker × agent orchestrator — without picking sides.
 
 | Existing | Strength | What's missing |
 |---|---|---|
-| `gt dashboard` | Zero install, upstream-canonical | Intentionally light; no boards, graph, saved filters; won't grow further |
-| [gvid](https://github.com/intent-solutions-io/gastown-viewer-intent) | Single binary, dep graph, serves Gas Town v1 well today | Observability focus, not PM workflow; Gas Town vocabulary hardwired in the UI layer (harder to migrate when Gas City arrives) |
-| [Smorgasbord](https://smorgasbord.pm) | Kanban + polished | Next.js footprint; Gas Town vocabulary hardwired |
+| Backend-native dashboards (gt, Linear UI, Jira native) | Zero install, canonical | Locked to one backend; no cross-plane view |
+| [gvid](https://github.com/intent-solutions-io/gastown-viewer-intent) | Single binary, dep graph | Gas Town–specific in the UI layer |
+| [Smorgasbord](https://smorgasbord.pm) | Polished Kanban | Next.js footprint; Gas Town–specific |
+| Atlassian Marketplace tools | Mature PM ergonomics | Jira-only; no agent execution surface |
 
-(Other projects exist — gastown-gui, m1chael-pappas/gastown-ui, Beadbox, beads-ui, bigsky77/gastown-frontend, Mardi Gras, Foolery, BeadBoard, perles, bdui. Worth looking at, but none target the pack-agnostic PM + declarative-reconciliation surface.)
+## Architecture in one diagram
 
-## Locked decisions
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      Gemba SPA (React/TS)                        │
+│        no role names · no pack vocabulary · capability-driven    │
+└─────────────────────────────────────────────────────────────────┘
+                                ▲
+                  HTTP / SSE — capability-negotiated
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     Gemba core (Go binary)                       │
+│   types: WorkItem · AgentRef · Relationship · Evidence · DoD     │
+│          Sprint · TokenBudget · CostMeter · EscalationRequest    │
+└─────────────────────────────────────────────────────────────────┘
+        ▲                                              ▲
+        │   WorkPlaneAdaptor                           │   OrchestrationPlaneAdaptor
+        │   transport: api | jsonl | mcp               │   transport: api | jsonl | mcp
+        ▼                                              ▼
+  ┌───────────────────────┐                   ┌───────────────────────────┐
+  │  v1 reference: Beads  │                   │  v1 reference: Gas Town   │
+  │  forcing fn:   Jira   │                   │  forcing fn:  LangGraph   │
+  │  (Linear, GH, …)      │                   │  (Gas City, OpenHands, …) │
+  └───────────────────────┘                   └───────────────────────────┘
+```
 
-These went through a design pass against the Gas City README. Flagging the ones most likely to get pushback:
+## The two-plane contract
 
-1. **Standalone sidecar, not a `gt` plugin or a `gc` plugin.** Neither runtime's plugin surface is for HTTP servers. Sidecar is the idiomatic path for both. In v1: talks to `gt --json` and `bd --json` against a Gas Town workspace; reads `~/gt/` state for low-latency views. The `internal/adapter/gc/` package is designed from day one so that when Gas City reaches GA, the primary runtime flips via configuration, not code surgery.
+Both adaptor interfaces (full TypeScript-style spec in `domain.md`) are typed, versioned, and capability-declared.
 
-2. **Pack-agnostic UI.** This is the decision that keeps the design honest. No hardcoded role names, no Gas Town-specific vocabulary in the UI layer. Agents are `[[agents]]` entries. Columns are derived from config. This matches Gas City's own "configured roles, not concepts" philosophy.
+**`WorkPlaneAdaptor`** — owns work items, edges, transitions, evidence, DoD, sprints, budgets:
+```ts
+interface WorkPlaneAdaptor {
+  describe(): CapabilityManifest;
+  list(query: WorkItemQuery): Page<WorkItem>;
+  get(id: WorkItemId): WorkItem;
+  create(draft: WorkItemDraft, ctx: CallCtx): WorkItem;
+  update(id, patch, ctx): WorkItem;
+  transition(id, to: StateRef, ctx): WorkItem;
+  edges(id): Relationship[];
+  add_edge(edge, ctx): void;
+  evidence(id): Evidence[];
+  read_budget_rollup(scope_kind, scope_id): TokenBudgetRollup;
+  list_sprints(query?): Sprint[];
+  subscribe(filter): AsyncIterator<WorkPlaneEvent>;
+}
+```
 
-3. **Declarative-reconciliation as a first-class surface (stubbed on Gas Town, full on Gas City).** Once Gas City stabilizes, the UI shows `city.toml` desired state alongside `.gc/agents/` actual state, and edits round-trip through `gc config`. On Gas Town v1, the view renders the implicit "desired" derived from Gas Town's fixed role set — useful but not the full surface. This is the single biggest new thing Gemba brings that nothing else does, and designing for it now means no rework when Gas City arrives.
+**`OrchestrationPlaneAdaptor`** — owns agents, groups, workspaces, sessions, cost, escalations:
+```ts
+interface OrchestrationPlaneAdaptor {
+  describe(): OrchestrationCapabilityManifest;
+  list_agents(filter?): Agent[];
+  list_groups(filter?): AgentGroup[];
+  acquire_workspace(spec, ctx): Workspace;
+  release_workspace(id, ctx): void;
+  start_session(spec, ctx): Session;
+  peek_session(id): SessionPeek;
+  pause_session(id, ctx) / resume_session(id, ctx) / end_session(id, ctx): void;
+  read_cost(scope): CostMeter;
+  declared_state(): WorkspaceTopology;
+  observed_state(): WorkspaceTopology;
+  subscribe(filter): AsyncIterator<OrchestrationEvent>;
+}
+```
 
-4. **Provider-aware agent views.** Agent detail page renders differently for tmux / k8s / subprocess / exec. Respects Gas City's `session.Provider` abstraction all the way up.
+Capability manifests carry `state_map`, `edge_extensions`, `field_extensions`, `relationship_extensions`, plus boolean capabilities (`sprint_native`, `token_budget_enforced`, `evidence_synthesis_required`, …). The UI hides controls and columns the manifest does not advertise.
 
-5. **Go + embedded React/TS SPA.** Single binary, `go:embed` for the SPA, shadcn + Tailwind + TanStack + @dnd-kit + React Flow + cmdk. Richness htmx can't deliver; install footprint Next.js can't match.
+## Twelve locked decisions
 
-6. **Full mutation surface, confirmation-gated.** Every mutation requires a server-enforced `X-GEMBA-Confirm` nonce. `--dangerously-skip-permissions` (name copied verbatim from Claude Code — not softened) disables it for the session.
+These survive the design pass. Changing one is an escalation, not a local edit.
 
-7. **Never write Dolt/JSONL/`.gc/`/controller.sock/`.gt/` internals directly.** All state changes round-trip through `gt`/`gc`/`bd` CLIs, or through a watched config file edit the controller reconciles. Applies to both runtimes.
+1. **Topology.** Standalone sidecar, separate binary. Talks to one configured WorkPlane adaptor and one configured OrchestrationPlane adaptor; default config discovers what the workspace supports.
+2. **Backend.** Go single binary; `go:embed` SPA; Cobra; chi; SSE.
+3. **Frontend.** React + TypeScript + Vite; shadcn/ui + Tailwind; TanStack Query/Table; @dnd-kit; React Flow; cmdk.
+4. **Adaptor-agnostic UI.** No role/pack vocabulary in the SPA outside `web/src/extensions/<adaptor-id>/` capability-gated widgets.
+5. **Pluggable workspaces.** `Workspace.kind ∈ worktree | container | k8s_pod | vm | exec | subprocess`, declared by the orchestration adaptor.
+6. **Multi-workspace, not federated.** Multiple workspaces in a single Gemba install; no Wasteland-style cross-workspace federation in v1.
+7. **Mutation model.** Server-enforced `X-GEMBA-Confirm` nonce; `--dangerously-skip-permissions` disables for the session.
+8. **Auth.** Localhost by default; non-loopback without `--auth` is a startup error; token (256-bit, argon2id, printed once); TLS via certs or `--tls-self-signed`; OIDC stubbed for v1.1.
+9. **Data integrity.** Never write any backend's private storage directly. Every mutation goes through the adaptor's public CLI/API.
+10. **Declarative UX.** UI shows `declared_state()` vs `observed_state()` with drift highlighted. Adaptors without a declarative source render implicit-desired from the capability manifest.
+11. **ZFC for the UI.** Present data, surface actions, let the operator decide. No decision logic in TypeScript.
+12. **Distribution.** Homebrew tap, npm wrapper, GitHub Releases binaries for macOS/Linux/Windows/FreeBSD.
 
-8. **ZFC for the UI.** No decision logic in the UI layer. Present data, surface actions, let the operator decide. Same principle Gas City applies to its Go code, applied to our TypeScript.
+## Cross-cutting primitives
 
-9. **Multi-rig, single workspace for v1.** Not Wasteland-federated, but no decision precludes federation. Every identity carries `WorkspaceID + RigID` (workspace = town today, city tomorrow); labels mark `fed:safe` / `fed:bridge` / `fed:blocked`.
+These types appear in every adaptor's surface. Adaptors with native equivalents wire them through; adaptors without synthesize them at the edge.
 
-10. **Auth.** Localhost-bound by default. Binding non-loopback without `--auth` is a startup error. Token auth: 256-bit, argon2id, printed once. TLS via user cert or `--tls-self-signed`. OIDC interface stubbed for v1.1.
-
-## Architectural alignment with Gas City
-
-I walked through the Gas City README section by section and checked each of its design principles against Gemba's design. Result:
-
-- **Zero Framework Cognition.** Gas City's principle — Go handles transport, not reasoning. Gemba's application: the UI shows state and actions; it does not embed judgments. No "agent looks stuck, restart it for the user" shortcuts. The operator reads the peek output and decides.
-- **GUPP (if you find work, run it).** Applies to agents, not UIs. Gemba is a viewer, not a dispatcher; it can *surface* that a polecat has idle slots, but the decision to sling stays with the human or the Mayor agent.
-- **Nondeterministic Idempotence.** Every Gemba mutation must be safely retryable. The `X-GEMBA-Confirm` nonce design already supports this — duplicate confirmations are rejected, so client retries don't double-mutate.
-- **SDK Self-Sufficiency.** Gas City functions with only its controller running. Gemba must function with zero specific agent roles present — a Level 1 city (one agent) should render usefully. The pack-agnostic UI decision derives directly from this.
-- **Bitter Lesson exclusions.** Gas City explicitly rejects skill systems, capability flags, MCP/tool registration, decision logic in Go, and hardcoded role names. Gemba mirrors this: no UI-layer skill catalog, no capability badges beyond what's declared in config, no MCP-aware tool panel, no decision trees, no role-name `switch` statements anywhere.
-
-## Auth posture
-
-Design I'm least sure about; would love critique.
-
-- **Default bind**: `127.0.0.1:7666`, no auth. The 99% case.
-- **Remote access**: `--listen 0.0.0.0 --auth token` generates a 256-bit token, prints once, stores argon2id hash at `~/.bc/tokens/primary`. Bearer header or signed session cookie.
-- **Non-loopback without auth is a startup error** — not a warning. Implemented and tested in the scaffold.
-- **TLS**: user certs, or `--tls-self-signed` with 1-year validity, SANs for localhost + bind IP, SHA-256 fingerprint printed at startup.
-- **OIDC**: interface + mock for v1, real providers (GitHub, Google) v1.1.
-
-Open questions:
-
-- Is one-shot token printed to stdout the right UX, or should it round-trip through a Gas City config mechanism so tokens live next to the rest of the city's configuration?
-- For teams sharing a bc instance, do we need multi-user auth day 1 or can it wait for OIDC?
-
-## New surfaces (differentiators)
-
-The **Convoy Kanban is the home screen** — it's what opens on `gemba serve`, and it's where day-of orchestration happens. Everything else is a destination reached from the board's nav or from a bead's detail view. All of these are things I think genuinely don't exist yet and are worth building:
-
-- **Convoy Kanban (home).** The primary interface. Columns derive from detected agents / rigs / statuses — pack-agnostic per locked decision #2, so no hardcoded Mayor/Witness/Polecat even on Gas Town v1. Drag-drop status changes round-trip through `bd update --status`; multi-select cards to "create convoy" and batch-dispatch via `gt sling` (or `gc` at GA). Swimlanes by rig, assignee, or label; WIP limits per column; filter chips (priority, tier, provider, `fed:*`). Quick-edit inline; keyboard-first via cmdk palette. Every mutation `X-GEMBA-Confirm`-gated.
-- **Bead detail.** Opens from a card click or at `/beads/:id`. Description, labels, linked PRs, parent/child hierarchy, all seven edge types, activity log, and quick actions (sling, assign, change status, add dep, open in graph) — same mutation-gating as the board. The second-most-used surface after the Kanban.
-- **Work grid (power-user view).** 10k beads, virtualized, column presets, saved filters, cross-rig. Jira/Linear table ergonomics for triage, bulk-edit, and JSONL import of RFC-driven work packages. Same data as the Kanban, different ergonomics — use the board for flow, the grid for triage.
-- **Dep graph.** All 7 Beads edge types (blocks, related, parent-child, discovered-from, waits-for, replies-to, conditional-blocks), each visually distinct. Cycle highlighting, critical-path mode. Reached from the board's nav or "show in graph" on bead detail.
-- **Molecule progress.** Formulas rendered as first-class workflow DAGs with step-level status and per-step prompt rendering. Reached from a bead's detail when its convoy carries a formula; standalone at `/molecules/:formula`. Hardest to build on any other PM tool because the data model is Gas-City-native.
-- **Desired-vs-actual.** The Kubernetes-dashboard surface for multi-agent systems. Reads `city.toml`, diffs against running sessions, highlights drift, offers "reconcile" per-drift or globally. Available as a standalone page and as a board-level overlay that tints rig/column headers when drift is present. On Gas Town v1, stubbed against the implicit fixed-role structure.
-- **Provider-aware agent detail.** Renders differently for tmux / k8s / subprocess / exec (locked decision #4). Reached from a rig or agent reference on the board or in a bead's activity log; shows session peek, elastic-pool check output, recent log.
-- **Pack browser.** Enumerate `packs/`, preview `pack.toml`, show per-rig overrides as a diff against the base pack. Kustomize-for-agents rendered as a UI. Standalone page.
-- **Elastic pool visualization.** For `[agents.pool]` with a `check` command — live plot of desired vs actual, queue-depth overlay, check-output log. Surfaces in agent detail and as a standalone page.
-- **Insights panel.** Fed from OTEL metrics + `bd stats`: spawn rate, completion rate, stuck-agent minutes, token cost, merge-queue latency. Available as a collapsed strip on the board and as a full dashboard.
-
-## What I'm NOT doing
-
-- Replacing `gt dashboard`. Parallel tool.
-- Becoming a Gas City in-tree feature. Sidecar.
-- Mobile native app. Responsive web is enough.
-- Confluence-like docs. Scope creep.
-- Direct Dolt access. Ever.
-- Embedding decision logic. ZFC for the UI.
-- Hardcoding pack vocabularies. Pack-agnostic.
-
-## Work package
-
-Decomposed into Beads:
-
-- 1 root epic (twelve locked decisions)
-- 8 phase epics (foundation → adapters → auth → beads/agents UI → boards/mutations → graph/insights/mail → molecules → release)
-- 39 tasks/features + 3 pre-identified bugs
-- 5 molecule formulas for multi-step checkpoint-recoverable work
-- Label taxonomy includes `provider:*` so agent-view work can be correctly routed to people who understand a given provider
-
-Phase 1 scaffold is built and verified: Go binary builds clean, tests pass with `-race`, bind policy verifiably rejects 0.0.0.0 without auth, SPA fallback doesn't shadow API 404s, yolo flag produces a WARN log. CI matrix covers macOS/Linux/Windows × Go 1.23/1.24. The `gemba doctor` command checks for either Gas Town (`gt` CLI, `~/gt`, `.gt/` or `rigs/`) or Gas City (`gc` CLI, `~/my-city`, `.gc/` or `city.toml`) so the binary is useful today against Gas Town v1 and becomes useful against Gas City the moment it's installable.
+- **`WorkItem` + canonical `state_category`** (`Backlog | Unstarted | Started | Completed | Canceled`). Per-state names are adaptor-declared.
+- **`AgentRef`** as a first-class core type. Adaptors that model agents only as user/bot/claim federate at the edge.
+- **`Relationship`** with three core edge types (`blocks`, `parent_child`, `relates_to`) + adaptor-declared extensions.
+- **`Evidence`**: PRs, commits, runs, traces, artifacts. Synthesized from git/CI for adaptors without native evidence; UI marks synthesized evidence with `synthesized: true`.
+- **`DefinitionOfDone`** — informational-only in v1 (free-text `acceptance_criteria` + `notes` + `version`; no enforcement).
+- **`Sprint` + `TokenBudget`** — sprint-as-token-budget. Three-tier `inform | warn | stop` thresholds at epic and sprint scope. Tokens are the only enforced budget axis in v1; dollars and wallclock render but do not gate.
+- **`CostMeter`** — token / dollar / wallclock rollups at assignment, work item, agent, group, epic, and sprint scope.
+- **`EscalationRequest`** — orchestrator pauses, budget threshold crossings, rate-limit waits, HITL interrupts.
+- **`CapabilityManifest`** — adaptor declares at registration; UI consumes at runtime.
 
 ## What I'm asking for
 
-1. **Gas City team: is this the right direction, and is the timing right?** Gemba is designed around Gas City's primitives but shipped against Gas Town v1.0 because that's what's stable today. If you want this to happen differently — a plugin into the SDK, an official reference implementation, a wholly different shape, or "wait until Gas City GA and then build" — that's the most valuable signal you can give. Julian, Chris: DMs open.
+The four highest-risk decisions, each scoped as a validation gate before contracts go to code:
 
-2. **Sequencing.** Would you rather I: (a) ship a Gas Town v1 UI now and swap in the Gas City adapter when it goes GA, which is the plan; (b) wait for Gas City GA and ship only against that; or (c) stop now because a reference UI is already planned on your side? Option (c) is the cheapest thing to find out early.
+1. **DD-1: Agent as a first-class core type, federated to backend assignee.** Trackers that only know "user / bot / claim" must synthesize agent role and parent-agent at the adaptor edge. Maintainers of Beads, Jira, Linear, GitHub Projects, Plane: is the federation shape (custom field + label fallback) something you'd accept as a contract Gemba writes against? Orchestrator maintainers (Gas Town, Gas City, LangGraph, OpenHands, Devin): is `{agent_id, display_name, role, parent_id?, agent_kind}` enough to render usefully without amputating dimensions you care about?
 
-3. **Pack-agnostic UI sanity.** The decision that no UI layer may hardcode role names — even though Gas Town v1 has fixed role names — is strong. Does anyone see failure modes? Cases where a specific pack needs a specific UI affordance that a generic approach can't give?
+2. **DD-9: Three core edge types** (`blocks`, `parent_child`, `relates_to`) **with the rest as adaptor extensions.** Beads has seven; Jira has many; LangGraph has graph-edges. The narrowing forces every UI to render the three core types always and the rest only when declared. Beads maintainers: comfortable with `discovered_from`, `waits_for`, `replies_to`, `conditional_blocks` as Beads-namespaced extensions rather than core?
 
-4. **Desired-vs-actual view.** Is there prior art inside Gas City for this already (a `gc config explain --drift` flow, say)? If so I'd rather consume it than reinvent.
+3. **DD-13: Evidence synthesis at the adaptor edge for adaptors without native evidence.** Tag synthesized evidence with `synthesized: true` so the UI can render provenance honestly. Trackers that *do* have native evidence (Linear's auto-linked PRs, GitHub's native PR↔Issue links): is the contract clear enough that you'd write the adaptor without us rewriting half of it post-hoc?
 
-5. **Architectural red flags.** Sidecar vs plugin, Go+React vs alternatives, full mutation vs read-only v1, localhost-default. The decisions feel right but group epistemics beat mine.
+4. **DD-14: Sprint-as-token-budget** with three-tier `inform | warn | stop` enforcement at epic and sprint scope. Tokens the only enforced axis in v1; dollars and wallclock rendered, not gating. Scrum-fluent users: does redefining "sprint" as a token-budget container break your mental model in unproductive ways, or does it sharpen the UX for agent-driven work?
 
-6. **Prior art I missed.** Especially anything designed for the Gas Town → Gas City transition specifically. I'd rather contribute than fork.
+Lower-stakes asks:
 
-7. **Name pushback.** "Gemba" fits the Gas City theming (Bullet Farmer → Bullet Farm was the original, but Gemba plays better with the declarative-city architecture Gas City is heading toward). If this collides with something planned upstream, tell me now.
+5. **Sequencing.** Reference adaptors first (Beads + Gas Town to a working binary), then forcing-function adaptors (Jira + LangGraph), then the rest? Or do forcing-function adaptors before the reference adaptors get too crystallized to refactor?
+6. **Transport plurality (DD-15).** Adaptors declare one of `{api, jsonl, mcp}`. MCP is recommended-but-not-required. Anyone building MCP-first adaptor integrations: is the recommended-not-required stance safe for you, or do you want it tighter?
+7. **Capability negotiation (DD-12).** All-or-nothing capability scoping in v1 (no per-capability permission scoping). For multi-tenant deployments down the line, is that a non-starter or acceptable v1 simplification?
+8. **Auth posture.** Localhost-default + bind-policy startup-error. Anyone done a security review of a similar local tool — what would you add or remove?
+9. **Prior art I missed.** Especially anything generalized across work trackers and orchestrators. I'd rather contribute than fork.
+10. **Anyone building something similar?** Happy to join forces.
 
-8. **Auth sanity check.** The bind-policy startup-error is opinionated. If anyone has done a security review of a similar local tool, I'd love to hear what you'd add or remove.
+## What I'm NOT doing
 
-9. **Anyone building something similar?** Happy to join forces.
+- Picking sides between work trackers or orchestrators. Adaptors are first-class.
+- Writing to any backend's private storage. Every mutation through the adaptor's public CLI/API.
+- Embedding decision logic in the UI. ZFC for the UI.
+- Federating workspaces in v1. The labels (`fed:safe` / `fed:bridge` / `fed:blocked`) leave the door open.
+- Mobile native. Responsive web is enough.
+- Confluence-like docs. Scope creep.
 
-Not asking for maintainer time or upstream integration. Just want to know if the approach is sound before I commit to Phase 2.
+## Work package
+
+Decomposed into ~80 Beads issues across 13 phase epics:
+
+1. **Foundation** — repo, Cobra, embed pipeline, Vite/React/TS, Makefile, CI
+2. **Validation** — four gates on DD-1, DD-9, DD-13, DD-14
+3. **Core contracts** — domain types, two adaptor interfaces, registration, conformance harness, event schema, noop reference adaptors
+4. **Transport** — HTTP API + chi, OpenAPI/TS codegen, SSE hub, mutation nonce
+5. **Auth** — bind policy, token, TLS, OIDC stub
+6. **Reference WorkPlane: Beads** — CRUD, edge mapping, AgentRef federation, DoD pass-through, evidence synthesis, subscribe, conformance
+7. **Reference OrchestrationPlane: Gas Town** — agents/groups, workspace, sessions, cost meter, escalation mapping, transport declaration, conformance
+8. **Forcing-function WorkPlane: Jira** — REST v3 CRUD, workflow FSM mapping, custom-field synthesis, DoD, rate-limit subscribe, conformance
+9. **Forcing-function OrchestrationPlane: LangGraph** — Agent synthesis from node paths, graph-mode AgentGroup, checkpoint suspend/resume, LangSmith cost, exec workspace, conformance
+10. **Stub OrchestrationPlane: Gas City** — skeleton, workspace detection, RFC follow-up
+11. **Cross-cutting** — DoD informational, CostMeter, EscalationRequest pipeline, capability negotiation UI, Sprint+TokenBudget enforcement, evidence synthesis library, transport plurality harness
+12. **UI** — app shell, react-query+SSE, work grid, AgentGroup board (Kanban), backlog board, WorkItem creation, bulk actions, YOLO toggle, drawers, palette, dep graph, insights, mail (gated), escalations, capability browser, agent detail (`Workspace.kind`-driven), desired-vs-actual
+13. **Molecules** — formula catalog, molecule progress
+14. **Release** — goreleaser, npm wrapper, docs site, "Writing a Gemba adaptor" guide, migration guide, announcement
+
+Phase-1 scaffold is built and verified. CI matrix covers macOS/Linux/Windows × Go 1.23/1.24. The `gemba doctor` command discovers which adaptors a workspace can satisfy.
+
+Not asking for maintainer time or upstream integration. Just want to know if the abstraction is sound before I commit further build cycles.
 
 Thanks for reading.
