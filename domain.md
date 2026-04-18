@@ -9,7 +9,7 @@
 
 This document specifies the abstraction layer that lets Gemba render any supported Work Coordination Plane (Beads, Jira, Linear, GitHub Projects, Azure DevOps, Shortcut, Plane, …) over any supported Agent Orchestration Plane (Gas Town, Gas City, LangGraph, CrewAI, OpenHands, Devin, Factory, …) without changing the UI layer.
 
-Every design choice is grounded in Phase 1 evidence. References take the form `C#` (convergent pattern), `D#` (divergent pattern), `DD-N` (this document's design decision), and RFC-§N (RFC locked decision N).
+Every design choice is grounded in landscape.md evidence. References take the form `C#` (convergent pattern), `D#` (divergent pattern), `DD-N` (this document's design decision), and RFC-§N (RFC locked decision N).
 
 Pseudo-code is **TypeScript-style** throughout (matches the SPA layer and documents types more legibly than Go for this audience). Adaptor *implementations* are free to be written in Go — only the interface shape is prescriptive.
 
@@ -22,11 +22,11 @@ Two inviolable principles from RFC.md propagate everywhere:
 
 ## 1. Design decisions — resolving the open questions
 
-Phase 1 §6 listed 11 known-unknowns. Each is resolved below. Numbering is stable; later sections refer back by `DD-N`.
+landscape.md §6 listed 11 known-unknowns. Each is resolved below. Numbering is stable; later sections refer back by `DD-N`.
 
 ### DD-1: Agent identity model — first-class, federated to tracker assignee
 
-**Phase 1 reference:** D4, D10, Gap "No standard for agent as first-class work-tracker citizen".
+**Landscape reference:** D4, D10, Gap "No standard for agent as first-class work-tracker citizen".
 
 **Decision:** Gemba models `Agent` as a first-class entity with its own identity, role, parent, and capabilities (per C10 — identity vs session is near-universal). Each `WorkPlane` adaptor is responsible for the bidirectional mapping between a Gemba `AgentRef` and the backend's assignee primitive (bot user, `claim` string, user id, etc.). The mapping is typed and lossy-by-design: core carries only `{agent_id, display_name, role, agent_kind: "agent"|"human"}`; the adaptor preserves backend extras via the extension channel.
 
@@ -38,7 +38,7 @@ Phase 1 §6 listed 11 known-unknowns. Each is resolved below. Numbering is stabl
 
 ### DD-2: Source of truth — Work Coordination Plane is primary, Orchestration Plane is derivable
 
-**Phase 1 reference:** D7.
+**Landscape reference:** D7.
 
 **Decision:** The WorkPlane is the source of truth for work-item state, lifecycle, assignment, and evidence. The OrchestrationPlane is the source of truth for session-level runtime state (current prompt, cost burn, sandbox fingerprint). When they disagree on anything in the WorkPlane's jurisdiction, **the WorkPlane wins** and the OrchestrationPlane reconciles. Adaptors MAY expose a read-through cache but MUST NOT silently override WorkPlane state.
 
@@ -50,11 +50,11 @@ Phase 1 §6 listed 11 known-unknowns. Each is resolved below. Numbering is stabl
 
 ### DD-3: Definition of Done — informational-only free-text, enforcement deferred
 
-**Phase 1 reference:** D8, Gap "No cross-system DoD primitive".
+**Landscape reference:** D8, Gap "No cross-system DoD primitive".
 
 **Decision:** Gemba's `DefinitionOfDone` is **informational-only** for v1. It is displayed metadata — never a gate, never machine-evaluated, never a precondition for state transitions. The schema collapses to two optional free-text strings: `acceptance_criteria` and `notes`, tagged with `version: "1.0"`. Adaptors pass this through to whichever native free-text field the backend already exposes (Jira: description or an `Acceptance Criteria` custom field; Linear: the ad-hoc acceptance-criteria custom field; GitHub Issues: a clearly-delimited section in the issue body; Beads: a new `acceptance_criteria` field on the bead; Gas Town / Gas City: the same Beads-side field). No new storage primitives, no predicate kinds, no evaluator dispatch, no `ProofOfDoD` object, no predicate registry, no scheduling.
 
-**Rationale:** Phase 1 D8 correctly observed that no industry consensus exists on completion semantics. Phase 2's earlier hybrid design (a predicate schema with evaluators) would have required Gemba to *create* that consensus — a credible but expensive political bet with a wide blast radius across every adaptor. Rather than make that bet in v1, Gemba ships the *display* affordance (every Kanban card can show acceptance criteria) without making any claim that the text is machine-checkable or authoritative. When industry consensus on completion semantics emerges — or when Gemba's deployed base demands enforcement — DD-3 re-opens at `schema_version: "2.0"` as an opt-in capability. Not before.
+**Rationale:** landscape.md D8 correctly observed that no industry consensus exists on completion semantics. an earlier hybrid design (a predicate schema with evaluators) would have required Gemba to *create* that consensus — a credible but expensive political bet with a wide blast radius across every adaptor. Rather than make that bet in v1, Gemba ships the *display* affordance (every Kanban card can show acceptance criteria) without making any claim that the text is machine-checkable or authoritative. When industry consensus on completion semantics emerges — or when Gemba's deployed base demands enforcement — DD-3 re-opens at `schema_version: "2.0"` as an opt-in capability. Not before.
 
 **Tradeoffs:** v1 users who want CI-gated completion must arrange it outside Gemba (e.g., in their tracker's native workflow validators, or in CI). The Kanban cannot badge "all DoD predicates pass" because there are no predicates. This is the price of keeping adaptors cheap and avoiding a political bet.
 
@@ -62,11 +62,11 @@ Phase 1 §6 listed 11 known-unknowns. Each is resolved below. Numbering is stabl
 
 ### DD-4: Cost and budget — Gemba meters, adaptors contribute
 
-**Phase 1 reference:** D9.
+**Landscape reference:** D9.
 
 **Decision:** Gemba owns a canonical `CostMeter` schema with three axes: `{tokens_total, wallclock_seconds, dollars_est}`. The OrchestrationPlane adaptor MUST emit samples against at least one axis (typically tokens or wallclock). Gemba aggregates. Adaptors that natively meter in proprietary units (Devin's ACUs) expose the native unit as an extension while also down-converting into `dollars_est` using a configured rate card.
 
-**Rationale:** Phase 1 D9 established that tokens, ACUs, and wall-clock are not convertible; no industry standard exists. Gemba's Kanban needs *some* comparable number per card, so Gemba defines it. The rate card is config, not code, so the adaptor can be updated without a release.
+**Rationale:** landscape.md D9 established that tokens, ACUs, and wall-clock are not convertible; no industry standard exists. Gemba's Kanban needs *some* comparable number per card, so Gemba defines it. The rate card is config, not code, so the adaptor can be updated without a release.
 
 **Tradeoffs:** `dollars_est` is estimated, not billed — actual invoices from Anthropic/OpenAI/Cognition will disagree. Gemba's number is for flow-management, not finance. This distinction is surfaced in the UI (the field is labelled `≈$` everywhere).
 
@@ -74,7 +74,7 @@ Phase 1 §6 listed 11 known-unknowns. Each is resolved below. Numbering is stabl
 
 ### DD-5: Isolation contract — "scoped working directory" is the only MUST; everything else is capability-negotiated
 
-**Phase 1 reference:** D5, C7.
+**Landscape reference:** D5, C7.
 
 **Decision:** Every OrchestrationPlane adaptor MUST declare that it can provide a *scoped working directory* for an assignment — meaning a filesystem namespace where writes by one assignment do not corrupt another in-flight assignment. The *mechanism* (worktree, Docker container, k8s pod, cloud VM, exec'd chroot) is a declared capability, negotiated at registration, and surfaced in the UI (`Workspace.isolation_kind`). Anything stronger than "scoped working directory" (network isolation, resource limits, snapshot/restore) is optional capability.
 
@@ -86,7 +86,7 @@ Phase 1 §6 listed 11 known-unknowns. Each is resolved below. Numbering is stabl
 
 ### DD-6: Escalation — unified `EscalationRequest` entity, dedicated UI inbox + card badge
 
-**Phase 1 reference:** D11.
+**Landscape reference:** D11.
 
 **Decision:** Gemba defines `EscalationRequest` as a cross-cutting entity (§3.1) with a single schema. MCP elicitation, A2A `input-required` task state, Claude Code permission prompts, CrewAI `flow_finished`-after-HITL, and Microsoft Agent Framework HITL approvals all map to `EscalationRequest`. The UI treats them as (a) a badge on the owning WorkItem card, (b) a first-class inbox surface (`/escalations`), and (c) an overlay on the Convoy Kanban when any card in view has an open escalation.
 
@@ -98,7 +98,7 @@ Phase 1 §6 listed 11 known-unknowns. Each is resolved below. Numbering is stabl
 
 ### DD-7: Agent grouping — `AgentGroup` primitive, static+dynamic, multi-repo-ready
 
-**Phase 1 reference:** D6, Gap "Agent-group membership model is immature".
+**Landscape reference:** D6, Gap "Agent-group membership model is immature".
 
 **Decision:** `AgentGroup` is a first-class entity with three grouping modes declared by the orchestrator adaptor: `static` (enumerated member list, e.g., Gas Town convoy, CrewAI crew), `pool` (elastic via a `check` command returning live membership, e.g., Gas Town worker pool, Gas City `[agents.pool]`), or `graph` (LangGraph subgraph, ADK hierarchy). Gemba stores the declaration; the adaptor resolves membership on read.
 
@@ -110,7 +110,7 @@ Phase 1 §6 listed 11 known-unknowns. Each is resolved below. Numbering is stabl
 
 ### DD-8: Adaptor transport — plurality with MCP recommended, not required
 
-**Phase 1 reference:** C8, Bitter Lesson (RFC §Architectural alignment).
+**Landscape reference:** C8, Bitter Lesson (RFC §Architectural alignment).
 
 **Decision:** Each adaptor declares its transport on registration from the set `{api, jsonl, mcp}`. Any one satisfies the contract; multiple are supported.
 - **`api`** — HTTP + JSON over a documented endpoint set (REST or JSON-RPC 2.0). Gas Town's `gt --json` + `bd --json` CLI surfaces are wrapped as an `api`-transport adaptor.
@@ -127,7 +127,7 @@ MCP is the **recommended** transport for new OrchestrationPlane adaptors because
 
 ### DD-9: Edge taxonomy — 3-core `{parent_of, blocks, relates_to}`, all other edges via extension channel
 
-**Phase 1 reference:** D1, C2, C3.
+**Landscape reference:** D1, C2, C3.
 
 **Decision:** Core edges are `{parent_of, blocks, relates_to}` (aligned to C2 + C3). All other edges — including Beads' `discovered-from`, `waits-for`, `replies-to`, `conditional-blocks`, Azure's `predecessor/successor` and `tests/tested-by`, Jira's `duplicates`, `clones`, `causes`, and any tracker-specific custom link type — are first-class inside the adaptor but surfaced to the core via the `Relationship.extension` typed map. Gemba's core graph rendering shows only the 3 canonical types by default; the dep-graph view exposes extension edges when the adaptor declares them.
 
@@ -139,7 +139,7 @@ MCP is the **recommended** transport for new OrchestrationPlane adaptors because
 
 ### DD-10: Multi-repo work items — **v1 is single-repo-per-WorkItem**; multi-repo is a v2 capability
 
-**Phase 1 reference:** Gap "Cross-repo coordination is barely solved", RFC locked decision #9.
+**Landscape reference:** Gap "Cross-repo coordination is barely solved", RFC locked decision #9.
 
 **Decision:** A v1 `WorkItem` is scoped to exactly one `RepositoryRef`. Evidence across repos is supported (an evidence link can point to another repo) but parent-of edges cannot cross repos. Adaptors that *want* to expose cross-repo work items (GitHub sub-issues explicitly support this; see §3 of the landscape) MUST flatten them: the core sees a single-repo parent and extension metadata notes "has cross-repo children the adaptor chose not to surface."
 
@@ -155,11 +155,11 @@ MCP is the **recommended** transport for new OrchestrationPlane adaptors because
 
 When industry consensus on completion semantics emerges and DD-3 re-opens with enforcement, this DD will also re-open to define the no-DoD close policy. Not before.
 
-*(Phase 1 reference preserved for history: known-unknown #11, D8.)*
+*(Landscape reference preserved for history: known-unknown #11, D8.)*
 
 ### DD-12 (emergent): Capability-negotiation over hardcoded feature flags
 
-**Phase 1 reference:** RFC §Architectural alignment (Bitter Lesson exclusions — no capability flags in the UI); C4, D2, D3 (tracker-by-tracker variance demands a protocol).
+**Landscape reference:** RFC §Architectural alignment (Bitter Lesson exclusions — no capability flags in the UI); C4, D2, D3 (tracker-by-tracker variance demands a protocol).
 
 **Decision:** Every adaptor (both planes) declares its capabilities on registration via a typed `CapabilityManifest` (§4.6). The UI queries capabilities at render time to decide whether to show a control (e.g., "transition to In Review" only appears if the tracker declares `can_transition_to: ["InReview"]`). The UI never hardcodes "Jira does X, Linear does Y."
 
@@ -171,7 +171,7 @@ When industry consensus on completion semantics emerges and DD-3 re-opens with e
 
 ### DD-13 (emergent): Evidence is append-only and adaptor-synthesizable
 
-**Phase 1 reference:** C5, Gap "Evidence-backed DoD verification is bespoke everywhere".
+**Landscape reference:** C5, Gap "Evidence-backed DoD verification is bespoke everywhere".
 
 **Decision:** `Evidence` records are append-only (never mutated, only superseded). For trackers that don't natively store evidence (most), the adaptor MAY synthesize evidence from adjacent data (Git log for commits, PR API for PRs, Beads work-history for sessions). Synthesized evidence is tagged `synthesized: true` so the UI can distinguish "the tracker asserted this" from "the adaptor inferred this."
 
@@ -181,7 +181,7 @@ When industry consensus on completion semantics emerges and DD-3 re-opens with e
 
 ### DD-14 (emergent): Sprint — token-budgeted (not duration-bounded), with epic-level inform/warn/stop rollup
 
-**Phase 1 reference:** Gap "No cross-system cost/budget accounting" (D9); Phase 2 self-critique (missing sprint primitive from the Agile-ceremony gap).
+**Landscape reference:** Gap "No cross-system cost/budget accounting" (D9); domain self-critique (missing sprint primitive from the Agile-ceremony gap).
 
 **Decision:** Gemba introduces **`Sprint`** as a first-class entity, reusing the familiar Agile term but **redefining its hard constraint**: a Sprint is bounded by a **token budget**, not a calendar duration. Calendar duration (e.g., "two weeks") is *optional planning metadata* surfaced in the UI for team cadence; it is not enforced. When the token budget is exhausted, the Sprint ends — on day 4 or day 40, irrespective of the planned calendar.
 
@@ -213,7 +213,7 @@ Sprint has its own state: `Planned → Active → Closed` or `Planned → Abando
 
 *(Nested inside DD-8 rationale; promoted to its own DD for discoverability.)*
 
-**Phase 1 reference:** C8 (MCP convergence), observed heterogeneity across adaptor implementation costs.
+**Landscape reference:** C8 (MCP convergence), observed heterogeneity across adaptor implementation costs.
 
 **Decision:** Each adaptor (both planes) declares exactly one transport at registration from `{api, jsonl, mcp}`. The transport declaration lives in the `CapabilityManifest` (DD-12). Gemba's adaptor-registration protocol negotiates the transport and uses that transport exclusively for all subsequent operations against the adaptor.
 
@@ -441,7 +441,7 @@ interface WorkDescription {
   "planned_start": "2026-04-20",
   "planned_end": "2026-05-04",
   "actual_start": "2026-04-20T09:00:00Z",
-  "epic_ids": ["gm-gen-c", "gm-gen-a1", "gm-gen-a2"],
+  "epic_ids": ["gm-e3", "gm-e6", "gm-e7"],
   "extension": {}
 }
 ```
@@ -1458,7 +1458,7 @@ interface Session_BC {
 **Gaps / unknowns:**
 
 - **`city.toml` spec**: not public as of Phase 1 (§6). Adaptor interface stubbed to read `city.toml`; field schema resolved when spec lands.
-- **Escalation mechanism in Gas City**: unknown (Phase 1 §6 explicitly asks this of the Gas City team in RFC §What I'm asking for).
+- **Escalation mechanism in Gas City**: unknown (landscape.md §6 explicitly asks this of the Gas City team in RFC §What I'm asking for).
 - **Reconciliation API**: unknown — does `gc` have a reconcile verb? Adaptor declares the capability as unknown and falls back to drift-display-only until confirmed.
 
 **Impedance mismatches:**
