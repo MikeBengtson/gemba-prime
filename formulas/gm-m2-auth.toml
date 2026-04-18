@@ -1,0 +1,104 @@
+name = "gm-m2-auth"
+version = 1
+description = "Gemba auth subsystem: bind policy, token auth, TLS. OIDC is scaffolded only."
+
+[meta]
+rig = "gemba"
+owner_epic = "gm-e3"
+tier = "opus"
+
+[execution]
+timeout = "6h"
+notify_on_failure = true
+severity = "CRITICAL"
+
+# Auth is the most security-sensitive surface. Every step here requires
+# a second set of eyes via the Refinery's review flow.
+
+[[steps]]
+ref = "bind-policy"
+title = "Implement bind policy with loopback-only default"
+description = """
+## Step: bind-policy
+Reference gm-e3.1. This is the single most important auth decision;
+structural prevention of accidental network exposure.
+
+After implementing, write tests for every case in the matrix
+(localhost/remote x auth/no-auth) before moving on.
+"""
+tier = "opus"
+
+[[steps]]
+ref = "token-auth"
+title = "Token auth: generate, hash, verify"
+description = """
+## Step: token-auth
+Needs: bind-policy
+Reference gm-e3.2.
+
+Critical: token displayed ONCE; never logged, never stored plaintext.
+Use argon2id for the stored hash. Incoming auth check uses
+subtle.ConstantTimeCompare on the hash, never a naive string compare.
+"""
+tier = "opus"
+
+[[steps]]
+ref = "tls"
+title = "TLS: user-provided certs OR self-signed"
+description = """
+## Step: tls
+Needs: bind-policy
+Reference gm-e3.3.
+
+Self-signed cert generation uses crypto/rand and produces a certificate
+valid for 1 year with localhost + 127.0.0.1 + the bind IP in SAN.
+Print SHA-256 fingerprint at startup prominently.
+"""
+tier = "sonnet"
+
+[[steps]]
+ref = "oidc-interface"
+title = "OIDC provider interface + mock implementation"
+description = """
+## Step: oidc-interface
+Needs: token-auth
+Reference gm-e3.4.
+
+Scaffolding only for v1. Real providers (GitHub, Google, Okta) file
+as discovered-from beads blocked by this step, targeted at v1.1.
+"""
+tier = "opus"
+
+[[steps]]
+ref = "audit-log"
+title = "Audit log for every auth event and mutation"
+description = """
+## Step: audit-log
+Needs: token-auth
+
+Write `~/.bc/audit.log` with: timestamp, remote IP (if not loopback),
+auth result, endpoint, bead ID, argv hash. Log rotation at 10MB.
+"""
+tier = "sonnet"
+
+[[steps]]
+ref = "security-review"
+title = "Self-review auth surface, threat model the result"
+description = """
+## Step: security-review
+Needs: bind-policy, token-auth, tls, oidc-interface, audit-log
+
+Spend real effort here. Cover:
+- Prompt injection from bead descriptions rendering in the UI (XSS)
+- CSRF on mutation endpoints (is same-origin sufficient, or do we need
+  double-submit cookies?)
+- Timing attacks on auth check
+- Token leakage in logs / error messages / diagnostics output
+- Path traversal on any file path accepted via API
+- Subprocess argument injection in bd/gt adapters (shell metachars in
+  user-supplied strings)
+- SSE connection flood as a DoS vector
+
+Escalate findings via `gt escalate -s HIGH` before closing this step.
+"""
+tier = "opus"

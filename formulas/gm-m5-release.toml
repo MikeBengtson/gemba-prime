@@ -1,0 +1,98 @@
+name = "gm-m5-release"
+version = 1
+description = "Release workflow: preflight, cross-compile, signing, distribution, announce"
+
+[meta]
+rig = "gemba"
+owner_epic = "gm-e8"
+tier = "sonnet"
+
+[execution]
+timeout = "4h"
+notify_on_failure = true
+severity = "HIGH"
+
+[[steps]]
+ref = "preflight"
+title = "Preflight checks: green CI, clean tree, CHANGELOG updated"
+description = """
+## Step: preflight
+Refuse to proceed if:
+- main branch has unmerged PRs marked blocker
+- CI on main is not green
+- Tree has uncommitted changes
+- CHANGELOG.md lacks an entry for this version
+- `gemba doctor` fails in the release container
+
+Failing any of these is an automatic escalation, not a retry.
+"""
+tier = "sonnet"
+
+[[steps]]
+ref = "cross-compile"
+title = "Cross-compile via goreleaser"
+description = """
+## Step: cross-compile
+Needs: preflight
+Reference gm-e8.1.
+
+Build all matrix targets. Verify each artifact runs with `bf --version`
+via qemu (for arm64 on amd64 host) before proceeding.
+"""
+tier = "sonnet"
+
+[[steps]]
+ref = "sign-notarize"
+title = "Codesign + notarize macOS binaries"
+description = """
+## Step: sign-notarize
+Needs: cross-compile
+
+Apple notarization can take minutes; poll rather than block. Windows
+Authenticode signing deferred to v1.1; release notes warn Windows
+users to expect a SmartScreen prompt.
+"""
+tier = "sonnet"
+
+[[steps]]
+ref = "publish"
+title = "Publish: GitHub Release, Homebrew tap bump, npm publish"
+description = """
+## Step: publish
+Needs: sign-notarize
+
+- Create GitHub Release with artifacts, checksums, SBOM
+- PR the Homebrew formula bump in the tap repo
+- `npm publish` the wrapper package
+
+Each sub-publish is idempotent: re-running after partial failure should
+skip completed sub-publishes, not republish.
+"""
+tier = "sonnet"
+
+[[steps]]
+ref = "smoke-test"
+title = "Post-publish smoke test: fresh install on clean VMs"
+description = """
+## Step: smoke-test
+Needs: publish
+
+Spin up fresh VMs (or use a test matrix):
+- macOS (Intel + Apple Silicon): brew install and run
+- Linux (Ubuntu + Alpine): direct binary + npm install
+- Windows 11: direct binary + npm install
+
+`gemba serve` must reach steady state on each. Any failure cuts a
+v1.x.y+1 hotfix and restarts the molecule.
+"""
+tier = "sonnet"
+
+[[steps]]
+ref = "announce"
+title = "Announce: docs update, discussions post, blog, HN, Reddit"
+description = """
+## Step: announce
+Needs: smoke-test
+Reference gm-e8.4.
+"""
+tier = "sonnet"
