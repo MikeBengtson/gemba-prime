@@ -61,7 +61,13 @@ There's already prior art in the in-tree-dashboard lane (`gt dashboard`, `gc das
 | Backend-native dashboards (gt, Linear UI, Jira native) | Zero install, canonical | Locked to one backend; no cross-plane view |
 | [gvid](https://github.com/intent-solutions-io/gastown-viewer-intent) | Single binary, dep graph | Gas Town–specific in the UI layer |
 | [Smorgasbord](https://smorgasbord.pm) | Polished Kanban | Next.js footprint; Gas Town–specific |
+| [Beads Kanban](https://marketplace.visualstudio.com/items?itemName=DavidCForbes.beads-kanban) (VS Code) | Board + table + dep graph + drag-drop, real-time `.beads` updates | Beads-only; no OrchestrationPlane |
+| [Beads Project Manager](https://marketplace.visualstudio.com/items?itemName=4UtopiaInc.beads-vscode) (VS Code) | Explorer/list-first, filters, metadata editing | Beads-only; no agent surface |
+| [T3 Code](https://betterstack.com/community/guides/ai/t3-code/) | Agent-runtime GUI: provider selection, worktree workflows, session supervision | Not tracker-aware; no issue/kanban surface |
+| [Foolery](https://news.ycombinator.com/item?id=47075901) | Dep-aware wave planning + built-in terminal for live agent monitoring + human verification queue | Beads-only; youngest in the field |
 | Atlassian Marketplace tools | Mature PM ergonomics | Jira-only; no agent execution surface |
+
+**The gap no existing tool fills**: an abstraction layer that pairs *any* WorkPlane with *any* OrchestrationPlane under one UI. Beads Kanban + T3 Code + Foolery together cover roughly 60% of Gemba's Phase 12 UI for the single-plane Beads + Gas Town case — but none of them generalize across trackers or orchestrators, and none exposes a typed adaptor contract. The build-vs-integrate decision for the UI layer itself is an open question tracked as a separate design decision.
 
 ## Architecture in one diagram
 

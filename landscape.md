@@ -957,6 +957,70 @@ Do not add a 9th requirement or renumber R1–R8 without user sign-off. If a new
 
 ---
 
+## 8. Addendum (2026-04-20): Beads-ecosystem UI prior art
+
+**Source:** External user analysis provided to gemba_prime on 2026-04-20. URLs cited inline; original searches performed by the external analysis. Category added *after* Phases 1–3 because the original landscape survey focused on generic trackers × orchestrators, which missed the emerging Beads-native GUI layer. These tools are directly relevant to **where Gemba's UI phase (gm-e12.*) overlaps with already-shipped work**, so documenting them separately from the main taxonomy is deliberate.
+
+### 8.1 VS Code Beads extensions
+
+Three extensions exist in the VS Code Marketplace, all targeting Beads as the single supported WorkPlane:
+
+- **Beads Kanban** (`DavidCForbes.beads-kanban`) — kanban board, table view, dependency graph, drag-and-drop status changes, real-time `.beads` updates. VS Code-hosted. Beads-only. ([marketplace](https://marketplace.visualstudio.com/items?itemName=DavidCForbes.beads-kanban))
+- **Beads Project Manager** (`4UtopiaInc.beads-vscode`) — explorer/list-first with stronger table/list browsing, filters, issue metadata editing, workspace-aware daemon handling. VS Code-hosted. Beads-only. ([marketplace](https://marketplace.visualstudio.com/items?itemName=4UtopiaInc.beads-vscode))
+- **vscode-beads** (`planet57.vscode-beads`) — third VS Code extension; overlapping scope with Beads Project Manager. ([marketplace](https://marketplace.visualstudio.com/items?itemName=planet57.vscode-beads))
+
+**Category:** Beads-native UI surface. None exposes an adaptor interface; none targets any tracker besides Beads.
+
+**Relevance to Gemba:**
+- Collectively these three cover ~60-70% of Gemba's Phase 12 "work grid + kanban + dep graph + drawer" surface — *for Beads*.
+- They do **not** cover: cross-tracker rendering, OrchestrationPlane integration (no agent/session/workspace/group/escalation surfaces), capability manifests, transport plurality, structured DoD/Evidence.
+- UX patterns worth borrowing: drag-drop semantics, dep-graph rendering conventions, `.beads/` change-detection idioms.
+
+### 8.2 T3 Code
+
+Agent-execution GUI. Provider selection across coding agents, planning/chat modes, worktree-based workflows, agent session management. Not tracker-aware; no native issue/kanban surface. ([Better Stack guide](https://betterstack.com/community/guides/ai/t3-code/), [Addrom walkthrough](https://addrom.com/t3-code-minimal-web-gui-for-ai-coding-agents-complete-installation-and-usage-guide/), [pyshine](https://pyshine.com/T3Code-Minimal-Web-GUI-Coding-Agents/))
+
+**Category:** OrchestrationPlane-side UI. Closest analog to Gemba's "agent detail + session peek + dispatch" surface for coding agents.
+
+**Relevance to Gemba:**
+- Covers ~50% of Gemba's agent-run-control surface (provider-selection, worktree-worflow, session supervision) but is **runtime-specific** — not an abstraction.
+- Could be a candidate OrchestrationPlane target (T3-Code-managed agents rendered by Gemba) — not a UI replacement.
+- Does not touch the work-tracker side of the house.
+
+### 8.3 Foolery
+
+Local web UI over Beads. Stated feature set includes **dependency-aware wave planning**, **built-in terminal for live agent monitoring**, and a **verification queue for human approval/rejection**. Positioned as the most ambitious Beads-native PM+agent-supervision tool; newer than the VS Code extensions. ([HN submission](https://news.ycombinator.com/item?id=47075901))
+
+**Category:** Closest existing tool to Gemba's positioning. Single workspace with kanban-adjacent planning + live agent observation + human-in-loop approval. **Beads-only** per observable surface.
+
+**Relevance to Gemba:**
+- The three features listed map directly onto Gemba's (a) Kanban + dep graph, (b) session peek + escalation banner, (c) X-GEMBA-Confirm nonce + EscalationRequest UI.
+- If Foolery is open-source, licensable, or extensible, it is a **serious** "extend rather than build" candidate for Gemba's Phase 12 UI surface.
+- Still Beads-only, but that's a software problem (could host Gemba's adaptor layer underneath) rather than an architectural impedance mismatch.
+
+### 8.4 How this addendum changes the picture
+
+The original landscape (§2–§6) correctly identified a gap: *no cross-plane tool pairs any tracker with any orchestrator under one UI*. That gap is unchanged by this addendum — none of the Beads-native UIs generalize across trackers, and T3 Code doesn't generalize across work-tracker systems.
+
+**What changes:** the assumption that Gemba must build the **entire UI surface from scratch** is weaker than it looked in April 18's planning. Roughly:
+
+- Phase 12 UI (~17 tasks) is ~40–60% overlap with Beads Kanban + T3 Code + Foolery *for the single-plane case*.
+- The **abstraction layer** Gemba is building (WorkPlaneAdaptor × OrchestrationPlaneAdaptor × CapabilityManifest × conformance suite) is still unique.
+- Strategic question: **is Gemba the engine (adaptor layer) that powers an existing/future UI like Foolery, or a standalone product with its own SPA?** This should be decided before gm-e12.2..e12.17 dispatch — see the decision bead filed separately.
+
+### 8.5 Direct citations
+
+- Beads Kanban — https://marketplace.visualstudio.com/items?itemName=DavidCForbes.beads-kanban
+- Beads Project Manager — https://marketplace.visualstudio.com/items?itemName=4UtopiaInc.beads-vscode
+- vscode-beads (planet57) — https://marketplace.visualstudio.com/items?itemName=planet57.vscode-beads
+- T3 Code (Better Stack guide) — https://betterstack.com/community/guides/ai/t3-code/
+- T3 Code (Addrom walkthrough) — https://addrom.com/t3-code-minimal-web-gui-for-ai-coding-agents-complete-installation-and-usage-guide/
+- T3 Code (pyshine) — https://pyshine.com/T3Code-Minimal-Web-GUI-Coding-Agents/
+- Foolery — https://news.ycombinator.com/item?id=47075901
+- Mintlify Beads community tools page — https://www.mintlify.com/steveyegge/beads/resources/community-tools
+
+---
+
 ## Appendix: Methodology notes
 
 - All web searches performed 2026-04-18 via WebSearch.
