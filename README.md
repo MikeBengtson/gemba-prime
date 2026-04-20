@@ -95,6 +95,12 @@ Every architectural decision exists to make these three workflows fast.
 
 Landed-`AgentGroup` review; molecule step-by-step replay (prompts + outputs + checkpoints); insights panel from OTEL + adaptor-supplied `CostMeter` (token spend, sprint burn-down, stuck-session minutes, merge-queue latency).
 
+## How Gemba differs from the closest existing tools
+
+The Beads-ecosystem UI layer (`Beads Kanban`, `Beads Project Manager`, `vscode-beads`) and the emerging web-native tool `Foolery` each cover a slice of Gemba's Phase 12 UI surface — keyboard-first grids, kanban, session monitoring — for the single-plane Beads case. They are not competitors to Gemba's core abstraction; Gemba's unique bet is **cross-plane**: any `WorkPlaneAdaptor` × any `OrchestrationPlaneAdaptor` rendered under one capability-manifest-driven SPA with typed contracts, transport plurality (`api | jsonl | mcp`), declarative drift, token-budget enforcement, and unified escalation.
+
+Full differentiator matrix (Gemba ↔ Foolery specifically, with what Gemba borrows from the ecosystem and what it keeps uniquely) is in `landscape.md §8.5`. Gemba's architecture explicitly preserves the option for external UI consumers (future npm package, VS Code extensions, CLI wrappers) to sit over Gemba's adaptor layer without forking — that invariant is tracked in the `gm-ege` bead.
+
 ## Work graph shape
 
 - **1 root epic** (`gm-root`) — holds the twelve locked decisions

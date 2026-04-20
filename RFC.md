@@ -67,7 +67,15 @@ There's already prior art in the in-tree-dashboard lane (`gt dashboard`, `gc das
 | [Foolery](https://news.ycombinator.com/item?id=47075901) | Dep-aware wave planning + built-in terminal for live agent monitoring + human verification queue | Beads-only; youngest in the field |
 | Atlassian Marketplace tools | Mature PM ergonomics | Jira-only; no agent execution surface |
 
-**The gap no existing tool fills**: an abstraction layer that pairs *any* WorkPlane with *any* OrchestrationPlane under one UI. Beads Kanban + T3 Code + Foolery together cover roughly 60% of Gemba's Phase 12 UI for the single-plane Beads + Gas Town case — but none of them generalize across trackers or orchestrators, and none exposes a typed adaptor contract. The build-vs-integrate decision for the UI layer itself is an open question tracked as a separate design decision.
+**The gap no existing tool fills**: an abstraction layer that pairs *any* WorkPlane with *any* OrchestrationPlane under one UI. Beads Kanban + T3 Code + Foolery together cover roughly 60% of Gemba's Phase 12 UI for the single-plane Beads + Gas Town case — but none of them generalize across trackers or orchestrators, and none exposes a typed adaptor contract.
+
+**Gemba vs Foolery specifically.** Because Foolery is the closest emerging tool (dep-aware wave planning + live agent monitoring + human verification queue), we did a full fit-gap spike (2026-04-20). Summary:
+
+- **Overlap (keyboard-first grid + Kanban + drawer + palette + dep graph):** Gemba absorbs UX lessons from Foolery (hotkey system, Retakes lane, session-history view with xterm, conformance harness as importable package) without adopting Foolery as the UI.
+- **Divergence (the reason Gemba exists as a separate product):** two-plane contract (`WorkPlaneAdaptor` × `OrchestrationPlaneAdaptor`) vs Foolery's single `BackendPort`; transport plurality (api/jsonl/mcp) vs HTTP/CLI-only; cross-plane primitives (Agent/AgentGroup/Workspace/Session/Sprint+TokenBudget/EscalationRequest) absent from Foolery; `declared_state() vs observed_state()` drift rendering; capability browser as user surface; production security posture (nonce-gated mutations, argon2id tokens, TLS, OIDC stub).
+- **Complementarity, not competition:** Gemba fails if it tries to out-UX Foolery on the single-plane Beads case; Foolery fails if it tries to absorb cross-plane orchestration without a typed contract.
+
+Full differentiator table + integration options in `landscape.md §8.5`.
 
 ## Architecture in one diagram
 

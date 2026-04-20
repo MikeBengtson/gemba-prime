@@ -1008,7 +1008,36 @@ The original landscape (§2–§6) correctly identified a gap: *no cross-plane t
 - The **abstraction layer** Gemba is building (WorkPlaneAdaptor × OrchestrationPlaneAdaptor × CapabilityManifest × conformance suite) is still unique.
 - Strategic question: **is Gemba the engine (adaptor layer) that powers an existing/future UI like Foolery, or a standalone product with its own SPA?** This should be decided before gm-e12.2..e12.17 dispatch — see the decision bead filed separately.
 
-### 8.5 Direct citations
+### 8.5 Key differentiators — Foolery ↔ Gemba
+
+Resolution of the strategic question (gm-9h6, closed 2026-04-20): Gemba ships its own SPA (Path A). Foolery remains a candidate consumer of Gemba via a future npm package (Path D, deferred). The categorization below is what distinguishes the two products at their respective ships, irrespective of the UI-strategy pick.
+
+| Dimension | Foolery (as of v0.10.0) | Gemba (designed) |
+|---|---|---|
+| **Scope** | Memory-manager backend UI: Beads or Knots, one at a time | Cross-plane UI: any `WorkPlaneAdaptor` × any `OrchestrationPlaneAdaptor` |
+| **Adaptor contract** | Single `BackendPort` interface with flat `BackendCapabilities` booleans | Two typed contracts (`WorkPlaneAdaptor`, `OrchestrationPlaneAdaptor`) with rich `CapabilityManifest` (state_map, edge_extensions, field_extensions) |
+| **Transport plurality** | HTTP + CLI subprocess only | `api` · `jsonl` · `mcp` (DD-15) |
+| **Cross-plane concerns** | Tracker-side only; no agent-orchestration primitives beyond session attach | First-class `Agent`, `AgentGroup{mode: static\|pool\|graph}`, `Workspace`, `Session`, `EscalationRequest`, `CostMeter`, `Sprint`, `TokenBudget` |
+| **Desired vs actual** | Not present | Adaptor declares `declared_state()` / `observed_state()`; drift rendered in UI (`gm-e12.13`) |
+| **Capability browser** | Flags exist as data, no UI | First-class user surface (`gm-e12.14`) |
+| **Budget enforcement** | Not present | Sprint+TokenBudget with three-tier inform/warn/stop (DD-14) |
+| **Evidence model** | Conversation logs + PR link heuristics | Typed `Evidence` collection with shared synthesis library + synthesized-flag provenance (DD-13) |
+| **Escalation model** | Implicit in session state | Unified `EscalationRequest{orchestrator_pause\|hitl_interrupt\|budget_warn\|budget_stop\|rate_limit_wait\|dod_incomplete}` + `/escalations` inbox (DD-6) |
+| **Insights** | Runtime perf + Leases diagnostic | OTEL-driven work metrics (spawn rate, stuck-session minutes, sprint burn-down, token cost, escalation backlog) + leases-rollup surface (`gm-e12.17`, lease-entity bead) |
+| **Mutation safety** | Standard HTTP + local-only defaults | `X-GEMBA-Confirm` single-use nonce; argon2id-hashed 256-bit token auth; TLS via user cert or `--tls-self-signed`; `--dangerously-skip-permissions` copied verbatim from Claude Code (locked decisions 7, 8) |
+| **Workspace kinds** | tmux + agent dialect (claude/codex/copilot/opencode/gemini) — two-axis | `Workspace.kind ∈ worktree\|container\|k8s_pod\|vm\|exec\|subprocess` + orthogonal agent `dialect` — two-axis abstraction (locked decision 5) |
+| **Multi-workspace** | Per-repo hotkey navigation (`Shift+R`) | First-class `Workspace` entity; every identity carries `WorkspaceID`; fed:safe/bridge/blocked labels reserve federation (locked decision 6) |
+| **Target audience** | Individual developers running single-memory-manager agent workflows | Team/org deployments running mixed stacks (Beads+Gas Town; Jira+LangGraph; Linear+OpenHands; etc.) under one pane of glass |
+| **UX opinion** | Keyboard-first, 5-view model (Queues/Active/Retakes/History/Diagnostics) with embedded xterm | Adaptor-agnostic; Kanban + WorkItem grid + dep graph + drift + capability browser + escalation inbox + insights; mouse + cmdk + global hotkey system (`gm-7hj`) |
+| **Distribution** | Next.js app launched via CLI wrapper | Single Go binary with `go:embed`-bundled SPA; `brew install`, `npm install -g`, GitHub Releases across macOS/Linux/Windows/FreeBSD (locked decisions 2, 12) |
+
+**What Foolery does better, and what Gemba borrows.** Foolery's keyboard ergonomics, 5-view decomposition, embedded xterm, and tight contract-test harness are genuinely ahead of what Gemba would ship without the lesson. Gemba's roadmap absorbs these via `gm-7hj` (hotkey system), `gm-8h9`/`gm-3dp` (Retakes + Session History views), `gm-e12.15` (xterm), and `gm-2am` (conformance harness as importable package).
+
+**What Gemba does that Foolery cannot, without becoming a different product.** The two-plane contract, declarative-drift, multi-workspace, budget enforcement, and unified escalation are load-bearing for Gemba's target audience (team/org deployments with heterogeneous backends) but would require Foolery to either (a) rebuild its backend port into the WorkPlane×OrchestrationPlane shape or (b) pair with a backend (like the future `@gemba/foolery-backend`) that carries those surfaces through. Both are acceptable outcomes in our framing; neither is a v1 commitment.
+
+**Why the two are complementary, not competing.** Gemba fails if it tries to out-UX Foolery on the single-plane Beads case; Foolery fails if it tries to absorb cross-plane orchestration primitives without a typed contract. The intentional overlap is the keyboard-first grid + Kanban + dep graph. The intentional divergence is everything above. This framing governs any future integration (Path D and beyond).
+
+### 8.6 Direct citations
 
 - Beads Kanban — https://marketplace.visualstudio.com/items?itemName=DavidCForbes.beads-kanban
 - Beads Project Manager — https://marketplace.visualstudio.com/items?itemName=4UtopiaInc.beads-vscode
