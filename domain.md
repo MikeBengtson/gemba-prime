@@ -20,6 +20,35 @@ Two inviolable principles from RFC.md propagate everywhere:
 
 ---
 
+## 1.0 Category preconditions — the agentic data plane
+
+Gemba's WorkPlane abstraction generalizes from Beads, but the generalization does **not** make Beads "one of many work trackers." It targets a narrow category — the **agentic data plane** — whose members are designed (or adapted) for multi-agent AI software-engineering work tied to a Git repository.
+
+Scope: software-engineering agents tied to Git repos. General business workflow (Jira Service Management for IT tickets, Asana for marketing, Basecamp for client delivery, enterprise control planes like Kore.ai or Glean) is out of scope. Such systems remain supportable as adaptors — they will simply fail some of the capability bars below, which is an acceptable outcome (per RFC §What I'm NOT doing).
+
+Reference implementations in the category (detail in `landscape.md` §2 and §7): **Beads** (reference WorkPlane), **AgentHub**, **Ralph**, **Symphony**, **Raindrop (Liquid Metal)**, **Gastown** (orchestrator on Beads), **Metaswarm** (multi-agent platform on Beads).
+
+The category is defined by **eight canonical foundational requirements** (R1–R8). They are **category-level preconditions** — not adaptor-optional quirks. The WorkPlane contract MUST honour them at the baseline bar defined below; adaptors advertise their level of compliance via the `CapabilityManifest` (§2.5) so orchestrators can reject adaptors that fall below the bar. **Do not renumber R1–R8 without user sign-off** — cross-document numbering is canonical across `domain.md`, `landscape.md`, `RFC.md`, `dataplane-requirements.md`, and the conformance harness.
+
+| # | Requirement | Where in this doc | Contract-level | Manifest field |
+|---|---|---|---|---|
+| R1 | Structured, schemaful agent memory — tasks/artifacts in a relational/SQL store; writes through schema enforcement | §2.1, §2.5 | MUST | `schema_enforcement: "native" \| "synthesized"` |
+| R2 | Queryable rather than parse-only — machine-friendly JSON queries, no HTML/UI on the agent path | §2.5 | MUST | `query_languages: Set<"filter-only" \| "jsonpath" \| "sql-subset" \| "graphql">` |
+| R3 | Dependency-aware task graph — edges first-class; `ready-set` and `blocked` queries; graph evolves mid-execution (discovered work) | §2.4, DD-9, §2.5 | MUST (edges); adaptor-optional for native `ready-set` | `dependency_graph_native: boolean`; `ready_set_query: boolean` |
+| R4 | Git-native / versioned transport — state distributable and versioned alongside code; no hard SaaS dependency | DD-8, DD-15, §2.5 | Category-defining (not strictly MUST; bar-gated) | `versioning_transport: Set<"git" \| "dolt" \| "jsonl" \| "native-sqlite-export" \| "none">` |
+| R5 | Multi-agent concurrency and transaction semantics — many writers at scale (N≥16 default stress bar) with predictable read-after-write | §2.5 concurrency, §2.6 Group B, DD-12 | MUST | `concurrency_model: "optimistic" \| "mvcc" \| "git-merge" \| "dolt-merge"` |
+| R6 | Decoupling of work from any single agent — work items outlive sessions/context windows; any agent or human can pick up later | DD-2, C10 (landscape.md), §2.1 | MUST | `agent_session_decoupling: boolean` (must be `true`) |
+| R7 | Agent-native interfaces and ergonomics — CLI/JSON/API primary; operations vocabulary tuned for agent callers | DD-8, DD-15, §2.5 | Category-defining | `agent_native_api: "cli" \| "json-api" \| "mcp" \| "rest-only"` |
+| R8 | Tight integration with orchestrators and workflows — plane is source-of-truth for "what to do next"; pluggable into Gastown / Metaswarm / Gemba | DD-2, §2.5 `subscribe`, §3 | MUST (baseline); hooks advertised per-kind | `orchestrator_hooks: Set<HookKind>` |
+
+**Minimum bar for agentic-data-plane-class registration:** `schema_enforcement` set; `query_languages` non-empty; `dependency_graph_native == true`; `versioning_transport` contains at least one non-`"none"` value; `concurrency_model` set; `agent_session_decoupling == true`; `agent_native_api ∈ {"cli", "json-api", "mcp"}`; `orchestrator_hooks` non-empty. Adaptors below the bar may still register but the UI surfaces a "reduced-capability" indicator and orchestrators that require the full bar (Gastown, Metaswarm) refuse to bind.
+
+Full gap analysis — per-requirement evidence of where each requirement currently appears (explicit vs implicit), which level it operates at (WorkPlane-contract vs adaptor-optional), and the per-requirement conformance test group — is in `dataplane-requirements.md`.
+
+The design decisions that follow (DD-1 … DD-15) address design-level questions *within* a category that already takes R1–R8 as given. They refine, rather than re-open, the category preconditions.
+
+---
+
 ## 1. Design decisions — resolving the open questions
 
 landscape.md §6 listed 11 known-unknowns. Each is resolved below. Numbering is stable; later sections refer back by `DD-N`.
@@ -638,6 +667,14 @@ interface WorkPlaneAdaptor {
   // Canonical filters: by state, state_category, assignee, parent_id, repository, type,
   // relationship (inbound/outbound of a given type), label, extension fields.
 
+  // ─── Ready-set (R3) ───
+  ready_set(filter: WorkItemFilter, page: PageCursor, ctx: CallCtx): Promise<Page<WorkItem>>;
+  // Returns WorkItems whose `blocks` in-edges are all resolved (parents/blockers closed)
+  // and state_category ∈ {Backlog, Unstarted}. Adaptors with `ready_set_query: true` answer
+  // server-side; adaptors with `ready_set_query: false` MAY synthesize from `query` + edge
+  // traversal client-side. The contract is identical either way — orchestrators use this
+  // as their primary dispatch query (Gastown's `bd ready` is the Beads-adaptor fast path).
+
   // ─── State transitions (idempotent, nonce-gated) ───
   transition(id: WorkItemId, to_state: string, nonce: ConfirmNonce, ctx: CallCtx): Promise<WorkItem>;
   claim(id: WorkItemId, claimant: AgentRef | HumanRef, nonce: ConfirmNonce, ctx: CallCtx): Promise<WorkItem>;
@@ -734,6 +771,26 @@ interface CapabilityManifest {
   poll_interval_seconds?: number;
   // Auth
   auth_model: "delegated_oauth" | "service_principal" | "local_cli";
+
+  // ─── Agentic data plane category (R1–R8 per §1.0, dataplane-requirements.md) ───
+  // Orchestrators (Gastown, Metaswarm, Gemba itself) inspect these to decide whether
+  // an adaptor clears the agentic-data-plane minimum bar. Below-bar adaptors may load
+  // but run in reduced-capability mode.
+  schema_enforcement: "native" | "synthesized";                         // R1
+  query_languages: Set<"filter-only" | "jsonpath" | "sql-subset" | "graphql">;  // R2
+  dependency_graph_native: boolean;                                     // R3 (edges)
+  ready_set_query: boolean;                                             // R3 (native ready-set)
+  versioning_transport: Set<"none" | "git" | "dolt" | "jsonl" | "native-sqlite-export">; // R4
+  concurrency_model: "optimistic" | "mvcc" | "git-merge" | "dolt-merge"; // R5
+  agent_session_decoupling: boolean;                                    // R6 — must be `true` for category
+  agent_native_api: "cli" | "json-api" | "mcp" | "rest-only";           // R7
+  orchestrator_hooks: Set<
+    | "ready-set-subscribe"
+    | "claim-atomic"
+    | "escalation-ingest"
+    | "work-complete-ack"
+    | "pool-bulk-dispatch"
+  >;                                                                    // R8
 }
 
 type WorkPlaneCapability =
@@ -802,6 +859,37 @@ Every `WorkPlane` adaptor MUST pass the following. The suite is a Gemba project;
 1. `unknown_field_rejected`: Write `adaptor_extensions` with a key not in `field_extensions`; rejected.
 2. `typed_field_type_enforced`: Enum extension rejects non-enum values; date extension rejects invalid ISO-8601.
 3. `extension_query` (only if `query_by_extension` declared): Filter by extension field value returns correct subset.
+
+**Group G — Dep graph evolution (R3)**
+
+1. `ready_set_graph_evolution`: Insert A (state=Unstarted); insert B with `blocks→A`; `ready_set` returns A but not B. Close A; within the subscribe-event latency budget, `ready_set` returns B.
+2. `discovered_from_mid_execution`: Agent working on A creates B via `create` with `discovered_from→A` extension (if `beads.discovered_from` declared). B appears in subsequent `ready_set` / `query` with the edge intact.
+
+**Group H — Versioned transport (R4)** — capability-gated by `versioning_transport`
+
+1. `versioned_state_round_trip`: Mutate state; export to declared versioning transport (`git` / `dolt` / `jsonl` / `native-sqlite-export`); import into a fresh instance; state matches byte-equivalent on typed fields.
+2. `branch_merge_round_trip` (only if `versioning_transport` contains `dolt` or `git`): Create a second branch of the state; mutate each branch divergently; merge; result contains both mutations. Cell-level merge conflicts on the same record surface as a declared conflict, not silent overwrite.
+3. `jsonl_export_import_round_trip` (only if `versioning_transport` contains `jsonl`): Full bulk export → bulk import → equivalence; partial-re-import idempotent on (id, updated_at).
+
+**Group I — Concurrency stress (R5)**
+
+1. `concurrent_writer_stress_N16`: Spawn 16 concurrent workers, each attempting `claim` on the same WorkItem; exactly one succeeds, 15 receive `ConflictError` with consistent `assignee` in the body. Total latency budget for the winning-write-to-visible-read cycle: adaptor-declared (default 2s).
+2. `read_after_write_cross_writer`: Writer A completes `transition(id, "InProgress")`; writer B (different session) issues `read(id)` within the event-latency budget; sees `InProgress`. No stale-read larger than the declared budget.
+
+**Group J — Session decoupling (R6)**
+
+1. `session_death_recovery`: Session S1 claims X, persists notes via `update`, crashes (no `unclaim`). Session S2 opens; `query` shows X claimed-by-S1 with notes intact. S2 `unclaim(X)` + `claim(X)` succeeds; all prior notes/state survive.
+2. `work_pickup_by_second_agent`: Agent A claims X; A exits cleanly (session end, no close). Agent B reads X, sees claim + state; B force-steals via `claim(X, B, override_nonce)`; X becomes B's claim; A's prior work artifacts (evidence, notes) remain attached.
+
+**Group K — Orchestrator hooks (R8)** — each test capability-gated by `orchestrator_hooks` set membership
+
+1. `ready_set_subscribe_latency` (if `ready-set-subscribe` declared): Subscribe to ready-set events; mutation that newly-qualifies an item delivers `ready_set.enter` within adaptor-declared latency budget.
+2. `claim_atomic` (if `claim-atomic` declared): Same as Group B `claim_race` but stressed at N=16 — one winner, 15 well-formed conflicts.
+3. `escalation_ingest_round_trip` (if `escalation-ingest` declared): Orchestrator pushes an `EscalationRequest` via the adaptor; readback from `subscribe(kind="escalation")` receives an equivalent event.
+4. `work_complete_ack` (if `work-complete-ack` declared): `close` emits a `work.completed` event with the closing agent's identity preserved.
+5. `pool_bulk_dispatch` (if `pool-bulk-dispatch` declared): Bulk-claim N items in one call; atomicity matches adaptor declaration (all-or-nothing vs best-effort).
+
+Groups A–F remain baseline; G–K are category-level (R3 / R4 / R5 / R6 / R8) and capability-gated where listed.
 
 ---
 

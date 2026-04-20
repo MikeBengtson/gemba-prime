@@ -11,6 +11,8 @@ Posting this to gather feedback before committing further build cycles. Looking 
 
 **Gemba** (`gemba`) is a single-binary Go service with an embedded React SPA that pairs *exactly one* **Work Coordination Plane** adaptor (the work tracker — Beads, Jira, Linear, …) with *exactly one* **Agent Orchestration Plane** adaptor (the runtime — Gas Town, Gas City, LangGraph, …) and renders whatever the two planes declare. The UI is adaptor-agnostic: no role name, column header, panel, or string literal in the SPA hardcodes vocabulary from a specific backend.
 
+**Category framing.** The WorkPlane abstraction targets a narrow category Gemba calls the **agentic data plane** — work-coordination systems designed (or adapted) for multi-agent AI software-engineering work tied to a Git repository. Reference members include Beads, AgentHub, Ralph, Symphony, Raindrop, Gastown (as orchestrator over Beads), and Metaswarm. General business workflow (Jira Service Management for IT tickets, Asana marketing boards, Basecamp client delivery) is out of scope: such trackers may still load as WorkPlane adaptors but will fail specific capability bars in the manifest, and that is an acceptable outcome. The eight category preconditions (R1–R8) are defined in `domain.md` §1.0 and `dataplane-requirements.md`; `CapabilityManifest` advertises each.
+
 Beads and Gas Town are the **reference adaptors** for v1 (the simplest path to a working release). Jira (WorkPlane) and LangGraph (OrchestrationPlane) are the **forcing-function adaptors** for v1 — picked because their quirks are supersets of the easier members of their categories. If the contract handles Jira's workflow FSM, Linear is easy. If it handles LangGraph's checkpoint-and-graph topology, OpenHands is easy.
 
 ```
@@ -127,7 +129,7 @@ interface OrchestrationPlaneAdaptor {
 }
 ```
 
-Capability manifests carry `state_map`, `edge_extensions`, `field_extensions`, `relationship_extensions`, plus boolean capabilities (`sprint_native`, `token_budget_enforced`, `evidence_synthesis_required`, …). The UI hides controls and columns the manifest does not advertise.
+Capability manifests carry `state_map`, `edge_extensions`, `field_extensions`, `relationship_extensions`, plus boolean capabilities (`sprint_native`, `token_budget_enforced`, `evidence_synthesis_required`, …) **and the eight agentic-data-plane category capabilities** (`schema_enforcement`, `query_languages`, `dependency_graph_native`, `ready_set_query`, `versioning_transport`, `concurrency_model`, `agent_session_decoupling`, `agent_native_api`, `orchestrator_hooks` — see `domain.md` §1.0, §2.5 and `dataplane-requirements.md`). The UI hides controls and columns the manifest does not advertise; orchestrators inspect the category fields to decide whether an adaptor clears the minimum bar or runs in reduced-capability mode.
 
 ## Twelve locked decisions
 

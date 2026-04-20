@@ -888,6 +888,75 @@ A2A supports all three (sync, SSE, async push). MCP added Streamable HTTP in Mar
 
 ---
 
+## 7. Agentic data plane — category map
+
+This section maps reference systems to the eight canonical requirements (R1–R8) that define the **agentic data plane** category. Full taxonomy + per-requirement evidence is in `domain.md` §1.0 and `dataplane-requirements.md`.
+
+**Scope:** software-engineering agents tied to Git repositories. Not general business workflow.
+
+**Reference members:** Beads (reference WorkPlane), AgentHub, Ralph, Symphony, Raindrop (Liquid Metal), Gastown (orchestrator on Beads), Metaswarm (multi-agent platform on Beads). Gas Town is listed in §2 as an execution product; its role as an **orchestrator** over Beads places it in the data-plane-*consumer* column, not the data-plane column itself — same for Metaswarm.
+
+Broader "agentic platforms" (Kore.ai, Glean, enterprise control planes) match partial requirements but are SaaS/UI-centric and not VCS-native. **Explicitly out of scope.**
+
+### 7.1 The eight requirements (reference)
+
+| # | Requirement | One-line |
+|---|---|---|
+| R1 | Structured, schemaful agent memory | Tasks/artifacts in a relational/SQL store; writes through schema enforcement. |
+| R2 | Queryable rather than parse-only | Machine-friendly JSON queries; no HTML/UI on the agent path. |
+| R3 | Dependency-aware task graph | Edges first-class; `ready-set` and `blocked` queries; graph evolves mid-execution. |
+| R4 | Git-native / versioned transport | State distributable and versioned alongside code; no hard SaaS dependency. |
+| R5 | Multi-agent concurrency + transaction semantics | Many writers with transactional / VCS primitives; predictable read-after-write. |
+| R6 | Decoupling of work from any single agent | Work outlives sessions/context windows; pickup by any agent or human. |
+| R7 | Agent-native interfaces and ergonomics | CLI/JSON/API primary; vocabulary tuned for agent callers. |
+| R8 | Tight integration with orchestrators and workflows | Plane is source-of-truth for "what to do next"; pluggable into Gastown/Metaswarm/Gemba. |
+
+**Do not renumber R1–R8 without user sign-off.** Cross-document numbering is canonical.
+
+### 7.2 Reference-system projection
+
+Cells are projected manifest values per system — the value each system would declare in its `WorkPlaneCapabilityManifest` (`domain.md` §2.5). Projection is informed by surveys in §2–§3 of this document and by direct inspection where noted; empirical audits land as beads under `gm-e6` (Beads) and follow-up research beads for the rest.
+
+Legend: ✓ = clears R; ~ = partial / weak; ✗ = fails R; — = not applicable (system is a data-plane *consumer*, not a data plane).
+
+| System | R1 schema | R2 query | R3 graph | R4 versioned-tx | R5 concurrency | R6 decoupling | R7 agent-native | R8 orchestrator hooks | Category fit |
+|---|---|---|---|---|---|---|---|---|---|
+| **Beads** | ✓ native (Dolt SQL) | ✓ sql-subset | ✓ native + ready-set | ✓ git + dolt + jsonl | ✓ dolt-merge | ✓ | ✓ cli + json-api | ✓ ready-set-subscribe, claim-atomic, escalation-ingest, work-complete-ack | **Full** |
+| **AgentHub** | ~ synthesized (DAG+board) | ~ filter-only | ~ partial (weak deps) | ✓ git | ~ git-merge | ✓ | ✓ cli | ~ ready-set-subscribe (weak) | **Partial** |
+| **Ralph** | ~ synthesized (per-iter files) | ~ filter-only | ✗ none | ✓ git | ✗ single-agent | ✗ | ✓ cli | ✗ | **Weak — single-agent** |
+| **Symphony** | ~ synthesized (`WORKFLOW.md` + workspace) | ~ filter-only | ✗ none | ✓ git | ✗ | ✓ | ~ cli (markdown-shaped) | ✗ | **Weak — markdown-centric** |
+| **Raindrop (Liquid Metal)** | ✓ native | ~ filter-only | ~ partial | ✗ none (SaaS) | ✓ mvcc | ✓ | ✓ json-api | ~ | **Partial — SaaS gap on R4** |
+| **Gastown** | — | — | — | — | — | — | — | — | Consumer (orchestrator over Beads) |
+| **Metaswarm** | — | — | — | — | — | — | — | — | Consumer (multi-agent platform over Beads) |
+
+For reference-only comparison (systems already in §3 but at the SaaS edge of the category):
+
+| System | R1 | R2 | R3 | R4 | R5 | R6 | R7 | R8 | Category fit |
+|---|---|---|---|---|---|---|---|---|---|
+| **Jira** | ✓ native | ✓ JQL (graphql-ish) | ✓ via issue links | ✗ none (SaaS Cloud) / ~ (Data Center export) | ✓ optimistic | ✓ | ~ rest-only | ✗ | **SaaS-edge — fails R4** |
+| **Linear** | ✓ native | ✓ graphql | ~ partial | ✗ none (SaaS) | ✓ optimistic | ✓ | ~ rest-only (+ GraphQL) | ✗ | **SaaS-edge — fails R4** |
+| **GitHub Projects v2** | ✓ native | ✓ graphql | ~ partial (sub-issues + closes) | ~ per-repo-ish (API export) | ✓ optimistic | ✓ | ~ rest-only | ✗ | **SaaS-edge — fails R4 cleanly** |
+
+These three remain supportable as WorkPlane adaptors — the UI will expose them correctly and orchestrators that don't require R4 can bind. But an orchestrator like Gastown or Metaswarm that requires VCS-native state will refuse to bind them, and that is the *designed* outcome.
+
+### 7.3 What the matrix implies for design
+
+- **Beads is the only surveyed system that clears all eight requirements.** That confirms it as Gemba's reference WorkPlane (RFC §two-plane contract) and validates the category as a category (not an idiosyncrasy).
+- **Ralph and Symphony fail R3 and R5.** They are not agentic-data-plane class. They can still load as reduced-capability adaptors for teams that accept the tradeoff; the manifest tells the UI to hide concurrency-dependent affordances (force-steal, concurrent-claim UX, dep-graph editing).
+- **AgentHub clears most but has weak dep semantics (R3).** A Gemba adaptor can compensate by synthesizing stronger dep-graph queries at the adaptor edge, but some features (discovered-from visualization, mid-execution graph evolution) will be weaker than on Beads.
+- **Raindrop fails R4.** That's a SaaS-dependency call — acceptable for users who want Gemba UI over a hosted plane but unacceptable for Git-native deployments.
+- **Gastown and Metaswarm are data-plane consumers.** Their integration is evaluated at the OrchestrationPlane boundary (`domain.md` §3), not the WorkPlane boundary. Their R8 "satisfaction" is the *orchestrator side* of the R8 handshake — they call the hooks that WorkPlane adaptors advertise.
+
+### 7.4 Update cadence
+
+Cells are projection, not audit. Empirical validation is staged as beads:
+- `gm-e6.audit` — Beads adaptor R1–R8 conformance audit (gap beads file under gm-e6).
+- Future beads — AgentHub, Ralph, Symphony, Raindrop adaptor assessments, when / if adaptors are authored.
+
+Do not add a 9th requirement or renumber R1–R8 without user sign-off. If a new category-level capability emerges, file a design bead and reconcile via amendment, not silent renumbering.
+
+---
+
 ## Appendix: Methodology notes
 
 - All web searches performed 2026-04-18 via WebSearch.
