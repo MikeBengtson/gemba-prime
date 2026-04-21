@@ -17,7 +17,7 @@ The product is the abstraction plus the Persona layer on top. Beads + Gas Town s
 **No backend-specific vocabulary in the core SPA** — all backend-flavor lives in capability-gated extension widgets.
 
 **What it's for — three concrete workflows:**
-1. **Walk the floor.** Epic-granular Kanban is the home screen — cards are Epics (not individual stories) with readiness counts, parallel-group membership, escalation state, token-budget posture. Drill-down to member work items is double-click. The Plan view lets you drag-to-reorder, toggle in/out of scope, and launch the batch after parallel-safety is verified.
+1. **Walk the floor.** The home screen is the **Gemba** itself — an Epic-granular Kanban. Cards are Epics (not individual stories) with readiness counts, parallel-group membership, escalation state, token-budget posture. Drill-down to member work items is double-click. The Plan view lets you drag-to-reorder, toggle in/out of scope, and launch the batch after parallel-safety is verified.
 2. **Ask a specialist.** PM panel always available. `/plan` "Recommend order" → PM persona returns JSONL-ranked Epics with rationale. Managers can take scoped agentic action (`add_to_backlog`, `change_this`, `check release readiness`), consult other personas mid-task, and HITL-pause when they need a judgment call. QA gates can block a release; override requires persona consensus or nonce-confirmed justification.
 3. **Undo back to yesterday.** Checkpoints atomically snapshot every git repo involved, the Beads database, live session context summaries, sidecar state, and artifacts. Restore rolls every dimension back together.
 
