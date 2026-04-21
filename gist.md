@@ -21,25 +21,55 @@ A **single Go binary with an embedded React SPA**. It pairs *exactly one* **Work
 - **Reference pack-ins (v1):** Beads as the WorkPlane, Gas Town as the OrchestrationPlane.
 - **Forcing-function adaptors (v1):** Jira and LangGraph — quirks are supersets of their categories' easier members, so the contract is proven against them. If it handles Jira's workflow FSM, Linear is easy. If it handles LangGraph's checkpoint-and-graph topology, OpenHands is easy.
 
-## The expertise layer — Personas in two varieties
+## The expertise layer — Coaches, the Project Manager, and Jam Sessions
 
-**Coaches** are conversational and advisory — they suggest, the operator applies or dismisses:
+### Two persona varieties
 
-- Architect, Code Reviewer, UX Expert, Technical Writer, Documentarian, Onboarder.
+**Coaches** are conversational and advisory — they observe and suggest; the operator applies or dismisses. Output is structured: markdown coaching narratives for broad questions (*what remains on the board right now?*), JSONL-ranked recommendations for specific decisions (*which epics should I stage next, in what order?*), typed reports for reviews. Each invocation is cheap, auditable, and rejectable. The seed roster:
 
-**Managers** are agentic and can be gate-blocking — they execute scoped tasks directly:
+- **Architect** — design review, dep-graph hygiene, refactor guidance, type-system advice.
+- **Code Reviewer** — diff review, PR feedback, API-shape critique, test-coverage concerns.
+- **UX Expert** — UI spec consistency, vocabulary ratification, user-flow critique, accessibility.
+- **Technical Writer** — bead-description clarity, commit-message quality, docs copy, release notes.
+- **Documentarian** — curates human-readable artifacts; maintains the project summary and decisions log that every other persona reads from.
+- **Onboarder** — first-run tour, new-adaptor setup, context bootstrap for new users.
 
-- Project Manager, QA, Deployment Engineer, DevOps/SRE, Security.
+**Managers** are agentic and can be gate-blocking — they execute scoped tasks directly, consult other personas mid-task, and pause for human-in-the-loop input when they need a judgment call:
 
-Managers can:
+- **Project Manager** — staging, ordering, scoping, escalation triage, sprint retros, and the coordinator persona most operators talk to most. Files beads via `add_to_backlog`; modifies in-flight work via `change_this` (with reverse-actions recorded for rollback).
+- **QA** — regression-suite catalog owner; can block state transitions (an Epic cannot move to Completed until its gate passes); overrides require persona consensus or nonce-confirmed justification. Integrates with XRay for test management and configurable linters as regression-suite members.
+- **Deployment Engineer** — release-engineering mechanics: goreleaser, CI matrices, artifact signing, Homebrew tap + npm wrapper alignment, semver compatibility, release notes.
+- **DevOps/SRE** — runtime operations, incident response, capacity planning, on-call.
+- **Security** — auth-surface review, secret hunting, CVE triage, policy compliance (Manager authority activates for auth-labeled work; advisory otherwise).
 
-- File beads (PM's `add_to_backlog` skill, with mid-task consultation of Architect + QA as needed)
-- Modify in-flight work (PM's `change_this` skill, with reverse-actions recorded)
-- Block state transitions (QA's gate can block a release; override requires persona consensus or nonce-confirmed justification)
+Every persona has **separately configurable prompt, context providers, and output validation**. Each lives as a TOML file; users add / modify / disable freely. Model choice is per-persona — Claude Opus for deep reasoning, Sonnet for iteration, Haiku for high-volume copy, or plug a different vendor altogether.
 
-Every persona has **separately configurable prompt, context providers, and output validation**. Each lives as a TOML file; users add / modify / disable freely.
+### The Project Manager as coordinator
 
-**Jam Sessions** formalize the interactive multi-topic decisioning conversation. The PM aggregates escalations from every worker (polecat HITL, Manager persona suspension, gate failures, budget crossings, adaptor-degraded events) into one agenda and walks the operator through ratification — resumable across days, auditable, the native mode for working a busy backlog at scale.
+The PM is the central persona — the one the operator talks to most, and the one that coordinates every other persona. PM skills span four categories:
+
+- **Planning** — `epic_order`, `parallel_safety`, `scope_trim`, `epic_decompose`, `epic_merge`, `workspace_priority`, `budget_replan`.
+- **Operational coaching** — `what_remains` (structured-markdown "next actionable chunk" narrative), `escalation_triage`, `stale_session`, `find_checkpoint`.
+- **Agentic actions** — `add_to_backlog` (files beads with Architect + QA + Tech Writer consultation), `change_this` (modifies in-flight work with HITL for affected polecat sessions), `dispatch_readiness` (pre-sling DoD check).
+- **Retro + insights** — `velocity_calibration`, `evidence_summary` integration, sprint + token-budget reporting.
+
+The PM panel lives in the SPA chrome, always one click away. Plan view buttons ("Recommend order", "What remains", "Trim to budget") call PM skills directly. Every invocation produces a `PersonaConsultRecord` — permanent audit trail, reviewable in `/insights/personas` with per-persona aggregates (hit rate, cost, applied-vs-dismissed ratio). Retros use this to calibrate which personas are earning their keep.
+
+### Jam Sessions — the interactive decisioning surface
+
+A Jam Session is an interactive multi-topic conversation between the operator and the PM — the same pattern an operator-and-assistant fall into naturally when working through a busy backlog, made first-class. On start, the PM auto-populates the agenda from every escalation source in the workspace:
+
+- **Open EscalationRequests** — polecat / crew escalations, Manager persona suspensions, Witness findings, Refinery merge rejections, budget-stop events, adaptor-degraded notifications, gate failures.
+- **HITL questions** — Manager persona sessions that paused mid-task awaiting a judgment call.
+- **Recently-filed beads** — awaiting ratification (created in the last 24h, configurable).
+- **Recently-closed work** — needing retro or summary (Documentarian-flagged).
+- **User-added topics** — anything the operator wants on the agenda.
+
+The operator and PM walk the agenda one item at a time. For each: the PM frames the context, summarizes what's happened, proposes actions; the operator ratifies / modifies / rejects / defers; ratified actions apply as nonce-gated mutations through the same API any client uses. The PM may consult other personas mid-session — Architect for design impact, QA for test coverage, Security for auth-surface concerns — with brief consultations running inline and their responses feeding the current decision.
+
+Jams are **resumable** across days (pause and pick up later; serialized state survives process restarts), **auditable** (every turn, every decision, every consulted persona captured), and produce a **Documentarian-written summary artifact** on end. The always-available PM panel doubles as the active jam's chat surface — no context switch between "asking the PM" and "working the list."
+
+Jam Sessions are the native mode for walking the floor at scale — the operator's running conversation with the project's brain.
 
 ## The workspace
 
