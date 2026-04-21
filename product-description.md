@@ -59,6 +59,16 @@ The operator's main decision — *what to stage next, and what can run in parall
 
 A dedicated surface (`/plan`) lists actionable Epics in recommended order, grouped by `ParallelGroup`. The operator drags to reorder, toggles Epics in or out of scope, and clicks **Execute all in-scope** to launch the batch. Parallel safety is verified before launch.
 
+### Jam Sessions — the interactive decisioning surface
+
+A **Jam Session** is an interactive multi-topic conversation between the operator and the PM persona — the same pattern an operator-and-assistant fall into naturally when working through a busy backlog, made first-class. On start, the PM auto-populates the agenda from every escalation source in the workspace: open EscalationRequests (polecat / crew / Manager persona / Witness / Refinery / Gate failures), pending HITL questions from suspended Manager sessions, recently-filed beads needing ratification, recently-closed work needing retro. The operator and PM walk the agenda: for each item, PM frames, proposes actions; operator ratifies / modifies / rejects / defers; decisions apply as nonce-gated mutations; remaining items park for later or defer to backlog.
+
+Jam Sessions are resumable (pause and pick up days later; serialized state survives process restarts), auditable (every decision plus the full transcript lands in the audit log), and produce a Documentarian-written summary artifact on end. The always-available PM panel doubles as the active jam's chat surface — no context switch between "asking the PM" and "working the list."
+
+### Agentic code analysis — first-class knowledge-graph context
+
+Every persona — Architect, PM, Code Reviewer, QA, Documentarian, Security — reasons better when it has the actual call graph, flow graph, and module structure of the codebase, not just the README and git log. Gemba makes **agentic code analysis** a first-class pluggable capability: GitNexus is the reference backend; Sourcegraph, CodeQL, or custom tree-sitter-driven indexers plug in via a typed `CodeAnalysisProvider` interface. The knowledge graph surfaces as four context providers personas can opt into (summary, symbol-context, impact-analysis, health-report), feeds the bootstrap flow's source-code-import path for richer first-draft epic decomposition, and is reindexed automatically on merge (configurable per repo).
+
 ### Coaches and Managers
 
 Personas are first-class configurable LLM assistants. Two varieties:
@@ -99,17 +109,20 @@ Modes compose with workspace mutation policy: managed mode narrows auto-approve 
 
 A **Checkpoint** is an atomic, cross-dimension snapshot: every git repo involved, the Beads database state, live LLM session context summaries, Gemba's sidecar state, and generated artifacts. Operators can "undo back to yesterday" via a Checkpoint, which rolls every dimension back atomically.
 
-Triggers include: manual, scheduled (nightly), session-start, pre-persona-mutation, pre-sling, pre-merge, pre-release, post-restore. Restore is nonce-gated, surfaces external-state warnings (pushed commits can't un-push), and auto-checkpoints the current state so the restore itself is undoable.
+**v1 triggers** are intentionally minimal: **manual** (user clicks "Checkpoint now" with a label), **epic_start** (auto-fire when an Epic transitions to InProgress), and **epic_stop** (auto-fire on completion). Each checkpoint emits a first-class Beads record (informational bead with `kind:checkpoint`) so snapshots are discoverable via `bd list`, citable from personas, and appear in `what_remains` coaching alongside regular work.
+
+**Restore** is nonce-gated, atomic across dimensions, surfaces external-state warnings (pushed commits can't un-push), and auto-checkpoints the current state so the restore itself is undoable. Local CAS (content-addressed storage) backs the snapshots in v1; remote backends (S3 / GCS / Git-LFS) are a v2 follow-up. Additional trigger kinds (scheduled, pre-persona-mutation, pre-sling, pre-merge, pre-release, session_start, post_restore) also defer to v2.
 
 ### Bootstrap
 
-A new project bootstraps from either **Jira** or **Beads** — the doc-import adaptor reads existing epics, stories, specs, and acceptance criteria, runs them through a PM + Documentarian + Architect trio to produce: a project description, initial goals, candidate values, recommended guardrails, and a validated-for-consistency starting plan. The operator ratifies; Gemba seeds the workspace.
+A new project bootstraps from one of four first-class sources: **Jira** (doc-import adaptor reads existing epics/stories/specs/acceptance-criteria), **Beads** (local workspace seed), **Source-code repo** (existing git repo — the agentic code analysis capability walks module structure, call graph, entry points, and recent git history to propose candidate Epic decomposition), or **Fresh** (Onboarder-driven 5–10-question interview). An Onboarder + PM + Documentarian trio runs on whatever source is chosen to produce: a project description, initial goals, candidate values, recommended guardrails, and a validated-for-consistency starting plan. The operator reviews + edits + ratifies via nonce; Gemba commits the new project config. Wizard UI at `/bootstrap`.
 
 ## User surfaces
 
 - **Epic Kanban** (home) — drag-to-reorder, scope toggles, drill-down to members
 - **Plan view** — staging, parallel-group grouping, execute-all
-- **PM panel** — persistent, right-side; any question any time
+- **Jam Session** — interactive multi-topic decisioning with PM, aggregating escalations from all workers
+- **PM panel** — persistent, right-side; any question any time; doubles as active-jam chat
 - **Persona roster + chat modals** — conversational access to every configured Coach and Manager
 - **WorkItem grid** — Jira/Linear-style power-user view for triage
 - **Dependency graph** — React Flow over the three core edge types + declared extensions
@@ -118,8 +131,9 @@ A new project bootstraps from either **Jira** or **Beads** — the doc-import ad
 - **Agent detail + session peek** — provider-aware (tmux attach, k8s pod status, container logs, subprocess tree, exec output)
 - **Escalations inbox** — unified surface for orchestrator pauses, HITL questions, budget crossings, rate-limit waits, gate failures
 - **Capability browser** — what each active adaptor can and cannot do
+- **Code analysis explorer** — knowledge-graph queries, module inventory, impact analysis, health report
 - **Checkpoints timeline** — snapshot history with restore UX
-- **Adaptor marketplace / Pack browser** — installable adaptors and persona packs
+- **Adaptor marketplace / Pack browser** — installable adaptors and pack bundles (arbitrary names and intents)
 
 ## System surfaces
 
@@ -173,7 +187,7 @@ Three extension surfaces:
 
 1. **Adaptors** — write a `WorkPlaneAdaptor` or `OrchestrationPlaneAdaptor` implementing the typed contract. Ship via Go module or over the MCP transport. Run the conformance harness in your CI. Publish in the adaptor marketplace.
 2. **Personas** — author a TOML file in `.gemba/personas/`. Tune system prompt, select model, opt context providers on/off, declare the Skills you fulfill, set budget caps.
-3. **Packs** — bundles of personas + skills + default values + adaptor preferences. Curate role-specific packs (CTO, CEO, COO, CRO/LRC) as installable units. Sign packs for provenance. Private packs for internal teams; public packs for community distribution.
+3. **Packs** — bundles of personas + skills + default values + guardrails + adaptor preferences + UI emphasis. Installable unit. Ship signed for provenance (private packs for internal teams; public packs for community distribution). Packs are **arbitrary in name and intent**, not just executive-role-shaped — the v1 seed ships a CTO pack; future first-party packs will cover CEO / COO / CRO-LRC contexts; community and private packs can be organized any way that makes sense (domain packs like `fintech-compliance` or `healthcare-hipaa`; framework packs like `langchain-focused`; task packs like `migration` or `launch-readiness`; customer-specific internal packs). Default install scope is per-workspace — a team can run one pack on one project and a different pack on another.
 
 ## Multi-organization-context roadmap
 
