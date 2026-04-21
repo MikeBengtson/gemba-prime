@@ -193,7 +193,7 @@ Three extension surfaces:
 
 Gemba v1 ships optimized for **CTO context** — technical leadership of an agentic software project, which is where the product originates and where the v1 pack ships. The adaptor + persona + pack architecture is designed to extend:
 
-- **CEO context** — commercialization work: market validation, pricing, positioning, customer discovery. Pack includes product-strategy and go-to-market personas.
+- **CEO context** — product-strategy work: market validation, positioning, customer discovery, founder narrative. Pack includes product-strategy and go-to-market personas.
 - **COO context** — ongoing operations: support load, uptime, on-call rotation, capacity planning. Pack includes incident-response and capacity-planning personas.
 - **CRO / LRC context** — legal, risk, compliance: contract review, license compliance, data handling policy, audit response. Pack includes policy-review and audit-prep personas.
 
@@ -206,12 +206,6 @@ All four contexts share the same core (two planes, Kanban, Plan view, Checkpoint
 - A chat product. Personas surface in chat modals, but the product value is in the structured Skill outputs and the Kanban-level operational UX, not the chat UI.
 - A mobile app. Responsive web is enough.
 - An in-tree feature of any backend. Always sidecar; always standalone binary.
-
-## Business model (sketch)
-
-Gemba core is **open-source** under a permissive license. The product grows by adaptor and persona packs. The commercial story is in organizational adoption and role-pack curation — training and change-management consulting for teams adopting agentic workflows at scale, and curated paid packs (specialized CRO / LRC packs, for example, where the value is the prompt library and regulatory-domain expertise baked into the persona roster).
-
-Details: see the business plan beads.
 
 ---
 

@@ -70,7 +70,7 @@ Drill-down reveals member work items in stage order. The **Plan view** lets the 
 
 ## Extensibility
 
-Three surfaces. All three support OSS or proprietary distribution, signed or unsigned, public or private.
+Three surfaces. All three support signed or unsigned distribution, public or private.
 
 - **Adaptors** — implement the typed two-plane contract; run the importable conformance harness (`gemba/testing`) in your own CI.
 - **Personas** — author a TOML file in `.gemba/personas/`. Tune system prompt, select model, opt context providers on or off, declare Skills, set budget caps.
@@ -96,11 +96,37 @@ An Onboarder + PM + Documentarian trio runs on whatever source is chosen to prod
 - **Organization surface** — tools shared across a team: Jira, XRay (test management + evidence + requirement-to-test traceability), configurable linters. QA's Manager reads and writes XRay, runs linters as regression suites, and gates state transitions on combined results.
 - **Execution surface** — per-workspace tools where actual work happens: Beads, Gas Town, LangGraph, per-workspace CI. Swappable via adaptors.
 
-## Business model
+## Workspace repos come in pairs
 
-- **Core** is open-source under a permissive license.
-- **Specialty packs** — paid, curated domain expertise (compliance, industry-specific strategy, regulatory-domain prompt libraries).
-- **Training + change-management consulting** — for teams adopting agentic workflows at scale.
+Every project pairs two repos by convention, formalized as a first-class product concept:
+
+- **`<project>_prime`** — the workspace repo: docs, digests, design artifacts, decision log, product description, RFCs, ADRs. Versioned, commit-logged, walkable as a historical record. Contains the `.gemba/` sidecar.
+- **`<project>`** — the output repo: the actual shippable code or content.
+
+Bootstrap creates both. Adaptors map to both. Checkpoints capture both atomically. The UI toggles between workspace-repo view and output-repo view. Documentarian writes to the workspace repo by default.
+
+## System surfaces — extensibility goes deeper than the UI
+
+- **HTTP API** at `/api/v1/*` — OpenAPI-documented, TypeScript client codegenned, stable.
+- **Two-plane adaptor contracts** — typed interfaces with transport plurality: `api`, `jsonl`, or `mcp`. MCP is recommended but not required.
+- **Conformance harness** — importable Go package (`gemba/testing`) plus `gemba adaptor test` CLI so third-party adaptor authors can run contract tests in their own CI.
+- **SSE events** — discriminated union, capability-filtered subscriptions, W3C trace propagation, rotation + retention from day one.
+- **External consumer preservation** — the API, schema, and conformance harness are designed so future UIs (VS Code extensions, npm wrappers, third-party consumers) can sit over Gemba's adaptor layer without forking.
+
+## Security + auditability
+
+- **Mutation safety**: every mutation requires a server-enforced `X-GEMBA-Confirm` nonce; `--dangerously-skip-permissions` (copied verbatim from Claude Code, not softened) disables for the session.
+- **Auth**: localhost-bound by default; non-loopback bind without `--auth` is a startup error; token auth is 256-bit, argon2id-hashed, printed once; TLS via user certs or `--tls-self-signed`.
+- **Data integrity**: never write any backend's private storage directly; every mutation round-trips through the adaptor's public CLI/API.
+- **Audit log**: every persona consult + Manager action + checkpoint + mutation is recorded as an immutable record; `/insights/personas` + the Checkpoint timeline make everything retros-ready.
+
+## What Gemba is *not*
+
+- Not a replacement for a full-featured PM SaaS — Gemba plugs into Jira, Linear, Beads; it doesn't replace them.
+- Not an agent framework — agents run in Gas Town, LangGraph, OpenHands, whatever your orchestrator is; Gemba renders and directs, not embeds.
+- Not a chat product — personas surface in chat modals, but the product value is in the structured Skill outputs and Kanban-level operational UX.
+- Not a mobile native app — responsive web is enough.
+- Not an in-tree feature of any backend — always sidecar; always standalone binary.
 
 ---
 
