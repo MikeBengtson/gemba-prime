@@ -75,7 +75,7 @@ There's already prior art in the in-tree-dashboard lane (`gt dashboard`, `gc das
 - **Divergence (the reason Gemba exists as a separate product):** two-plane contract (`WorkPlaneAdaptor` × `OrchestrationPlaneAdaptor`) vs Foolery's single `BackendPort`; transport plurality (api/jsonl/mcp) vs HTTP/CLI-only; cross-plane primitives (Agent/AgentGroup/Workspace/Session/Sprint+TokenBudget/EscalationRequest) absent from Foolery; `declared_state() vs observed_state()` drift rendering; capability browser as user surface; production security posture (nonce-gated mutations, argon2id tokens, TLS, OIDC stub).
 - **Complementarity, not competition:** Gemba fails if it tries to out-UX Foolery on the single-plane Beads case; Foolery fails if it tries to absorb cross-plane orchestration without a typed contract.
 
-Full differentiator table + integration options in `landscape.md §8.5`.
+Full differentiator tables + integration options in `landscape.md §8.5` (Foolery) and `§8.6` (t3code — a parallel audit of the OrchestrationPlane-side port produced five distinct contract lessons: `retryable:bool` on errors, typed `SessionCloseReason`, port-level capability enforcement, event-log rotation from day one, and boundary-decoding at the transport layer).
 
 ## Architecture in one diagram
 

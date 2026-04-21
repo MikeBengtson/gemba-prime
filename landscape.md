@@ -1037,7 +1037,41 @@ Resolution of the strategic question (gm-9h6, closed 2026-04-20): Gemba ships it
 
 **Why the two are complementary, not competing.** Gemba fails if it tries to out-UX Foolery on the single-plane Beads case; Foolery fails if it tries to absorb cross-plane orchestration primitives without a typed contract. The intentional overlap is the keyboard-first grid + Kanban + dep graph. The intentional divergence is everything above. This framing governs any future integration (Path D and beyond).
 
-### 8.6 Direct citations
+### 8.6 Key differentiators — t3code ↔ Gemba
+
+t3code (`pingdotgg/t3code`, MIT, in active refactor as of 2026-04-20 — see t3-pkb audit) is a minimal web GUI for coding agents. A dedicated gap + extensibility audit of its `apps/server/src/provider/` subsystem (four audit docs + an extension guide + an ADR) produced a different lesson set from the Foolery spike, because t3code's contract work is OrchestrationPlane-shaped, not WorkPlane-shaped.
+
+| Dimension | t3code (as of 2026-04-20 audit) | Gemba (designed) |
+|---|---|---|
+| **Scope** | Coding-agent orchestration GUI; four provider adapters (Claude / Codex / Cursor / OpenCode) | Cross-plane UI: any WorkPlaneAdaptor × any OrchestrationPlaneAdaptor |
+| **Adaptor contract** | `ProviderAdapterShape` port with snapshot/session split; 15 service tokens, 15 live layers; ACP toolkit (`provider/acp/`) reusable | `OrchestrationPlaneAdaptor` with declared `workspace_kinds`, `group_modes`, `cost_axes`, `escalation_kinds`; WorkPlane is separate |
+| **Error model** | Tagged errors via `Schema.TaggedErrorClass`; **no `retryable: bool`** — callers string-match detail strings | Discriminated errors with mandatory `retryable: bool` + structured cause (`gm-faz`) |
+| **Session contract** | Close reasons inferred from stderr; `startSession(..., resumeCursor)` overloaded; reaper skips active turns per-adaptor | Typed `SessionCloseReason` enum; first-class `resume_session`; idempotent `end_session`; `active_turn_id` in contract; normalized `list_pending_requests` (`gm-xj5`) |
+| **Capability enforcement** | Per-adaptor (drift across four adapters) | Port-level gate; adaptors fail-fast on undeclared ops (`gm-4qf`) |
+| **Event log** | Canonical NDJSON, unbounded | Rotation + retention + archival hook from day one (`gm-3hg`) |
+| **Boundary decoding** | Decode at service layer, adapters trust inputs | Decode at transport layer (api/jsonl/mcp), adapters trust inputs (`gm-io4`) |
+| **Two-pipeline discipline** | Snapshot pipeline (ProviderRegistry) ≠ Session pipeline (ProviderAdapterRegistry); ADR explicitly forbids merging | CapabilityManifest.describe() vs live session operations — naturally separated; adopt t3code's explicit ADR framing |
+| **Retry semantics** | No port-level retry; caller's problem | Adaptors do not retry; core/orchestration owns retry policy (consistent with t3code; codified in contract) |
+| **Extension model** | `apps/server/src/provider/Services/<Name>Adapter.ts` + `Layers/<Name>Adapter.ts` + register in `ProviderAdapterRegistry.ts`; documented in `provider-extension-guide.md` | `internal/adapter/<name>/` with two interface implementations + manifest; documented in adaptor authoring guide (`gm-e14.5`, moved earlier) |
+| **Target runtime** | Effect-TS service graph (layers + context + scopes) | Go interfaces + chi transport; scopes via `context.Context` + explicit cleanup |
+
+**Three t3code observations Gemba already honors by design.** (a) `ProviderService` as the single boundary — equivalent to Gemba's transport router as the single entry point. (b) Fresh `listSessions()` with no caching at the service layer for live reads — matches Gemba's SSE-for-state-change rule (`gm-yi9`). (c) Per-adaptor capability flags rather than per-session — matches Gemba's CapabilityManifest granularity.
+
+**Five t3code lessons Gemba did not have and now does.** All five filed as `origin:t3code-audit` beads:
+
+- `gm-faz` — Error algebra (`retryable: bool`, discriminated kind, typed cause)
+- `gm-xj5` — Session contract (SessionCloseReason, idempotent end, scope-first, active_turn_id, list_pending_requests)
+- `gm-4qf` — Port-level capability enforcement
+- `gm-3hg` — Event log rotation + retention
+- `gm-io4` — Boundary decoding at the transport layer
+
+**Complementary, not competing — same framing as Foolery.** t3code is a coding-agent GUI; Gemba is a cross-plane work-orchestration UI. A future `internal/adapter/t3code/` OrchestrationPlane adaptor would let Gemba render t3code-managed sessions alongside work from any WorkPlane (`gm-btm`, deferred). That integration is not pursued in v1; the architectural invariant in `gm-ege` keeps the option open.
+
+**A smaller architectural note.** t3code's audit flags that Effect-TS's `Context.Service` pattern paired with `Layer.effect` gives a compile-time-verifiable service graph. Gemba's Go implementation can approximate this via interface-satisfaction + `wire`/`fx`-style constructor graphs, but does not inherit the same compiler guarantees. Worth tracking as a future consideration for adaptor registration tooling.
+
+---
+
+### 8.7 Direct citations
 
 - Beads Kanban — https://marketplace.visualstudio.com/items?itemName=DavidCForbes.beads-kanban
 - Beads Project Manager — https://marketplace.visualstudio.com/items?itemName=4UtopiaInc.beads-vscode

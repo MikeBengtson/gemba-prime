@@ -99,7 +99,7 @@ Landed-`AgentGroup` review; molecule step-by-step replay (prompts + outputs + ch
 
 The Beads-ecosystem UI layer (`Beads Kanban`, `Beads Project Manager`, `vscode-beads`) and the emerging web-native tool `Foolery` each cover a slice of Gemba's Phase 12 UI surface — keyboard-first grids, kanban, session monitoring — for the single-plane Beads case. They are not competitors to Gemba's core abstraction; Gemba's unique bet is **cross-plane**: any `WorkPlaneAdaptor` × any `OrchestrationPlaneAdaptor` rendered under one capability-manifest-driven SPA with typed contracts, transport plurality (`api | jsonl | mcp`), declarative drift, token-budget enforcement, and unified escalation.
 
-Full differentiator matrix (Gemba ↔ Foolery specifically, with what Gemba borrows from the ecosystem and what it keeps uniquely) is in `landscape.md §8.5`. Gemba's architecture explicitly preserves the option for external UI consumers (future npm package, VS Code extensions, CLI wrappers) to sit over Gemba's adaptor layer without forking — that invariant is tracked in the `gm-ege` bead.
+Full differentiator matrices are in `landscape.md §8.5` (Gemba ↔ Foolery — WorkPlane-side lessons) and `§8.6` (Gemba ↔ t3code — OrchestrationPlane-side lessons from a separate audit of t3code's provider subsystem). Gemba's architecture explicitly preserves the option for external UI consumers (future npm packages for Foolery + t3code, VS Code extensions, CLI wrappers) to sit over Gemba's adaptor layer without forking — that invariant is tracked in the `gm-ege` bead.
 
 ## Work graph shape
 
