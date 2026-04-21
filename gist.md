@@ -4,7 +4,7 @@
 
 ## The factory floor
 
-In lean manufacturing, gemba (現場) is "the actual place" — the factory floor, where real work happens. A *gemba walk* is when leadership observes the work directly, not through reports, and leaves actionable feedback as they go. Gemba the product is built around that metaphor. Operators running agentic software projects today hit a consistent failure pattern:
+In lean manufacturing, gemba (/ˈɡem.bə/ 現場) is "the actual place" — the factory floor, where real work happens. A *gemba walk* is when leadership observes the work directly, not through reports, and leaves actionable feedback as they go. Gemba the product is built around that metaphor. Operators running agentic software projects today hit a consistent failure pattern:
 
 - Planning is disconnected from execution — issues in Jira or Beads, agents in a terminal, output in git.
 - Priority is invisible. The dep graph says what *can* run; nothing says what *should* run next.
@@ -16,7 +16,7 @@ Gemba addresses all five: a browser-based UI for walking the floor of an agentic
 
 ## The shape
 
-A **single Go binary with an embedded React SPA**. It pairs *exactly one* **Work Coordination Plane** adaptor — the issue tracker (Beads, Jira, Linear, GitHub Projects, Azure DevOps, …) — with *exactly one* **Agent Orchestration Plane** adaptor — the agent runtime (Gas Town, Gas City, LangGraph, OpenHands, Devin, …) — under a typed contract. The UI is adaptor-agnostic: no backend vocabulary leaks in; what renders is what the active capability manifests declare.
+A **single Go binary with an embedded React SPA**. It pairs *exactly one* **Work Coordination Plane** adaptor — the issue tracker (Beads by default) — with *exactly one* **Agent Orchestration Plane** adaptor — the agent runtime (Gas Town by default) — under a typed contract. The UI is adaptor-agnostic: no backend vocabulary leaks in; what renders is what the active capability manifests declare.
 
 - **Reference pack-ins (v1):** Beads as the WorkPlane, Gas Town as the OrchestrationPlane.
 - **Forcing-function adaptors (v1):** Jira and LangGraph — quirks are supersets of their categories' easier members, so the contract is proven against them. If it handles Jira's workflow FSM, Linear is easy. If it handles LangGraph's checkpoint-and-graph topology, OpenHands is easy.
@@ -120,11 +120,6 @@ New projects start from one of four first-class sources:
 - **Fresh** — Onboarder-driven 5-to-10-question interview
 
 An Onboarder + PM + Documentarian trio runs on whatever source is chosen to produce a project description, initial goals, candidate values, recommended guardrails, and a starting plan — validated for internal consistency before the operator ratifies.
-
-## Organization + execution surfaces
-
-- **Organization surface** — tools shared across a team: Jira, XRay (test management + evidence + requirement-to-test traceability), configurable linters. QA's Manager reads and writes XRay, runs linters as regression suites, and gates state transitions on combined results.
-- **Execution surface** — per-workspace tools where actual work happens: Beads, Gas Town, LangGraph, per-workspace CI. Swappable via adaptors.
 
 ## Workspace repos come in pairs
 
