@@ -49,9 +49,9 @@ Every workspace pairs exactly one Work Coordination Plane adaptor with exactly o
  Beads · Jira · Linear · ...               Gas Town · LangGraph · ...
 ```
 
-### Epic-granular Kanban
+### The Gemba — the main view
 
-The home screen is a Kanban where **cards are Epics**, not individual stories. Each Epic card surfaces: readiness counts (how many members are ready, blocked, in-progress), critical-path length, parallel-group membership, escalation state, and token-budget posture. Double-click drills into the member WorkItems in stage order.
+The home screen is **the Gemba** itself — the factory-floor rendering of your project. Its primary layout is an Epic-granular Kanban where **cards are Epics**, not individual stories. Each Epic card surfaces: readiness counts (how many members are ready, blocked, in-progress), critical-path length, parallel-group membership, escalation state, and token-budget posture. Double-click drills into the member WorkItems in stage order.
 
 The operator's main decision — *what to stage next, and what can run in parallel* — happens at this level. Stories exist; they're not the default unit.
 
@@ -59,11 +59,11 @@ The operator's main decision — *what to stage next, and what can run in parall
 
 A dedicated surface (`/plan`) lists actionable Epics in recommended order, grouped by `ParallelGroup`. The operator drags to reorder, toggles Epics in or out of scope, and clicks **Execute all in-scope** to launch the batch. Parallel safety is verified before launch.
 
-### Jam Sessions — the interactive decisioning surface
+### Gemba walks — the interactive decisioning surface
 
-A **Jam Session** is an interactive multi-topic conversation between the operator and the PM persona — the same pattern an operator-and-assistant fall into naturally when working through a busy backlog, made first-class. On start, the PM auto-populates the agenda from every escalation source in the workspace: open EscalationRequests (polecat / crew / Manager persona / Witness / Refinery / Gate failures), pending HITL questions from suspended Manager sessions, recently-filed beads needing ratification, recently-closed work needing retro. The operator and PM walk the agenda: for each item, PM frames, proposes actions; operator ratifies / modifies / rejects / defers; decisions apply as nonce-gated mutations; remaining items park for later or defer to backlog.
+A **Gemba walk** is an interactive multi-topic conversation between the operator and the PM persona — the same pattern an operator-and-assistant fall into naturally when working through a busy backlog, made first-class. On start, the PM auto-populates the agenda from every escalation source in the workspace: open EscalationRequests (polecat / crew / Manager persona / Witness / Refinery / Gate failures), pending HITL questions from suspended Manager sessions, recently-filed beads needing ratification, recently-closed work needing retro. The operator and PM walk the agenda: for each item, PM frames, proposes actions; operator ratifies / modifies / rejects / defers; decisions apply as nonce-gated mutations; remaining items park for later or defer to backlog.
 
-Jam Sessions are resumable (pause and pick up days later; serialized state survives process restarts), auditable (every decision plus the full transcript lands in the audit log), and produce a Documentarian-written summary artifact on end. The always-available PM panel doubles as the active jam's chat surface — no context switch between "asking the PM" and "working the list."
+Gemba walks are resumable (pause and pick up days later; serialized state survives process restarts), auditable (every decision plus the full transcript lands in the audit log), and produce a Documentarian-written summary artifact on end. The always-available PM panel doubles as the active Gemba walk's chat surface — no context switch between "asking the PM" and "working the list."
 
 ### Agentic code analysis — first-class knowledge-graph context
 
@@ -121,8 +121,8 @@ A new project bootstraps from one of four first-class sources: **Jira** (doc-imp
 
 - **Epic Kanban** (home) — drag-to-reorder, scope toggles, drill-down to members
 - **Plan view** — staging, parallel-group grouping, execute-all
-- **Jam Session** — interactive multi-topic decisioning with PM, aggregating escalations from all workers
-- **PM panel** — persistent, right-side; any question any time; doubles as active-jam chat
+- **Gemba walk** — interactive multi-topic decisioning with PM, aggregating escalations from all workers
+- **PM panel** — persistent, right-side; any question any time; doubles as active-Gemba walk chat
 - **Persona roster + chat modals** — conversational access to every configured Coach and Manager
 - **WorkItem grid** — Jira/Linear-style power-user view for triage
 - **Dependency graph** — React Flow over the three core edge types + declared extensions

@@ -55,7 +55,7 @@ Check / reorder (drag-and-drop in your head):
 - [ ] Insights
 - [ ] QA Health
 - [ ] Escalations
-- [ ] Jam Sessions
+- [ ] Gemba walks
 - [ ] Personas (roster)
 - [ ] Capabilities (adaptor/pack browser)
 - [ ] Checkpoints
@@ -69,7 +69,7 @@ Check:
 - [ ] Current mode indicator (unsupervised/supervised/managed)
 - [ ] Budget gauge (advisor + agent separately, or combined)
 - [ ] PM panel trigger
-- [ ] Jam session trigger (when a jam is active)
+- [ ] Gemba walk trigger (when a Gemba walk is active)
 - [ ] Search / command palette (Cmd-K)
 - [ ] User menu
 - [ ] Active-guardrail-unmet banner slot
@@ -135,12 +135,12 @@ For each screen below, answer: **primary entity**, **first-viewport priorities**
 - ExecutedAction differentiation (distinguish from suggested): [different icon / different color / "applied" badge / timestamped history]
 - Cost display per-consult: [inline-per-turn / running-total-in-header / on-hover]
 
-### 3.4 Jam Session surface
+### 3.4 Gemba walk surface
 - Layout: [three-pane (agenda/chat/escalations) / two-pane / stacked]
 - Agenda item visual: [list / cards / kanban-mini]
 - Decision recording: [inline action on item / bottom-of-chat / dedicated "decide" button]
 - Pause/Resume discoverability: [prominent button / menu / cmd-only]
-- Active-jam indicator in chrome: [banner / topbar-badge / pm-panel-hijack]
+- Active-Gemba walk indicator in chrome: [banner / topbar-badge / pm-panel-hijack]
 
 ### 3.5 Persona roster
 - Layout: [grid-of-cards / list / sidebar-tree]
@@ -270,7 +270,7 @@ Refer to ratified gm-7hj hotkey system — 26+ shortcuts. Any overrides or addit
 - Grid: ___________
 - Drawer: ___________
 - Persona chat: ___________
-- Jam session: ___________
+- Gemba walk: ___________
 
 ### 4.7 Search + command palette (Cmd-K)
 - Content indexed: [beads / personas / artifacts / commands / all]
@@ -318,9 +318,9 @@ For each term, pick one or write your own.
 - Persona output-apply: [Apply / Accept / Confirm / Execute]
 - Persona output-dismiss: [Dismiss / Discard / Skip / Ignore]
 
-### 5.4 Jam Session verbs
-- Start: [Start jam / Begin session / Open jam]
-- End: [Wrap up / Close jam / End session]
+### 5.4 Gemba walk verbs
+- Start: [Start Gemba walk / Begin session / Open Gemba walk]
+- End: [Wrap up / Close Gemba walk / End session]
 - Pause: [Pause / Hold / Table]
 - Decision-kinds in agenda: [Ratify / Modify / Reject / Defer — already ratified]
 
@@ -347,7 +347,7 @@ For each, write the statement you want actually injected into prompts:
 
 ### 6.1 Always-on elements
 - PM panel: ratified always-available. Override per screen: ___________
-- Active-jam banner: ___________
+- Active-Gemba walk banner: ___________
 - Unmet-guardrail banner: ___________
 - Mode indicator: ___________
 - Budget gauge: [top-bar / in-settings-only / mode-dependent]

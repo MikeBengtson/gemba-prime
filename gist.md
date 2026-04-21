@@ -21,7 +21,7 @@ A **single Go binary with an embedded React SPA**. It pairs *exactly one* **Work
 - **Reference pack-ins (v1):** Beads as the WorkPlane, Gas Town as the OrchestrationPlane.
 - **Forcing-function adaptors (v1):** Jira and LangGraph — quirks are supersets of their categories' easier members, so the contract is proven against them. If it handles Jira's workflow FSM, Linear is easy. If it handles LangGraph's checkpoint-and-graph topology, OpenHands is easy.
 
-## The expertise layer — Coaches, the Project Manager, and Jam Sessions
+## The expertise layer — Coaches, the Project Manager, and Gemba walks
 
 ### Two persona varieties
 
@@ -55,9 +55,9 @@ The PM is the central persona — the one the operator talks to most, and the on
 
 The PM panel lives in the SPA chrome, always one click away. Plan view buttons ("Recommend order", "What remains", "Trim to budget") call PM skills directly. Every invocation produces a `PersonaConsultRecord` — permanent audit trail, reviewable in `/insights/personas` with per-persona aggregates (hit rate, cost, applied-vs-dismissed ratio). Retros use this to calibrate which personas are earning their keep.
 
-### Jam Sessions — the interactive decisioning surface
+### Gemba walks — the interactive decisioning surface
 
-A Jam Session is an interactive multi-topic conversation between the operator and the PM — the same pattern an operator-and-assistant fall into naturally when working through a busy backlog, made first-class. On start, the PM auto-populates the agenda from every escalation source in the workspace:
+A Gemba walk is an interactive multi-topic conversation between the operator and the PM — the same pattern an operator-and-assistant fall into naturally when working through a busy backlog, made first-class. On start, the PM auto-populates the agenda from every escalation source in the workspace:
 
 - **Open EscalationRequests** — polecat / crew escalations, Manager persona suspensions, Witness findings, Refinery merge rejections, budget-stop events, adaptor-degraded notifications, gate failures.
 - **HITL questions** — Manager persona sessions that paused mid-task awaiting a judgment call.
@@ -67,13 +67,13 @@ A Jam Session is an interactive multi-topic conversation between the operator an
 
 The operator and PM walk the agenda one item at a time. For each: the PM frames the context, summarizes what's happened, proposes actions; the operator ratifies / modifies / rejects / defers; ratified actions apply as nonce-gated mutations through the same API any client uses. The PM may consult other personas mid-session — Architect for design impact, QA for test coverage, Security for auth-surface concerns — with brief consultations running inline and their responses feeding the current decision.
 
-Jams are **resumable** across days (pause and pick up later; serialized state survives process restarts), **auditable** (every turn, every decision, every consulted persona captured), and produce a **Documentarian-written summary artifact** on end. The always-available PM panel doubles as the active jam's chat surface — no context switch between "asking the PM" and "working the list."
+Gemba walks are **resumable** across days (pause and pick up later; serialized state survives process restarts), **auditable** (every turn, every decision, every consulted persona captured), and produce a **Documentarian-written summary artifact** on end. The always-available PM panel doubles as the active Gemba walk's chat surface — no context switch between "asking the PM" and "working the list."
 
-Jam Sessions are the native mode for walking the floor at scale — the operator's running conversation with the project's brain.
+Gemba walks are the native mode for walking the floor at scale — the operator's running conversation with the project's brain.
 
 ## The workspace
 
-**Epic-granular Kanban** as the home screen. Cards are Epics — not individual stories — showing:
+**The Gemba** is the home screen — the factory-floor view of your project: an Epic-granular Kanban rendering. Cards are Epics — not individual stories — showing:
 
 - Readiness counts (how many members ready / blocked / in progress)
 - Parallel-group membership
