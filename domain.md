@@ -198,6 +198,8 @@ When industry consensus on completion semantics emerges and DD-3 re-opens with e
 
 **Out of scope for v1:** Capability-level permission scoping (this user can only use capabilities X, Y, Z). v1 is all-or-nothing per authenticated identity.
 
+**Event-emission floor (added 2026-04-20, Foolery-spike lesson):** Capability negotiation is **not** an excuse for a mutation to skip event emission. An adaptor MAY advertise `event_delivery: "poll"` — that controls the *transport* the adaptor uses internally — but every state-changing adaptor call MUST produce a matching `WorkPlaneEvent` / `OrchestrationEvent` observable on `subscribe` within the declared latency budget. See §2.5, §2.6 Group D, §3.7, §3.8 Group E. The Foolery architecture (SSE for terminal streams; polled state updates) is the exact UX failure mode this floor prevents: the 500ms freshness bar (gm-e12.2) is unmeetable when state requires a client poll loop.
+
 ### DD-13 (emergent): Evidence is append-only and adaptor-synthesizable
 
 **Landscape reference:** C5, Gap "Evidence-backed DoD verification is bespoke everywhere".
@@ -710,8 +712,21 @@ interface WorkPlaneAdaptor {
 
   // ─── Events (SSE / push / poll — adaptor-declared) ───
   subscribe(filter: SubscribeFilter, ctx: CallCtx): AsyncIterable<WorkPlaneEvent>;
-  // Event stream includes `budget.inform | budget.warn | budget.stop` events
-  // emitted when thresholds are first crossed for any epic or sprint in scope.
+  // Every state-changing mutation (`create`, `update`, `transition`, `claim`,
+  // `unclaim`, `close`, `link`, `unlink`, `attach_evidence`, `create_sprint`,
+  // `update_sprint`, `transition_sprint`, `assign_epic_to_sprint`) MUST emit a
+  // matching `WorkPlaneEvent` observable to any live subscriber within the
+  // adaptor's declared latency budget. A mutation that returns success but
+  // emits no event is a **conformance failure** (see §2.6 Group D). This is a
+  // **MUST**, not a SHOULD — "poll-based" adaptors are not an escape hatch;
+  // even `event_delivery: "poll"` adaptors must queue and surface events,
+  // not require UI consumers to diff snapshots. (Foolery-spike lesson
+  // 2026-04-20: SSE-for-terminals-only + polled-state is exactly the UX
+  // failure mode this contract exists to prevent.)
+  //
+  // Event stream also includes `budget.inform | budget.warn | budget.stop`
+  // events emitted when thresholds are first crossed for any epic or sprint
+  // in scope.
 
   // ─── Identity mapping ───
   resolve_assignee(ref: AgentRef | HumanRef, ctx: CallCtx): Promise<BackendIdentity>;
@@ -843,10 +858,18 @@ Every `WorkPlane` adaptor MUST pass the following. The suite is a Gemba project;
 
 **Group D — Event delivery**
 
-1. `event_fires_on_state_change`: Subscribe; mutate state; event received within declared latency budget (default 5s for poll, 1s for SSE/push).
-2. `event_payload_includes_prev_and_next`: Events carry `{before, after}` for state-changing mutations.
-3. `event_ordering`: Two mutations A then B; subscribers see A's event before B's event.
-4. `subscribe_resume`: Kill subscription mid-stream; resume with last-seen cursor; no gaps.
+Every state-changing adaptor call MUST emit a matching `WorkPlaneEvent`. The
+harness enumerates each mutation method declared in the capability manifest and
+fails the suite if any one of them mutates successfully without producing an
+event. This group is **strict**: a passing Group D is a precondition for
+declaring the adaptor production-ready (see gm-e3.6 DoD).
+
+1. `event_fires_on_state_change`: Subscribe; mutate state; event received within declared latency budget (default 250ms for SSE/push, 5s for poll — a mutation that receives no event within budget **fails** the test).
+2. `mutation_without_event_is_failure` (**new, strict**): For every mutation in `{create, update, transition, claim, unclaim, close, link, unlink, attach_evidence, create_sprint, update_sprint, transition_sprint, assign_epic_to_sprint}`, exercise the happy path while an active subscriber is attached; assert exactly one matching event arrives within the declared latency budget. Zero events for any mutation is a hard failure — no "this adaptor is poll-only" escape hatch.
+3. `event_payload_includes_prev_and_next`: Events carry `{before, after}` for state-changing mutations.
+4. `event_ordering`: Two mutations A then B; subscribers see A's event before B's event.
+5. `subscribe_resume`: Kill subscription mid-stream; resume with last-seen cursor; no gaps.
+6. `poll_adaptor_still_emits` (**new**): With `event_delivery: "poll"`, the adaptor MUST internally batch and emit events on the subscribe channel after each poll tick — it MUST NOT require the UI to diff snapshots. Mutation → subscriber receives event within the declared poll interval + 1s.
 
 **Group E — Identity mapping**
 
@@ -1165,6 +1188,16 @@ interface OrchestrationPlaneAdaptor {
 
   // Events
   subscribe(filter: OrchestrationSubscribeFilter, ctx: CallCtx): AsyncIterable<OrchestrationEvent>;
+  // Every state-changing OrchestrationPlane call — `claim_next_ready`,
+  // `release_reservation`, `start_session`, `pause_session`, `resume_session`,
+  // `end_session`, `acquire_workspace`, `release_workspace`, and
+  // `resolve_escalation` — MUST emit a matching `OrchestrationEvent` observable
+  // to any live subscriber within the declared latency budget. Successful
+  // mutation + missing event is a **conformance failure** (§3.8 Group E).
+  // This is a **MUST**, not a SHOULD — see DD-12 and the Foolery-spike
+  // lesson: a state-update pipeline that relies on polling for anything
+  // other than cost-sample fan-in cannot meet the 500ms freshness bar the
+  // UI commits to (gm-e12.2 DoD).
 }
 ```
 
@@ -1222,9 +1255,15 @@ interface OrchestrationCapabilityManifest {
 
 **Group E — Events**
 
+Strict: every state-changing OrchestrationPlane call MUST produce an observable
+event. A passing Group E is a precondition for declaring the adaptor
+production-ready.
+
 1. `event_on_session_transition`: Session state transitions fire an event with `{before, after}`.
 2. `event_on_cost_sample`: Cost samples emit as events (even if batched) — consumer can reconstruct the sample stream.
 3. `event_ordering_across_assignment`: For one assignment, events arrive in causal order.
+4. `mutation_without_event_is_failure` (**new, strict**): For every mutation in `{claim_next_ready, release_reservation, start_session, pause_session, resume_session, end_session, acquire_workspace, release_workspace, resolve_escalation}`, exercise the happy path with an active subscriber attached; assert exactly one matching event arrives within the declared latency budget (default 250ms for SSE/push, 5s for poll). Zero events for any mutation = hard failure.
+5. `escalation_state_change_event` (**new**): `resolve_escalation` MUST emit `escalation_resolved`; transitioning an escalation to `expired` (via deadline) MUST emit `escalation_expired`. No silent state changes.
 
 **Group F — MCP contract (if declared)**
 

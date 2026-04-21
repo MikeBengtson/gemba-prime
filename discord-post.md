@@ -2,18 +2,26 @@
 
 ## Message 1 — the pitch
 
-Hey 👋 posting this for community feedback before I commit further build cycles. TL;DR below; full RFC attached.
+Hey 👋 posting this for community feedback before I commit further build cycles. TL;DR below; full RFC + product description attached.
 
-**Gemba** (`gemba`) — a single-binary Go service with an embedded React SPA that pairs *exactly one* **WorkPlane adaptor** (work tracker — Beads, Jira, Linear, GitHub Projects, Azure DevOps, Shortcut, Plane, …) with *exactly one* **OrchestrationPlane adaptor** (agent runtime — Gas Town, Gas City, LangGraph, CrewAI, OpenHands, Devin, Factory, …) and renders whatever the two declare.
+**Gemba** (`gemba`) — the Gemba walk UI for agentic software projects. **Large-scale side-of-the-desk projects: big impact, minimal cognitive load.**
 
-The product is the abstraction. Beads + Gas Town are the v1 *reference* adaptors. Jira (WorkPlane) and LangGraph (OrchestrationPlane) are v1 *forcing-function* adaptors — picked because their quirks are supersets of the easier members of their categories. If the contract handles Jira's workflow FSM, Linear is easy. If it handles LangGraph's checkpoint-and-graph topology, OpenHands is easy.
+In lean manufacturing, *gemba* (現場) is "the actual place" — the factory floor. A *gemba walk* is when leadership observes the work directly, not through reports, and leaves actionable feedback as they go. Gemba the product is a browser-based UI for exactly that: walking the floor of an agentic software project — with configurable LLM specialists a click away for the expertise the operator doesn't have time to personally deliver.
 
-**No backend-specific vocabulary in the core SPA** — all backend-flavor lives in capability-gated extension widgets under `web/src/extensions/<adaptor-id>/`.
+Single-binary Go service with an embedded React SPA. Pairs *exactly one* **WorkPlane adaptor** (work tracker — Beads, Jira, Linear, GitHub Projects, Azure DevOps, Shortcut, Plane, …) with *exactly one* **OrchestrationPlane adaptor** (agent runtime — Gas Town, Gas City, LangGraph, CrewAI, OpenHands, Devin, Factory, …) and renders whatever the two declare.
+
+The product is the abstraction plus the Persona layer on top. Beads + Gas Town ship as v1 *reference* pack-ins. Jira (WorkPlane) and LangGraph (OrchestrationPlane) are v1 *forcing-function* adaptors — if the contract handles Jira's workflow FSM, Linear is easy; if it handles LangGraph's checkpoint-and-graph topology, OpenHands is easy.
+
+**Two Persona varieties:** **Coaches** (conversational, advisory — Architect, Code Reviewer, UX Expert, Technical Writer, Documentarian, Onboarder) and **Managers** (agentic, can be gate-blocking — Project Manager, QA, Deployment Engineer, DevOps/SRE, Security). PM's `add_to_backlog` skill files beads; QA's gate can block a release; every persona has separately configurable prompt + context providers + output validation. Ship curated role packs (CTO today; CEO / COO / CRO/LRC later).
+
+**No backend-specific vocabulary in the core SPA** — all backend-flavor lives in capability-gated extension widgets.
 
 **What it's for — three concrete workflows:**
-1. **Plan & refine.** 10k-WorkItem virtualized grid across every workspace; saved filters; bulk JSONL import; Jira-style detail drawer.
-2. **Day-of ops.** AgentGroup Kanban (the home screen) — drag-drop round-trips through `WorkPlaneAdaptor.transition`; multi-select to dispatch via `OrchestrationPlaneAdaptor.acquire_workspace + start_session`. Desired-vs-actual drift tints column headers; provider-aware agent peek; every mutation `X-GEMBA-Confirm` nonce-gated.
-3. **Retro & release.** Landed-AgentGroup review, molecule replay, insights from OTEL + adaptor-supplied `CostMeter`; sprint-as-token-budget with three-tier inform/warn/stop enforcement.
+1. **Walk the floor.** Epic-granular Kanban is the home screen — cards are Epics (not individual stories) with readiness counts, parallel-group membership, escalation state, token-budget posture. Drill-down to member work items is double-click. The Plan view lets you drag-to-reorder, toggle in/out of scope, and launch the batch after parallel-safety is verified.
+2. **Ask a specialist.** PM panel always available. `/plan` "Recommend order" → PM persona returns JSONL-ranked Epics with rationale. Managers can take scoped agentic action (`add_to_backlog`, `change_this`, `check release readiness`), consult other personas mid-task, and HITL-pause when they need a judgment call. QA gates can block a release; override requires persona consensus or nonce-confirmed justification.
+3. **Undo back to yesterday.** Checkpoints atomically snapshot every git repo involved, the Beads database, live session context summaries, sidecar state, and artifacts. Restore rolls every dimension back together.
+
+**Values + guardrails + modes.** Projects inject values (innovation / transparency / execution / empathy ship as defaults) into the highest prompt layer. Guardrails are values with explicit blockers. Workspace modes (unsupervised / supervised / managed) govern interaction style. Bootstrap pulls from Jira or Beads and generates the project description, initial goals, candidate values, and starting plan for the operator to ratify.
 
 **The four hardest open questions I most want answered:**
 - **DD-1 (Agent as first-class core type).** Is `{agent_id, display_name, role, parent_id?, agent_kind}` enough to render usefully without amputating dimensions orchestrator maintainers care about?

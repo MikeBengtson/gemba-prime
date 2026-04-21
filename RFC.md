@@ -1,15 +1,22 @@
-# RFC: Gemba — a generalized Kanban-style web UI for any work tracker × any agent orchestrator
+# RFC: Gemba — the Gemba walk UI for agentic software projects
+
+**Positioning:** Large-scale side-of-the-desk projects: big impact, minimal cognitive load.
 
 **Status:** Proposal / seeking feedback
 **Author:** Mike Bengtson (@mikebengtson)
-**Target audience:** maintainers and operators of work trackers (Beads, Jira, Linear, GitHub Projects, Azure DevOps, Shortcut, Plane, …) and agent orchestrators (Gas Town, Gas City, LangGraph, CrewAI, OpenHands, Devin, Factory, …).
+**Target audience:** maintainers and operators of work trackers (Beads, Jira, Linear, GitHub Projects, Azure DevOps, Shortcut, Plane, …), agent orchestrators (Gas Town, Gas City, LangGraph, CrewAI, OpenHands, Devin, Factory, …), and any team running or evaluating agentic software projects at scale.
 **Type:** Sidecar tool (standalone, not upstream into any backend).
+**Full product description:** see `product-description.md` in this workspace; ~500-word summary in `gist.md`.
 
-Posting this to gather feedback before committing further build cycles. Looking for architectural gut-checks, prior art I've missed, and "don't do that" signals from people deeper in the ecosystem than I am — particularly from work-tracker and orchestrator maintainers whose contracts I'm proposing to map onto a shared abstraction.
+Posting this to gather feedback before committing further build cycles. Looking for architectural gut-checks, prior art I've missed, positioning critiques, and "don't do that" signals from people deeper in the ecosystem than I am — particularly from work-tracker and orchestrator maintainers whose contracts I'm proposing to map onto a shared abstraction, and from operators running agentic projects at any scale.
+
+## The name
+
+In lean manufacturing, *gemba* (現場) is Japanese for "the actual place" — the factory floor. A **gemba walk** is when leadership observes the work directly, not through reports, and leaves actionable feedback as they go. Gemba the product is a browser-based UI for exactly that: walking the floor of an agentic software project — with a roster of configurable LLM specialists a click away for the expertise the operator doesn't have time to personally deliver.
 
 ## TL;DR
 
-**Gemba** (`gemba`) is a single-binary Go service with an embedded React SPA that pairs *exactly one* **Work Coordination Plane** adaptor (the work tracker — Beads, Jira, Linear, …) with *exactly one* **Agent Orchestration Plane** adaptor (the runtime — Gas Town, Gas City, LangGraph, …) and renders whatever the two planes declare. The UI is adaptor-agnostic: no role name, column header, panel, or string literal in the SPA hardcodes vocabulary from a specific backend.
+**Gemba** (`gemba`) is a single-binary Go service with an embedded React SPA that pairs *exactly one* **Work Coordination Plane** adaptor (the work tracker — Beads, Jira, Linear, …) with *exactly one* **Agent Orchestration Plane** adaptor (the runtime — Gas Town, Gas City, LangGraph, …) and renders whatever the two planes declare. The UI is adaptor-agnostic: no role name, column header, panel, or string literal in the SPA hardcodes vocabulary from a specific backend. Two complementary **Persona varieties** — Coaches (conversational, advisory) and Managers (agentic, can be gate-blocking) — supply the domain expertise (product judgment, architecture review, QA gating, release mechanics, …) that a single operator running a side-of-the-desk project doesn't have time to personally deliver for every decision.
 
 **Category framing.** The WorkPlane abstraction targets a narrow category Gemba calls the **agentic data plane** — work-coordination systems designed (or adapted) for multi-agent AI software-engineering work tied to a Git repository. Reference members include Beads, AgentHub, Ralph, Symphony, Raindrop, Gastown (as orchestrator over Beads), and Metaswarm. General business workflow (Jira Service Management for IT tickets, Asana marketing boards, Basecamp client delivery) is out of scope: such trackers may still load as WorkPlane adaptors but will fail specific capability bars in the manifest, and that is an acceptable outcome. The eight category preconditions (R1–R8) are defined in `domain.md` §1.0 and `dataplane-requirements.md`; `CapabilityManifest` advertises each.
 
