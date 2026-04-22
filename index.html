@@ -94,6 +94,20 @@ html, body { margin: 0; padding: 0; }
   nav.strip a:hover {
     border-color: var(--navy);
   }
+  nav.strip a.primary {
+    background: var(--navy);
+    color: #fff;
+    margin-right: 16px;
+    padding: 6px 14px;
+    border: 1px solid var(--navy);
+  }
+  nav.strip a.primary:hover {
+    background: var(--navy-700);
+    border-color: var(--navy-700);
+  }
+  @media (prefers-color-scheme: dark) {
+    nav.strip a.primary { color: #0D1117; }
+  }
 
   main {
     max-width: 1920px;
@@ -308,6 +322,7 @@ html, body { margin: 0; padding: 0; }
   <h1>Gemba UI Mockups · Marker example project</h1>
   <p class="sub">Five-screen set · Rendered against <code>ui-spec.md</code> + <code>product-description.md</code> · Copy drawn from <code>gist.md</code></p>
   <nav class="strip">
+    <a class="primary" href="https://gist.github.com/MikeBengtson/52fa46fe24156a7ef78245930a5dfe5f" target="_blank" rel="noopener">Learn more →</a>
     <a href="#intro">Intro</a>
     <a href="#concepts">Main concepts</a>
     <a href="#s1">1 · The Gemba</a>
