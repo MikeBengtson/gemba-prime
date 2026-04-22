@@ -262,33 +262,100 @@ html, body { margin: 0; padding: 0; }
     height: auto;
   }
 
-  .motion-block {
-    margin-top: 28px;
-    padding-top: 28px;
-    border-top: 1px dashed var(--border);
+  /* "See in action" button on each screen */
+  .motion-trigger {
+    margin-top: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(42,68,96,0.18);
+    transition: background 150ms, transform 150ms;
   }
-  .motion-block h3 {
-    margin: 0 0 6px;
+  .motion-trigger:hover { background: var(--navy-700); transform: translateY(-1px); }
+  .motion-trigger::before {
+    content: "▶";
     font-size: 12px;
+    opacity: 0.9;
+  }
+  @media (prefers-color-scheme: dark) { .motion-trigger { color: #0D1117; } }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(42,68,96,0.55);
+    backdrop-filter: blur(4px);
+    display: none;
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+  }
+  .modal-backdrop.open { display: flex; animation: modalfadein 180ms ease-out; }
+  @keyframes modalfadein { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-dialog {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    max-width: 1600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: auto;
+    padding: 28px 32px 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    position: relative;
+  }
+  .modal-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 12px;
+  }
+  .modal-header h2 {
+    margin: 0;
+    font-size: 18px;
     font-weight: 700;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
     color: var(--navy-700);
   }
-  .motion-caption {
-    margin: 0 0 14px;
+  .modal-close {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .modal-close:hover { color: var(--txt); border-color: var(--navy); }
+  .modal-caption {
+    margin: 0 0 16px;
     font-size: 14px;
     color: var(--muted);
-    line-height: 1.5;
-    max-width: 820px;
+    line-height: 1.55;
+    max-width: 980px;
   }
-  .svg-frame.motion {
-    border-style: dashed;
-    border-color: var(--navy-700);
-    background: color-mix(in srgb, var(--navy) 4%, var(--surface));
+  .modal-svg {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
   }
-  .motion-hint {
-    margin: 8px 0 0;
+  .modal-svg object { display: block; width: 100%; height: auto; }
+  .modal-hint {
+    margin: 10px 0 0;
     font-size: 11px;
     color: var(--muted);
     font-family: 'JetBrains Mono', 'SF Mono', monospace;
@@ -494,20 +561,8 @@ html, body { margin: 0; padding: 0; }
     </div>
   </div>
 
-  <div class="motion-block">
-    <h3>See this in motion</h3>
-    <p class="motion-caption">Mike drags <code>mk-e4</code> (Browser extension) from <strong>Next Up</strong> into <strong>Staged</strong>. The lane tints navy as a valid drop zone, a ghost outline remains at the origin, and the column counts update on release. Drag-to-stage is the ratified primary action on the Gemba.</p>
-    <div class="svg-frame motion"><object data="docs/mockup/animated/01-board-drag.svg" type="image/svg+xml" aria-label="Animation: drag mk-e4 to Staged"></object></div>
-    <p class="motion-hint">// Loops every 4s · autoplay · freezes with <code>prefers-reduced-motion</code></p>
-  </div>
 
-  <div class="motion-block">
-    <h3>See this in motion</h3>
-    <p class="motion-caption">The PM panel lives at the bottom of the Gemba as a collapsible drawer. Mike taps <code>⌘P</code>, types <em>"What remains on the board right now?"</em>, and the Project Manager Manager streams a structured reply. Every consult is logged, costed, and auditable — <code>$0.004</code> per turn is not a typo.</p>
-    <div class="svg-frame motion"><object data="docs/mockup/animated/03-pm-consult.svg" type="image/svg+xml" aria-label="Animation: PM panel opens and streams a reply"></object></div>
-    <p class="motion-hint">// Loops every 5s · autoplay · freezes with <code>prefers-reduced-motion</code></p>
-  </div>
-
+  <button class="motion-trigger" data-motion-trigger="modal-s1" aria-haspopup="dialog">See this in action · Drag mk-e4 into Staged</button>
 </section>
 
 <section class="screen" id="s2">
@@ -544,13 +599,8 @@ html, body { margin: 0; padding: 0; }
     </div>
   </div>
 
-  <div class="motion-block">
-    <h3>See this in motion</h3>
-    <p class="motion-caption">The Pocket API deprecation is the active agenda item. Mike ratifies <strong>option (a)</strong> — update <code>mk-e6</code> to target Pocket v2. The action executes as a nonce-gated mutation (you see the green banner appear), item 3 transitions from <em>active</em> to <em>decided</em>, item 4 auto-promotes to <em>active</em>, and the PM frames the next topic. A Gemba walk is a running conversation that advances the project, not a passive dashboard.</p>
-    <div class="svg-frame motion"><object data="docs/mockup/animated/02-walk-ratify.svg" type="image/svg+xml" aria-label="Animation: ratify option (a) on the Pocket API agenda item"></object></div>
-    <p class="motion-hint">// Loops every 5s · autoplay · freezes with <code>prefers-reduced-motion</code></p>
-  </div>
 
+  <button class="motion-trigger" data-motion-trigger="modal-s2" aria-haspopup="dialog">See this in action · Ratify option (a) on the Pocket API agenda item</button>
 </section>
 
 <section class="screen" id="s3">
@@ -586,13 +636,8 @@ html, body { margin: 0; padding: 0; }
     </div>
   </div>
 
-  <div class="motion-block">
-    <h3>See this in motion</h3>
-    <p class="motion-caption">Mike hovers the pulsing yellow stale indicator on <code>mk-e2.4</code>. A popover reveals the three recovery affordances: <strong>Restart</strong> the worker, <strong>Peek</strong> the session, or <strong>Escalate</strong> to a Gemba walk. Recovery stays one click from the work; nothing forces you to leave the drawer to diagnose.</p>
-    <div class="svg-frame motion"><object data="docs/mockup/animated/04-drawer-stale.svg" type="image/svg+xml" aria-label="Animation: hover the stale indicator to reveal recovery options"></object></div>
-    <p class="motion-hint">// Loops every 3s · autoplay · freezes with <code>prefers-reduced-motion</code></p>
-  </div>
 
+  <button class="motion-trigger" data-motion-trigger="modal-s3" aria-haspopup="dialog">See this in action · Hover the stale-session indicator</button>
 </section>
 
 <section class="screen" id="s4">
@@ -628,6 +673,8 @@ html, body { margin: 0; padding: 0; }
       </ul>
     </div>
   </div>
+
+  <button class="motion-trigger" data-motion-trigger="modal-s4" aria-haspopup="dialog">See this in action · Drag mk-e5 into Parallel Group A</button>
 </section>
 
 <section class="screen" id="s5">
@@ -663,6 +710,8 @@ html, body { margin: 0; padding: 0; }
       </ul>
     </div>
   </div>
+
+  <button class="motion-trigger" data-motion-trigger="modal-s5" aria-haspopup="dialog">See this in action · Expand the Project Manager card</button>
 </section>
 
 </main>
@@ -670,6 +719,92 @@ html, body { margin: 0; padding: 0; }
 <footer>
   Five-screen set deliberately bounded · Additional surfaces (Retakes lane, Session history timeline, Lease dashboard, Insights, Graph, Capability browser, QA Health/Gates, Checkpoints, Bootstrap, Project Config, Pack browser, Worker session detail) deferred to v1.1 per <code>ui-spec.md §5.19</code>.
 </footer>
+
+
+<!-- ===================== MOTION MODALS ===================== -->
+<div class="modal-backdrop" id="modal-s1" role="dialog" aria-modal="true" aria-labelledby="modal-s1-title">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2 id="modal-s1-title">The Gemba · drag mk-e4 into Staged</h2>
+      <button class="modal-close" aria-label="Close">Close ✕</button>
+    </div>
+    <p class="modal-caption">Mike drags <code>mk-e4</code> (Browser extension) from <strong>Next Up</strong> into <strong>Staged</strong>. The lane tints navy as a valid drop zone, a ghost outline remains at the origin, and the column counts update on release. Drag-to-stage is the ratified primary action on the Gemba.</p>
+    <div class="modal-svg"><object data="docs/mockup/animated/01-board-drag.svg" type="image/svg+xml" aria-label="Animation: drag mk-e4 to Staged"></object></div>
+    <p class="modal-hint">// Loops every 4s · autoplay · freezes with <code>prefers-reduced-motion</code> · press Esc to close</p>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-s2" role="dialog" aria-modal="true" aria-labelledby="modal-s2-title">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2 id="modal-s2-title">Gemba walk · ratify the Pocket API decision</h2>
+      <button class="modal-close" aria-label="Close">Close ✕</button>
+    </div>
+    <p class="modal-caption">Mike ratifies option (a) — update <code>mk-e6</code> to target Pocket v2. The action executes as a nonce-gated mutation (green "Applied" banner appears), item 3 transitions from <em>active</em> to <em>decided</em>, item 4 auto-promotes, and the PM frames the next topic. A Gemba walk is a running conversation that advances the project.</p>
+    <div class="modal-svg"><object data="docs/mockup/animated/02-walk-ratify.svg" type="image/svg+xml" aria-label="Animation: ratify option (a)"></object></div>
+    <p class="modal-hint">// Loops every 5s · autoplay · freezes with <code>prefers-reduced-motion</code> · press Esc to close</p>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-s3" role="dialog" aria-modal="true" aria-labelledby="modal-s3-title">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2 id="modal-s3-title">Epic drawer · hover the stale indicator</h2>
+      <button class="modal-close" aria-label="Close">Close ✕</button>
+    </div>
+    <p class="modal-caption">Mike hovers the pulsing yellow stale indicator on <code>mk-e2.4</code>. A popover reveals the three recovery affordances: <strong>Restart</strong> the worker, <strong>Peek</strong> the session, or <strong>Escalate</strong> to a Gemba walk. Recovery stays one click from the work; nothing forces you to leave the drawer to diagnose.</p>
+    <div class="modal-svg"><object data="docs/mockup/animated/03-drawer-stale.svg" type="image/svg+xml" aria-label="Animation: hover stale indicator"></object></div>
+    <p class="modal-hint">// Loops every 3s · autoplay · freezes with <code>prefers-reduced-motion</code> · press Esc to close</p>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-s4" role="dialog" aria-modal="true" aria-labelledby="modal-s4-title">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2 id="modal-s4-title">Plan view · promote mk-e5 into Parallel Group A</h2>
+      <button class="modal-close" aria-label="Close">Close ✕</button>
+    </div>
+    <p class="modal-caption">Mike drags <code>mk-e5</code> (Full-text search) from a standalone group into <strong>Parallel Group A</strong>, where it runs concurrently with <code>mk-e3</code> (CLI). The group cluster expands to make room, the total cost estimate updates from one-epic to two, and the <strong>Execute all Staged</strong> button refreshes its badge.</p>
+    <div class="modal-svg"><object data="docs/mockup/animated/04-plan-drag.svg" type="image/svg+xml" aria-label="Animation: drag mk-e5 into Group A"></object></div>
+    <p class="modal-hint">// Loops every 4s · autoplay · freezes with <code>prefers-reduced-motion</code> · press Esc to close</p>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-s5" role="dialog" aria-modal="true" aria-labelledby="modal-s5-title">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2 id="modal-s5-title">Persona roster · expand the Project Manager card</h2>
+      <button class="modal-close" aria-label="Close">Close ✕</button>
+    </div>
+    <p class="modal-caption">Mike clicks the Project Manager card. The card expands to show the persona's full configuration: <strong>Personality</strong> (tonal voice), <strong>Perspective</strong> (always-applied lens), <strong>Purview</strong> (none — PM coordinates, doesn't own a domain), opt-in skill list, and budget policy. Edit opens the TOML editor.</p>
+    <div class="modal-svg"><object data="docs/mockup/animated/05-persona-expand.svg" type="image/svg+xml" aria-label="Animation: expand PM card"></object></div>
+    <p class="modal-hint">// Loops every 4s · autoplay · freezes with <code>prefers-reduced-motion</code> · press Esc to close</p>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const open = (id) => {
+      const m = document.getElementById(id);
+      if (!m) return;
+      m.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    };
+    const closeAll = () => {
+      document.querySelectorAll('.modal-backdrop.open').forEach(m => m.classList.remove('open'));
+      document.body.style.overflow = '';
+    };
+    document.querySelectorAll('[data-motion-trigger]').forEach(btn => {
+      btn.addEventListener('click', () => open(btn.getAttribute('data-motion-trigger')));
+    });
+    document.querySelectorAll('.modal-backdrop').forEach(bd => {
+      bd.addEventListener('click', e => {
+        if (e.target === bd || e.target.classList.contains('modal-close')) closeAll();
+      });
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+  })();
+</script>
 
 </body>
 </html>

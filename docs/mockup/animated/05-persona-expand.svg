@@ -1,0 +1,272 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <title>Animated: click PM persona card to expand PPPP config (personality, perspective, purview). 4s loop.</title>
+  <defs>
+    <style>
+      .txt { fill: #2B2B2B; }
+      .muted { fill: #6B6B6B; }
+      .mono { font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace; }
+
+      @keyframes cursor {
+        0%,10%   { transform: translate(1680px, 1100px); }
+        25%      { transform: translate(420px, 380px); }
+        30%      { transform: translate(420px, 380px) scale(0.9); }
+        35%,100% { transform: translate(420px, 380px) scale(1); }
+      }
+      @keyframes closedshow {
+        0%,30%   { opacity: 1; }
+        40%,95%  { opacity: 0; }
+        100%     { opacity: 1; }
+      }
+      @keyframes expandedshow {
+        0%,30%   { opacity: 0; transform: scale(0.98); }
+        40%,95%  { opacity: 1; transform: scale(1); }
+        100%     { opacity: 0; transform: scale(0.98); }
+      }
+
+      .cursor    { animation: cursor 4s ease-in-out infinite; }
+      .closed    { animation: closedshow 4s ease-in-out infinite; }
+      .expanded  { animation: expandedshow 4s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .cursor, .closed, .expanded { animation: none; }
+        .closed { opacity: 0; }
+        .expanded { opacity: 1; transform: none; }
+      }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1200" fill="#FAFAF7"/>
+
+  <!-- Top bar -->
+  <rect x="0" y="0" width="1920" height="56" fill="#FFFFFF"/>
+  <line x1="0" y1="56" x2="1920" y2="56" stroke="#E5E0D5" stroke-width="1"/>
+  <g transform="translate(60,16)">
+    <rect width="140" height="24" rx="6" fill="#F5EFE0" stroke="#E5E0D5"/>
+    <text x="12" y="17" class="txt" font-size="13" font-weight="600">marker</text>
+  </g>
+
+  <!-- Page title -->
+  <text x="120" y="120" font-size="28" font-weight="700" class="txt">Personas</text>
+  <text x="120" y="148" font-size="13" class="muted">11 configured · 6 Coaches · 5 Managers · $1.51 spent today</text>
+
+  <!-- ================ CLOSED GRID (4 columns × 3 rows = 11 cards + 1 add) ================ -->
+  <g class="closed">
+    <!-- Row 1 -->
+    <!-- PM (animated — we show its closed state here, and the expanded version below) -->
+    <g transform="translate(120, 200)">
+      <rect width="340" height="180" rx="14" fill="#FFFFFF" stroke="#3B5B7A" stroke-width="2"/>
+      <text x="20" y="48" font-size="36" text-anchor="start">📋</text>
+      <text x="20" y="90" font-size="18" font-weight="700" class="txt">Project Manager</text>
+      <rect x="20" y="100" width="78" height="22" rx="11" fill="#3B5B7A"/>
+      <text x="59" y="115" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Manager</text>
+      <text x="20" y="148" font-size="11" class="muted mono">claude-opus-4-7</text>
+      <text x="20" y="164" font-size="10" class="muted">last used 2m ago · $0.73 today</text>
+      <!-- Enabled toggle -->
+      <g transform="translate(280, 20)">
+        <rect width="40" height="20" rx="10" fill="#5BA46A"/>
+        <circle cx="30" cy="10" r="8" fill="#FFFFFF"/>
+      </g>
+    </g>
+
+    <g transform="translate(480, 200)">
+      <rect width="340" height="180" rx="14" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="20" y="48" font-size="36">📐</text>
+      <text x="20" y="90" font-size="18" font-weight="700" class="txt">Architect</text>
+      <rect x="20" y="100" width="60" height="22" rx="11" fill="#EDE6F5"/>
+      <text x="50" y="115" font-size="11" font-weight="700" fill="#6B4FA0" text-anchor="middle">Coach</text>
+      <text x="20" y="148" font-size="11" class="muted mono">claude-opus-4-7</text>
+      <text x="20" y="164" font-size="10" class="muted">last used 18m ago · $0.24 today</text>
+      <g transform="translate(280, 20)">
+        <rect width="40" height="20" rx="10" fill="#5BA46A"/>
+        <circle cx="30" cy="10" r="8" fill="#FFFFFF"/>
+      </g>
+    </g>
+
+    <g transform="translate(840, 200)">
+      <rect width="340" height="180" rx="14" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="20" y="48" font-size="36">🔍</text>
+      <text x="20" y="90" font-size="18" font-weight="700" class="txt">Code Reviewer</text>
+      <rect x="20" y="100" width="60" height="22" rx="11" fill="#EDE6F5"/>
+      <text x="50" y="115" font-size="11" font-weight="700" fill="#6B4FA0" text-anchor="middle">Coach</text>
+      <text x="20" y="148" font-size="11" class="muted mono">claude-sonnet-4-6</text>
+      <text x="20" y="164" font-size="10" class="muted">last used 1h ago · $0.11 today</text>
+    </g>
+
+    <g transform="translate(1200, 200)">
+      <rect width="340" height="180" rx="14" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="20" y="48" font-size="36">🎨</text>
+      <text x="20" y="90" font-size="18" font-weight="700" class="txt">UX Expert</text>
+      <rect x="20" y="100" width="60" height="22" rx="11" fill="#EDE6F5"/>
+      <text x="50" y="115" font-size="11" font-weight="700" fill="#6B4FA0" text-anchor="middle">Coach</text>
+      <text x="20" y="148" font-size="11" class="muted mono">claude-opus-4-7</text>
+      <text x="20" y="164" font-size="10" class="muted">last used 4h ago · $0.07 today</text>
+    </g>
+
+    <!-- Row 2 -->
+    <g transform="translate(120, 400)">
+      <rect width="340" height="180" rx="14" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="20" y="48" font-size="36">✅</text>
+      <text x="20" y="90" font-size="18" font-weight="700" class="txt">QA</text>
+      <rect x="20" y="100" width="78" height="22" rx="11" fill="#3B5B7A"/>
+      <text x="59" y="115" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Manager</text>
+      <text x="20" y="148" font-size="11" class="muted mono">claude-sonnet-4-6</text>
+      <text x="20" y="164" font-size="10" class="muted">last used 12m ago · $0.18 today</text>
+    </g>
+
+    <g transform="translate(480, 400)">
+      <rect width="340" height="180" rx="14" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="20" y="48" font-size="36">✍️</text>
+      <text x="20" y="90" font-size="18" font-weight="700" class="txt">Technical Writer</text>
+      <rect x="20" y="100" width="60" height="22" rx="11" fill="#EDE6F5"/>
+      <text x="50" y="115" font-size="11" font-weight="700" fill="#6B4FA0" text-anchor="middle">Coach</text>
+      <text x="20" y="148" font-size="11" class="muted mono">claude-haiku-4-5</text>
+      <text x="20" y="164" font-size="10" class="muted">last used 6h ago · $0.02 today</text>
+    </g>
+
+    <g transform="translate(840, 400)">
+      <rect width="340" height="180" rx="14" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="20" y="48" font-size="36">🛠️</text>
+      <text x="20" y="90" font-size="18" font-weight="700" class="txt">DevOps / SRE</text>
+      <rect x="20" y="100" width="78" height="22" rx="11" fill="#3B5B7A"/>
+      <text x="59" y="115" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Manager</text>
+      <text x="20" y="148" font-size="11" class="muted mono">claude-sonnet-4-6</text>
+      <text x="20" y="164" font-size="10" class="muted">last used 2d ago · $0.03 today</text>
+    </g>
+
+    <g transform="translate(1200, 400)">
+      <rect width="340" height="180" rx="14" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="20" y="48" font-size="36">🚢</text>
+      <text x="20" y="90" font-size="18" font-weight="700" class="txt">Deployment Engineer</text>
+      <rect x="20" y="100" width="78" height="22" rx="11" fill="#3B5B7A"/>
+      <text x="59" y="115" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Manager</text>
+      <text x="20" y="148" font-size="11" class="muted mono">claude-sonnet-4-6</text>
+      <text x="20" y="164" font-size="10" class="muted">idle · $0.00 today</text>
+    </g>
+
+    <!-- Row 3 -->
+    <g transform="translate(120, 600)">
+      <rect width="340" height="180" rx="14" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="20" y="48" font-size="36">🔒</text>
+      <text x="20" y="90" font-size="18" font-weight="700" class="txt">Security</text>
+      <rect x="20" y="100" width="78" height="22" rx="11" fill="#3B5B7A"/>
+      <text x="59" y="115" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Manager</text>
+      <text x="20" y="148" font-size="11" class="muted mono">claude-opus-4-7</text>
+      <text x="20" y="164" font-size="10" class="muted">last used 1h ago · $0.09 today</text>
+    </g>
+
+    <g transform="translate(480, 600)">
+      <rect width="340" height="180" rx="14" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="20" y="48" font-size="36">📚</text>
+      <text x="20" y="90" font-size="18" font-weight="700" class="txt">Documentarian</text>
+      <rect x="20" y="100" width="60" height="22" rx="11" fill="#EDE6F5"/>
+      <text x="50" y="115" font-size="11" font-weight="700" fill="#6B4FA0" text-anchor="middle">Coach</text>
+      <text x="20" y="148" font-size="11" class="muted mono">claude-sonnet-4-6</text>
+      <text x="20" y="164" font-size="10" class="muted">last used 30m ago · $0.04 today</text>
+    </g>
+
+    <g transform="translate(840, 600)">
+      <rect width="340" height="180" rx="14" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="20" y="48" font-size="36">👋</text>
+      <text x="20" y="90" font-size="18" font-weight="700" class="txt">Onboarder</text>
+      <rect x="20" y="100" width="60" height="22" rx="11" fill="#EDE6F5"/>
+      <text x="50" y="115" font-size="11" font-weight="700" fill="#6B4FA0" text-anchor="middle">Coach</text>
+      <text x="20" y="148" font-size="11" class="muted mono">claude-sonnet-4-6</text>
+      <text x="20" y="164" font-size="10" class="muted">never used · $0.00 today</text>
+    </g>
+
+    <!-- Add persona tile -->
+    <g transform="translate(1200, 600)" opacity="0.5">
+      <rect width="340" height="180" rx="14" fill="transparent" stroke="#6B6B6B" stroke-width="2" stroke-dasharray="8 6"/>
+      <text x="170" y="92" font-size="32" fill="#6B6B6B" text-anchor="middle">+</text>
+      <text x="170" y="120" font-size="13" font-weight="600" class="muted" text-anchor="middle">Add persona</text>
+    </g>
+  </g>
+
+  <!-- ================ EXPANDED PM CARD ================ -->
+  <g transform="translate(120, 200)" class="expanded">
+    <rect width="1420" height="720" rx="14" fill="#FFFFFF" stroke="#3B5B7A" stroke-width="2"/>
+    <!-- Header block -->
+    <g transform="translate(40, 40)">
+      <text x="0" y="40" font-size="48">📋</text>
+      <text x="68" y="28" font-size="24" font-weight="700" class="txt">Project Manager</text>
+      <rect x="68" y="40" width="78" height="22" rx="11" fill="#3B5B7A"/>
+      <text x="107" y="55" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle">Manager</text>
+      <text x="156" y="55" font-size="11" class="muted">Coach + mutation authority</text>
+    </g>
+
+    <!-- Close X -->
+    <g transform="translate(1360, 40)">
+      <rect width="32" height="32" rx="8" fill="#FAFAF7" stroke="#E5E0D5"/>
+      <line x1="10" y1="10" x2="22" y2="22" stroke="#6B6B6B" stroke-width="2"/>
+      <line x1="22" y1="10" x2="10" y2="22" stroke="#6B6B6B" stroke-width="2"/>
+    </g>
+
+    <!-- Personality -->
+    <g transform="translate(40, 140)">
+      <text y="16" font-size="11" font-weight="700" letter-spacing="0.8" fill="#2A4460">PERSONALITY</text>
+      <text y="42" font-size="14" class="txt" font-style="italic">Precise and economical. Doesn't over-explain; assumes the operator is sharp.</text>
+    </g>
+
+    <!-- Perspective -->
+    <g transform="translate(40, 210)">
+      <text y="16" font-size="11" font-weight="700" letter-spacing="0.8" fill="#2A4460">PERSPECTIVE</text>
+      <text y="42" font-size="14" class="txt">Coordination, dep-graph awareness, budget discipline, escalation triage.</text>
+    </g>
+
+    <!-- Purview -->
+    <g transform="translate(40, 280)">
+      <text y="16" font-size="11" font-weight="700" letter-spacing="0.8" fill="#2A4460">PURVIEW</text>
+      <rect x="0" y="30" width="600" height="40" rx="8" fill="#F5EFE0"/>
+      <text x="16" y="55" font-size="13" class="muted">none — PM is orchestrator, not domain-owner</text>
+    </g>
+
+    <!-- Skills -->
+    <g transform="translate(40, 380)">
+      <text y="16" font-size="11" font-weight="700" letter-spacing="0.8" fill="#2A4460">SKILLS · 12 OPT-INS</text>
+      <g transform="translate(0, 30)" font-size="11" class="mono">
+        <rect width="150" height="24" rx="6" fill="#EAF2FB"/><text x="10" y="16" fill="#2A4460" class="mono">epic_order</text>
+        <g transform="translate(160,0)"><rect width="160" height="24" rx="6" fill="#EAF2FB"/><text x="10" y="16" fill="#2A4460" class="mono">parallel_safety</text></g>
+        <g transform="translate(330,0)"><rect width="130" height="24" rx="6" fill="#EAF2FB"/><text x="10" y="16" fill="#2A4460" class="mono">scope_trim</text></g>
+        <g transform="translate(470,0)"><rect width="160" height="24" rx="6" fill="#EAF2FB"/><text x="10" y="16" fill="#2A4460" class="mono">epic_decompose</text></g>
+        <g transform="translate(640,0)"><rect width="140" height="24" rx="6" fill="#EAF2FB"/><text x="10" y="16" fill="#2A4460" class="mono">epic_merge</text></g>
+        <g transform="translate(790,0)"><rect width="180" height="24" rx="6" fill="#EAF2FB"/><text x="10" y="16" fill="#2A4460" class="mono">escalation_triage</text></g>
+      </g>
+      <g transform="translate(0, 62)" font-size="11" class="mono">
+        <rect width="180" height="24" rx="6" fill="#EAF2FB"/><text x="10" y="16" fill="#2A4460" class="mono">workspace_priority</text>
+        <g transform="translate(190,0)"><rect width="150" height="24" rx="6" fill="#EAF2FB"/><text x="10" y="16" fill="#2A4460" class="mono">budget_replan</text></g>
+        <g transform="translate(350,0)"><rect width="150" height="24" rx="6" fill="#EAF2FB"/><text x="10" y="16" fill="#2A4460" class="mono">what_remains</text></g>
+        <g transform="translate(510,0)"><rect width="170" height="24" rx="6" fill="#EAF2FB"/><text x="10" y="16" fill="#2A4460" class="mono">add_to_backlog</text></g>
+        <g transform="translate(690,0)"><rect width="140" height="24" rx="6" fill="#EAF2FB"/><text x="10" y="16" fill="#2A4460" class="mono">change_this</text></g>
+        <g transform="translate(840,0)"><rect width="200" height="24" rx="6" fill="#EAF2FB"/><text x="10" y="16" fill="#2A4460" class="mono">dispatch_readiness</text></g>
+      </g>
+    </g>
+
+    <!-- Budget -->
+    <g transform="translate(40, 520)">
+      <text y="16" font-size="11" font-weight="700" letter-spacing="0.8" fill="#2A4460">BUDGET POLICY</text>
+      <text y="42" font-size="13" class="txt">$0.25/invocation cap · $20/day cap · separate from sprint budget</text>
+    </g>
+
+    <!-- Edit + TOML buttons -->
+    <g transform="translate(40, 620)">
+      <rect width="140" height="44" rx="10" fill="#3B5B7A"/>
+      <text x="70" y="28" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Edit</text>
+      <g transform="translate(160, 0)">
+        <rect width="200" height="44" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="100" y="28" font-size="14" font-weight="600" fill="#2A4460" text-anchor="middle">Open TOML…</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Cursor -->
+  <g class="cursor">
+    <path d="M0 0 L0 18 L5 14 L8 20 L10 19 L7 13 L13 13 Z"
+          fill="#2B2B2B" stroke="#FFFFFF" stroke-width="1"/>
+  </g>
+
+  <!-- Caption -->
+  <g transform="translate(120, 1160)">
+    <text font-size="12" class="mono muted">// Click PM card → expand PPPP config (personality, perspective, purview) · 4s loop</text>
+  </g>
+</svg>

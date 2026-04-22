@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <title>Animated: drag mk-e5 into parallel group A; Execute all Staged button enables with updated cost. 4s loop.</title>
+  <defs>
+    <style>
+      .txt { fill: #2B2B2B; }
+      .muted { fill: #6B6B6B; }
+      .mono { font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace; }
+
+      @keyframes dragcard {
+        0%,15%   { transform: translate(0,0) scale(1); }
+        20%      { transform: translate(0,0) scale(1.03); }
+        25%,30%  { transform: translate(0,0) scale(1.03); }
+        60%      { transform: translate(0, -200px) scale(1.03); }
+        70%      { transform: translate(0, -200px) scale(1); }
+        72%,92%  { transform: translate(0, -200px) scale(1); }
+        100%     { transform: translate(0,0) scale(1); }
+      }
+      @keyframes cursor {
+        0%,15%  { transform: translate(630px, 700px); }
+        25%     { transform: translate(630px, 700px) scale(0.9); }
+        60%     { transform: translate(630px, 500px) scale(0.9); }
+        70%     { transform: translate(630px, 500px) scale(1); }
+        100%    { transform: translate(630px, 500px) scale(1); }
+      }
+      @keyframes ghostshow {
+        0%,17%  { opacity: 0; }
+        20%,60% { opacity: 0.35; }
+        65%,100% { opacity: 0; }
+      }
+      @keyframes groupA-expand {
+        0%,55%   { height: 180px; }
+        60%,100% { height: 280px; }
+      }
+      @keyframes btnold {
+        0%,62%   { opacity: 1; }
+        64%,100% { opacity: 0; }
+      }
+      @keyframes btnnew {
+        0%,62%   { opacity: 0; }
+        64%,100% { opacity: 1; }
+      }
+
+      .dragcard { animation: dragcard 4s ease-in-out infinite; }
+      .cursor   { animation: cursor 4s ease-in-out infinite; }
+      .ghost    { animation: ghostshow 4s ease-in-out infinite; }
+      .groupA   { animation: groupA-expand 4s ease-in-out infinite; }
+      .btn-old  { animation: btnold 4s steps(1) infinite; }
+      .btn-new  { animation: btnnew 4s steps(1) infinite; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .dragcard, .cursor, .ghost, .groupA, .btn-old, .btn-new { animation: none; }
+        .ghost { opacity: 0; }
+        .btn-old { opacity: 0; }
+        .btn-new { opacity: 1; }
+      }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1200" fill="#FAFAF7"/>
+
+  <!-- Top bar -->
+  <rect x="0" y="0" width="1920" height="56" fill="#FFFFFF"/>
+  <line x1="0" y1="56" x2="1920" y2="56" stroke="#E5E0D5" stroke-width="1"/>
+  <g transform="translate(60,16)">
+    <rect width="140" height="24" rx="6" fill="#F5EFE0" stroke="#E5E0D5"/>
+    <text x="12" y="17" class="txt" font-size="13" font-weight="600">marker</text>
+  </g>
+
+  <!-- Page title -->
+  <text x="120" y="120" font-size="28" font-weight="700" class="txt">Plan</text>
+  <text x="120" y="148" font-size="13" class="muted">Stage Epics for the next batch · verify parallel-safety before launching</text>
+
+  <!-- Execute All Staged button (old + new states) -->
+  <g transform="translate(1560, 100)" class="btn-old">
+    <rect width="300" height="52" rx="10" fill="#3B5B7A"/>
+    <text x="150" y="26" font-size="15" font-weight="700" fill="#FFFFFF" text-anchor="middle">Execute all Staged</text>
+    <text x="150" y="44" font-size="11" fill="#C9D5E3" text-anchor="middle">1 epic · ~60k tokens · ~$1.20</text>
+  </g>
+  <g transform="translate(1560, 100)" class="btn-new">
+    <rect width="300" height="52" rx="10" fill="#2A4460"/>
+    <text x="150" y="26" font-size="15" font-weight="700" fill="#FFFFFF" text-anchor="middle">Execute all Staged</text>
+    <text x="150" y="44" font-size="11" fill="#C9D5E3" text-anchor="middle">2 epics · ~102k tokens · ~$2.04</text>
+  </g>
+
+  <!-- Parallel Group A cluster -->
+  <g transform="translate(120, 200)">
+    <rect width="1360" height="180" rx="14" fill="transparent" stroke="#A4874D" stroke-width="2" stroke-dasharray="8 6" class="groupA"/>
+    <text x="20" y="32" font-size="14" font-weight="700" fill="#2A4460">Parallel Group A</text>
+    <g transform="translate(140, 18)">
+      <circle cx="10" cy="10" r="10" fill="#C9A878" stroke="#A4874D"/>
+      <text x="10" y="15" font-size="12" font-weight="700" fill="#2A4460" text-anchor="middle">A</text>
+    </g>
+    <text x="168" y="32" font-size="11" class="muted">can run concurrently · no file-space overlap</text>
+
+    <!-- mk-e3 (Staged, currently in group A) -->
+    <g transform="translate(30, 64)">
+      <rect width="420" height="94" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <rect x="0" y="0" width="4" height="94" rx="2" fill="#3B82C9"/>
+      <text x="20" y="26" font-size="12" class="mono muted">mk-e3</text>
+      <text x="20" y="48" font-size="15" font-weight="700" class="txt">CLI (marker binary)</text>
+      <text x="20" y="70" font-size="11" class="muted">Staged · P1 · 4/4 ready · ~60k tokens</text>
+      <text x="20" y="86" font-size="10" class="muted mono">file space: cmd/marker/*</text>
+      <g transform="translate(390, 12)">
+        <circle cx="10" cy="10" r="10" fill="#C9A878" stroke="#A4874D"/>
+        <text x="10" y="14" font-size="11" font-weight="700" fill="#2A4460" text-anchor="middle">A</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Drop zone ghost (inside group A, appearing mid-drag) -->
+  <g transform="translate(590, 264)" class="ghost">
+    <rect width="420" height="94" rx="10" fill="none" stroke="#3B5B7A" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <text x="210" y="52" font-size="12" class="muted" text-anchor="middle">drop mk-e5 here</text>
+  </g>
+
+  <!-- Parallel Group B cluster (source) -->
+  <g transform="translate(120, 500)">
+    <rect width="1360" height="180" rx="14" fill="transparent" stroke="#C0B5A0" stroke-width="2" stroke-dasharray="8 6"/>
+    <text x="20" y="32" font-size="14" font-weight="700" fill="#6B6B6B">Parallel Group B</text>
+    <text x="180" y="32" font-size="11" class="muted">eligible to promote into Group A (or remain as its own group)</text>
+
+    <!-- mk-e5 placeholder (ghost, animated card comes from this position) -->
+    <g transform="translate(30, 64)" class="ghost">
+      <rect width="420" height="94" rx="10" fill="none" stroke="#C0B5A0" stroke-width="1.5" stroke-dasharray="6 4"/>
+    </g>
+  </g>
+
+  <!-- ANIMATED CARD: mk-e5 starts at (150, 564) -->
+  <g transform="translate(150, 564)">
+    <g class="dragcard">
+      <rect x="4" y="4" width="420" height="94" rx="10" fill="rgba(42,68,96,0.12)"/>
+      <rect width="420" height="94" rx="10" fill="#FFFFFF" stroke="#3B5B7A" stroke-width="1.5"/>
+      <rect x="0" y="0" width="4" height="94" rx="2" fill="#3B82C9"/>
+      <text x="20" y="26" font-size="12" class="mono muted">mk-e5</text>
+      <text x="20" y="48" font-size="15" font-weight="700" class="txt">Full-text search</text>
+      <text x="20" y="70" font-size="11" class="muted">Next Up · P1 · 3/3 ready · ~42k tokens</text>
+      <text x="20" y="86" font-size="10" class="muted mono">file space: internal/search/*</text>
+    </g>
+  </g>
+
+  <!-- Not-parallel-safe row -->
+  <g transform="translate(120, 740)">
+    <rect width="1360" height="120" rx="14" fill="transparent" stroke="#E5E0D5" stroke-width="1" opacity="0.6"/>
+    <text x="20" y="28" font-size="13" font-weight="700" class="muted">Not parallel-safe with A (file-space overlap)</text>
+
+    <g transform="translate(30, 44)">
+      <rect width="420" height="66" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <rect x="0" y="0" width="4" height="66" rx="2" fill="#3B82C9"/>
+      <text x="20" y="24" font-size="12" class="mono muted">mk-e4</text>
+      <text x="20" y="44" font-size="13" font-weight="600" class="txt">Browser extension</text>
+      <text x="20" y="60" font-size="10" class="muted mono">shares file space with mk-e2 — Web UI</text>
+    </g>
+  </g>
+
+  <!-- Cost preview banner -->
+  <g transform="translate(120, 900)">
+    <rect width="1360" height="54" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <text x="20" y="32" font-size="13" class="muted">Total cost estimate ·</text>
+    <g class="btn-old">
+      <text x="200" y="32" font-size="13" font-weight="700" class="txt">$1.20 · ~60k tokens · ~1h 20m wall-clock</text>
+    </g>
+    <g class="btn-new">
+      <text x="200" y="32" font-size="13" font-weight="700" class="txt">$2.04 · ~102k tokens · ~2h 20m wall-clock</text>
+    </g>
+  </g>
+
+  <!-- Cursor -->
+  <g class="cursor">
+    <path d="M0 0 L0 18 L5 14 L8 20 L10 19 L7 13 L13 13 Z"
+          fill="#2B2B2B" stroke="#FFFFFF" stroke-width="1"/>
+  </g>
+
+  <!-- Caption -->
+  <g transform="translate(120, 1160)">
+    <text font-size="12" class="mono muted">// Drag mk-e5 → Parallel Group A · cost + Execute-all button update · 4s loop</text>
+  </g>
+</svg>
