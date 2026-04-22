@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gemba UI Mockups · Marker example project</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --navy: #3B5B7A;
+    --navy-700: #2A4460;
+    --tan: #C9A878;
+    --tan-100: #F5EFE0;
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --text: #2B2B2B;
+    --muted: #6B6B6B;
+    --border: #E5E0D5;
+    --purple: #8B6FB3;
+    --green: #5A9E6F;
+    --red: #C84747;
+    --yellow: #D4A437;
+    --blue: #3B82C9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1A1F24;
+      --surface: #232A31;
+      --text: #E8E6E0;
+      --muted: #9A958A;
+      --border: #3A4149;
+      --tan-100: #3A342B;
+      --navy: #7FA3C3;
+      --navy-700: #A8C4DC;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  header.site {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 48px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+  }
+  header.site h1 {
+    margin: 0 0 4px;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  header.site .sub {
+    color: var(--muted);
+    font-size: 13px;
+  }
+  header.site .sub code {
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    background: var(--tan-100);
+    color: var(--navy-700);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  nav.strip {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  nav.strip a {
+    display: inline-block;
+    padding: 6px 12px;
+    background: var(--tan-100);
+    color: var(--navy-700);
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid transparent;
+  }
+  nav.strip a:hover {
+    border-color: var(--navy);
+  }
+
+  main {
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 32px 48px 64px;
+  }
+
+  section.screen {
+    margin-bottom: 80px;
+    scroll-margin-top: 140px;
+  }
+
+  section.screen h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+  }
+  section.screen .purpose {
+    color: var(--muted);
+    font-size: 15px;
+    margin: 0 0 24px;
+  }
+
+  .svg-frame {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(42,68,96,0.06);
+  }
+  .svg-frame object {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .commentary {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+    margin-top: 20px;
+  }
+  @media (max-width: 900px) {
+    .commentary { grid-template-columns: 1fr; }
+  }
+  .commentary p {
+    margin: 0 0 12px;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .refs h4 {
+    margin: 0 0 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+  }
+  .refs ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .refs li {
+    font-size: 13px;
+    padding: 2px 0;
+    color: var(--muted);
+  }
+  .refs code {
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    background: var(--tan-100);
+    color: var(--navy-700);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  footer {
+    margin-top: 48px;
+    padding: 32px 48px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <h1>Gemba UI Mockups · Marker example project</h1>
+  <p class="sub">Generated 2026-04-22 · Five-screen set · Rendered against <code>ui-spec.md</code> + <code>product-description.md</code></p>
+  <nav class="strip">
+    <a href="#s1">1 · The Gemba</a>
+    <a href="#s2">2 · Gemba walk</a>
+    <a href="#s3">3 · Epic drawer</a>
+    <a href="#s4">4 · Plan view</a>
+    <a href="#s5">5 · Persona roster</a>
+  </nav>
+</header>
+
+<main>
+
+<section class="screen" id="s1">
+  <h2>1 · The Gemba — home / Epic Kanban</h2>
+  <p class="purpose">The factory-floor view. Six columns, cards-are-Epics, drag-to-stage as primary action.</p>
+  <div class="svg-frame"><object data="01-gemba-board.svg" type="image/svg+xml" aria-label="Gemba Board mockup"></object></div>
+  <div class="commentary">
+    <div>
+      <p>
+        The Gemba is the home screen: a six-column Epic Kanban (<strong>Backlog → Next Up → Staged → In Progress → Done → Canceled</strong>) rendered with the Marker project's 8 Epics. Sidebar is collapsed by default on the Board to maximise the Gemba view (§4.1). The yellow active-walk banner across the top announces the in-progress Gemba walk without occupying chrome permanently.
+      </p>
+      <p>
+        <strong>Primary interaction rendered:</strong> the operator is mid-drag on <code>mk-e4</code> (browser extension), pulling it from Next Up toward a dashed ghost outline in Staged. A card ghost follows the cursor. Per §4.5 the drop is nonce-gated in supervised mode; the ghost copy reads "Drop to Stage · nonce-gated · supervised mode" so the mutation surface is honest about its confirmation path.
+      </p>
+      <p>
+        Epic cards (§4.2) show priority stripe, title, readiness counts, token-budget gauge (on <code>mk-e2</code> at 62%, amber), parallel-group glyph (A on <code>mk-e2</code> and <code>mk-e3</code>), escalation dot on <code>mk-e6</code>, and the purview-violation yellow-outlined dot on <code>mk-e8</code>. The PM panel at the bottom is in its default context-sensitive state, with quick-action buttons scoped to Board ("Recommend order", "What remains", "Trim to budget", "Dispatch readiness"). Advisor cost is displayed separately from agent cost in the top-bar budget gauge per the `gm-e11.2` separation.
+      </p>
+    </div>
+    <div class="refs">
+      <h4>UI SPEC REFERENCES</h4>
+      <ul>
+        <li>§2.1-2.4 application shell, top bar, PM panel</li>
+        <li>§4.1-4.5 the Gemba layout + interactions</li>
+        <li>§3.1-3.3 vocabulary (Epic, Stage, Start, Defer)</li>
+        <li>§6.2 supervised-mode confirmation UX</li>
+        <li>§7.1 always-on chrome elements</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s2">
+  <h2>2 · Gemba walk — active decisioning</h2>
+  <p class="purpose">Two-pane agenda + chat. PM frames an adaptor-degraded escalation; operator ratifies.</p>
+  <div class="svg-frame"><object data="02-gemba-walk.svg" type="image/svg+xml" aria-label="Gemba walk mockup"></object></div>
+  <div class="commentary">
+    <div>
+      <p>
+        The walk is 6 minutes in. Agenda-left (§5.4) is a mini-kanban (<strong>Queued · Active · Decided · Deferred</strong>) with five items seeded from the workspace's escalation sources: two decided (a <code>stale_session</code> Witness escalation and a PM HITL question about Sprint placement), one active (the <code>mk-e6</code> Pocket API v1 deprecation, highlighted), two queued (a Security Purview violation and a user-added review item).
+      </p>
+      <p>
+        Chat-right shows PM framing three options, with volunteered perspectives surfacing <em>inset quote-style</em> (Architect Coach, Deployment Engineer Manager dormant-Purview, Documentarian Coach) — not as separate messages, per §5.4. A "2 more perspectives collapsed · expand all" hint lets the operator see QA and Security inputs on demand. Suggested actions below (<strong>Ratify (a) · Ratify (b) · Modify · Reject · Defer</strong>) match the ratified walk-decision verbs (§3.5).
+      </p>
+      <p>
+        <strong>Primary interaction rendered:</strong> the operator hovers "Ratify (a): Update mk-e6 to v2" — the primary CTA is navy-filled, amber-ringed in focus, with a tooltip clarifying nonce-gating under supervised mode. Cost accumulation ($0.04 this walk · 6m elapsed) is visible in the PM panel header at bottom — the panel is hijacked as the walk chat surface per §2.4, with its input ready for in-walk replies.
+      </p>
+    </div>
+    <div class="refs">
+      <h4>UI SPEC REFERENCES</h4>
+      <ul>
+        <li>§5.4 Gemba walk layout (agenda + chat panes)</li>
+        <li>§3.5 walk verbs (Ratify / Modify / Reject / Defer)</li>
+        <li>§2.4 PM panel walk-takeover</li>
+        <li>§6.6 walk keyboard shortcuts (R/M/X/D)</li>
+        <li>§7.2 persona invocation feedback (typing indicator)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <h2>3 · Epic drawer — drill into mk-e2</h2>
+  <p class="purpose">Right-side overlay on dimmed Board. Mini-kanban with stage swimlanes.</p>
+  <div class="svg-frame"><object data="03-epic-drawer.svg" type="image/svg+xml" aria-label="Epic drawer mockup"></object></div>
+  <div class="commentary">
+    <div>
+      <p>
+        Double-clicking <code>mk-e2</code> on the Board opens its drawer (§5.6): a 40%-viewport-width overlay with the Board dimmed behind it. The drawer header carries the In Progress state pill, P0 priority badge, the <strong>A</strong> parallel-group glyph, and the actions toolbar (<strong>Stage / Start / Complete</strong> — <em>dimmed because the Epic isn't Review-complete yet</em> — <strong>Defer / Split / Merge / Add member / Open in graph</strong>).
+      </p>
+      <p>
+        The primary surface is a mini-kanban with four thin columns (<strong>Ready / In Progress / Review / Done</strong>) sliced by <strong>stage swimlanes</strong> — Stage 0 Scaffolding (<code>mk-e2.1</code>, <code>mk-e2.2</code> done), Stage 1 Feature Surfaces (<code>mk-e2.3</code>, <code>mk-e2.4</code>, <code>mk-e2.5</code> in progress, with worker names obsidian/jasper/onyx), Stage 2 Polish (<code>mk-e2.6</code>, <code>mk-e2.7</code> ready). <code>mk-e2.4</code> renders with the amber stale indicator per §6.5.
+      </p>
+      <p>
+        <strong>Primary interaction rendered:</strong> the operator hovers the stale dot, revealing a dark popover with the three Witness-triaged options: <strong>Restart worker</strong> (primary) / <strong>Peek session</strong> / <strong>Escalate to Gemba walk</strong>. Tabs below the mini-kanban (Description active, DoD / Activity / Comments queued) plus right-aligned metadata chips (3 comments · 2 evidence · 8 events) preview drill-down depth without cluttering the primary surface.
+      </p>
+    </div>
+    <div class="refs">
+      <h4>UI SPEC REFERENCES</h4>
+      <ul>
+        <li>§5.6 Epic drawer layout + actions toolbar</li>
+        <li>§6.1 drawer vs modal vs page</li>
+        <li>§3.3 transition verbs (Stage / Start / Complete)</li>
+        <li>§6.5 error / stale state surfacing</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s4">
+  <h2>4 · Plan view — staging surface</h2>
+  <p class="purpose">Pick what runs next and in what parallel group. Drag-between-clusters scope toggle.</p>
+  <div class="svg-frame"><object data="04-plan-view.svg" type="image/svg+xml" aria-label="Plan view mockup"></object></div>
+  <div class="commentary">
+    <div>
+      <p>
+        Plan (§5.1) is the batch-launch surface. Sidebar is expanded (it's not the Board, §2.2). The <strong>Execute all Staged</strong> primary button carries a "2 epics · ~$2.40" sub-badge; the cost-preview row below quantifies spend (~142k tokens · ~3h wall-clock · share-of-sprint-budget stacked bar).
+      </p>
+      <p>
+        Staged work is clustered by parallel group: <strong>Group A</strong> (blue outline, parallel safety verified) contains <code>mk-e3</code> (CLI, Staged) and <code>mk-e2</code> (Web UI, already running — rendered with an inset "running now" blue pill and live-spend readout). <strong>Group B</strong> (tan dashed outline, "eligible to merge into A") contains <code>mk-e5</code>. Below those, a red-X cluster marks <strong>Not parallel-safe with A</strong> — <code>mk-e4</code> (Browser extension) is gated because its file signature overlaps <code>cmd/marker/*</code> with <code>mk-e3</code>.
+      </p>
+      <p>
+        <strong>Primary interaction rendered:</strong> the operator drags <code>mk-e5</code> by its handle out of Group B toward Group A. A ghost row follows the cursor with a <strong>Join Group A</strong> affirmation chip, and the Group B source row is dimmed with "dragging to group A…" italic annotation. Bottom-of-view "Next candidates" previews <code>mk-e7</code> (Backlog, not-yet-stageable) with a "Stage when ready — needs DoD review" guidance per the "Every Epic requires DoD before Start" guardrail.
+      </p>
+    </div>
+    <div class="refs">
+      <h4>UI SPEC REFERENCES</h4>
+      <ul>
+        <li>§5.1 Plan view layout</li>
+        <li>§2.2 sidebar expanded on non-Board surfaces</li>
+        <li>§4.5 drag interactions + parallel-group semantics</li>
+        <li>§3.3 Stage verb + cost preview pattern</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <h2>5 · Persona roster — Coaches &amp; Managers</h2>
+  <p class="purpose">11 configured personas. PM card expanded showing PPPP + skills + budget.</p>
+  <div class="svg-frame"><object data="05-persona-roster.svg" type="image/svg+xml" aria-label="Persona roster mockup"></object></div>
+  <div class="commentary">
+    <div>
+      <p>
+        The roster (§5.5) renders as a grid of 4-wide persona cards across 3 rows (plus one empty placeholder for the 12th slot and a "Browse Packs" anchor). Each closed-state card shows the icon, role name, <strong>variety badge</strong> (purple for Coach, navy for Manager — per §1.2's reserved semantics and §3.4 Ask/Consult distinction), the enabled toggle, and the currently-configured model tucked into the metadata line.
+      </p>
+      <p>
+        <strong>Primary interaction rendered:</strong> the Project Manager card is selected (navy-outlined, caret pointing down) and its <em>expanded drawer</em> is pinned below the grid with a connector arrow. The drawer surfaces the four PPPP axes ratified by <code>gm-9rv</code> / <code>gm-uf7</code>: <strong>Personality</strong> ("Precise and economical..."), <strong>Perspective</strong> ("Coordination, dep-graph awareness..."), <strong>Purview</strong> explicitly rendered as "(none — PM is orchestrator, not domain-owner)" with an INVARIANT reminder — PM never gates transitions. A Prompt Preview block ships the top-layer value injections (§3.8).
+      </p>
+      <p>
+        The right column lists the 12 opt-in Skills (with an "+ add skill" affordance), the Budget Policy ($0.25/invocation · $20/day caps, 3.7% cap-pressure), and Context Providers (5 of 7 opted in — <code>code_summary</code> and <code>call_graph</code> available but off, per persona-level opt-in). The operator's cursor is hovering the navy <strong>Edit</strong> button, which per §5.5 opens a modal TOML editor over <code>.gemba/personas/pm.toml</code> (tooltip confirms the target path). The footer aggregates: 11 personas · 6 Coaches · 5 Managers · $1.51 advisor spend today · CTO pack active.
+      </p>
+    </div>
+    <div class="refs">
+      <h4>UI SPEC REFERENCES</h4>
+      <ul>
+        <li>§5.5 persona roster grid + drawer + TOML modal</li>
+        <li>§1.2 Coach (purple) / Manager (navy) color semantics</li>
+        <li>§3.4 Ask / Consult action verbs</li>
+        <li>§3.8 values injection at top prompt layer</li>
+        <li>§8.2 pack management</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Five-screen set deliberately bounded · Additional surfaces (Retakes lane, Session history timeline, Lease dashboard, Insights, Graph, Capability browser, QA Health/Gates, Checkpoints, Bootstrap, Project Config, Pack browser, Worker session detail) deferred to v1.1 per <code style="font-family:'JetBrains Mono',monospace">ui-spec.md §5.19</code>.
+</footer>
+
+</body>
+</html>

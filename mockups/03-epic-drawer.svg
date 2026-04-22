@@ -1,0 +1,341 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <title>Epic drawer — mk-e2 Web UI. Mini-kanban with stage swimlanes over a dimmed Board.</title>
+  <defs>
+    <style>
+      .txt { fill: #2B2B2B; }
+      .muted { fill: #6B6B6B; }
+      .mono { font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', 'Consolas', monospace; }
+    </style>
+  </defs>
+
+  <rect width="1920" height="1200" fill="#FAFAF7"/>
+
+  <!-- ====== DIMMED BOARD BACKGROUND (30% opacity) ====== -->
+  <g id="board-dimmed" opacity="0.3">
+    <!-- simplified top bar -->
+    <rect width="1920" height="56" fill="#FFFFFF"/>
+    <line x1="0" y1="56" x2="1920" y2="56" stroke="#E5E0D5"/>
+    <rect x="0" y="56" width="1920" height="36" fill="#FFF6D6"/>
+    <line x1="0" y1="92" x2="1920" y2="92" stroke="#D4A437"/>
+    <!-- sidebar -->
+    <rect x="0" y="92" width="56" height="1108" fill="#F5EFE0"/>
+    <!-- column headers -->
+    <g font-size="13" font-weight="700" fill="#2B2B2B" transform="translate(0,152)">
+      <g transform="translate(72,0)"><rect width="300" height="32" rx="8" fill="#F0EAE0"/><text x="14" y="21">Backlog</text></g>
+      <g transform="translate(378,0)"><rect width="300" height="32" rx="8" fill="#F0EAE0"/><text x="14" y="21">Next Up</text></g>
+      <g transform="translate(684,0)"><rect width="300" height="32" rx="8" fill="#EAF2FB"/><text x="14" y="21">Staged</text></g>
+      <g transform="translate(990,0)"><rect width="300" height="32" rx="8" fill="#EAF2FB"/><text x="14" y="21">In Progress</text></g>
+      <g transform="translate(1296,0)"><rect width="300" height="32" rx="8" fill="#E7F1EA"/><text x="14" y="21">Done</text></g>
+      <g transform="translate(1602,0)"><rect width="300" height="32" rx="8" fill="#F5EFE0"/><text x="14" y="21">Canceled</text></g>
+    </g>
+    <!-- placeholder cards -->
+    <g fill="#FFFFFF" stroke="#E5E0D5">
+      <rect x="72" y="196" width="300" height="110" rx="12"/>
+      <rect x="72" y="316" width="300" height="80" rx="12"/>
+      <rect x="72" y="406" width="300" height="110" rx="12"/>
+      <rect x="378" y="196" width="300" height="100" rx="12"/>
+      <rect x="378" y="306" width="300" height="100" rx="12"/>
+      <rect x="684" y="196" width="300" height="130" rx="12"/>
+      <rect x="990" y="196" width="300" height="160" rx="12"/>
+      <rect x="1296" y="196" width="300" height="130" rx="12"/>
+    </g>
+    <!-- Scrim -->
+    <rect width="1920" height="1200" fill="#1A2430" opacity="0.25"/>
+  </g>
+
+  <!-- ====== DRAWER ====== -->
+  <g id="drawer">
+    <!-- Drawer frame (right side, 768 wide = 40%) -->
+    <rect x="1152" y="0" width="768" height="1200" fill="#FFFFFF"/>
+    <!-- subtle shadow on left edge -->
+    <rect x="1144" y="0" width="8" height="1200" fill="url(#shadow)"/>
+    <defs>
+      <linearGradient id="shadow" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#2A4460" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#2A4460" stop-opacity="0.12"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Drawer header -->
+    <g transform="translate(1176,28)">
+      <text x="0" y="14" class="muted mono" font-size="11" font-weight="600">mk-e2  ·  Epic</text>
+      <text x="0" y="44" class="txt" font-size="22" font-weight="700">Web UI (Next.js + Tailwind)</text>
+      <g transform="translate(0,56)">
+        <!-- state pill -->
+        <rect width="96" height="22" rx="11" fill="#EAF2FB" stroke="#3B82C9"/>
+        <circle cx="12" cy="11" r="3.5" fill="#3B82C9"/>
+        <text x="20" y="15" fill="#2A4460" font-size="11" font-weight="600">In Progress</text>
+
+        <!-- priority -->
+        <g transform="translate(104,0)">
+          <rect width="40" height="22" rx="6" fill="#FBE8E8" stroke="#C84747"/>
+          <text x="20" y="15" fill="#8B3030" font-size="11" font-weight="700" text-anchor="middle">P0</text>
+        </g>
+
+        <!-- parallel group A -->
+        <g transform="translate(152,0)">
+          <rect width="96" height="22" rx="11" fill="#EAF2FB" stroke="#3B82C9"/>
+          <circle cx="14" cy="11" r="7" fill="#3B82C9"/>
+          <text x="14" y="15" fill="#FFFFFF" font-size="10" font-weight="700" text-anchor="middle">A</text>
+          <text x="26" y="15" fill="#2A4460" font-size="11" font-weight="600">parallel group</text>
+        </g>
+
+        <!-- labels -->
+        <g transform="translate(256,0)">
+          <rect width="56" height="22" rx="6" fill="#F5EFE0"/>
+          <text x="28" y="15" fill="#6B4A1A" font-size="11" font-weight="600" text-anchor="middle">frontend</text>
+        </g>
+        <g transform="translate(320,0)">
+          <rect width="44" height="22" rx="6" fill="#F5EFE0"/>
+          <text x="22" y="15" fill="#6B4A1A" font-size="11" font-weight="600" text-anchor="middle">web</text>
+        </g>
+      </g>
+
+      <!-- Close X -->
+      <g transform="translate(700,4)">
+        <rect width="28" height="28" rx="6" fill="transparent"/>
+        <path d="M8 8 L20 20 M20 8 L8 20" stroke="#6B6B6B" stroke-width="2"/>
+      </g>
+      <!-- collapse drawer chevron -->
+      <g transform="translate(668,4)">
+        <rect width="28" height="28" rx="6" fill="transparent"/>
+        <path d="M8 14 L14 8 L14 11 L22 11 L22 17 L14 17 L14 20 Z" fill="#6B6B6B"/>
+      </g>
+    </g>
+
+    <!-- Actions toolbar -->
+    <g transform="translate(1176,120)">
+      <rect width="720" height="48" rx="10" fill="#FAFAF7" stroke="#E5E0D5"/>
+      <g font-size="12" font-weight="600">
+        <g transform="translate(10,8)">
+          <rect width="66" height="32" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+          <text x="33" y="20" class="txt" text-anchor="middle">Stage</text>
+        </g>
+        <g transform="translate(82,8)">
+          <rect width="66" height="32" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+          <text x="33" y="20" class="txt" text-anchor="middle">Start</text>
+        </g>
+        <g transform="translate(154,8)" opacity="0.5">
+          <rect width="82" height="32" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+          <text x="41" y="20" class="muted" text-anchor="middle">Complete</text>
+        </g>
+        <g transform="translate(242,8)">
+          <rect width="66" height="32" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+          <text x="33" y="20" class="txt" text-anchor="middle">Defer</text>
+        </g>
+        <g transform="translate(314,8)">
+          <rect width="52" height="32" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+          <text x="26" y="20" class="txt" text-anchor="middle">Split</text>
+        </g>
+        <g transform="translate(372,8)">
+          <rect width="62" height="32" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+          <text x="31" y="20" class="txt" text-anchor="middle">Merge</text>
+        </g>
+        <g transform="translate(440,8)">
+          <rect width="98" height="32" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+          <text x="49" y="20" class="txt" text-anchor="middle">+ member</text>
+        </g>
+        <g transform="translate(544,8)">
+          <rect width="116" height="32" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+          <text x="58" y="20" class="txt" text-anchor="middle">Open in graph</text>
+        </g>
+        <!-- kebab overflow -->
+        <g transform="translate(668,8)">
+          <rect width="42" height="32" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+          <circle cx="15" cy="16" r="1.8" fill="#6B6B6B"/>
+          <circle cx="21" cy="16" r="1.8" fill="#6B6B6B"/>
+          <circle cx="27" cy="16" r="1.8" fill="#6B6B6B"/>
+        </g>
+      </g>
+    </g>
+
+    <!-- ===== MINI-KANBAN with stage swimlanes ===== -->
+    <!-- Column headers -->
+    <g transform="translate(1176,188)" font-size="12" font-weight="700" fill="#2B2B2B">
+      <rect x="0" y="0" width="720" height="32" rx="6" fill="#F5EFE0"/>
+      <text x="94" y="20" text-anchor="middle">Ready</text>
+      <text x="274" y="20" text-anchor="middle">In Progress</text>
+      <text x="454" y="20" text-anchor="middle">Review</text>
+      <text x="634" y="20" text-anchor="middle">Done</text>
+      <!-- col dividers -->
+      <line x1="180" y1="0" x2="180" y2="544" stroke="#E5E0D5"/>
+      <line x1="360" y1="0" x2="360" y2="544" stroke="#E5E0D5"/>
+      <line x1="540" y1="0" x2="540" y2="544" stroke="#E5E0D5"/>
+    </g>
+
+    <!-- Swimlane: Stage 0 -->
+    <g transform="translate(1176,228)">
+      <rect x="0" y="0" width="720" height="28" fill="#F0EAE0" rx="4"/>
+      <text x="10" y="18" fill="#5A4519" font-size="11" font-weight="700" letter-spacing="0.5">STAGE 0  ·  SCAFFOLDING</text>
+      <text x="700" y="18" fill="#5A4519" font-size="11" font-weight="600" text-anchor="end">2/2 done</text>
+    </g>
+
+    <!-- Stage 0 Done: mk-e2.1, mk-e2.2 -->
+    <g transform="translate(1176,264)">
+      <!-- mk-e2.1 -->
+      <g transform="translate(548,0)">
+        <rect width="168" height="54" rx="8" fill="#F7FBF7" stroke="#D1E4D6"/>
+        <rect x="0" y="0" width="4" height="54" rx="2" fill="#5A9E6F"/>
+        <text x="12" y="18" class="mono muted" font-size="10" font-weight="600">mk-e2.1</text>
+        <text x="12" y="34" class="txt" font-size="12" font-weight="600">Next.js app scaffold</text>
+        <text x="12" y="48" class="muted" font-size="10">done · 2d ago</text>
+      </g>
+      <!-- mk-e2.2 -->
+      <g transform="translate(548,60)">
+        <rect width="168" height="54" rx="8" fill="#F7FBF7" stroke="#D1E4D6"/>
+        <rect x="0" y="0" width="4" height="54" rx="2" fill="#5A9E6F"/>
+        <text x="12" y="18" class="mono muted" font-size="10" font-weight="600">mk-e2.2</text>
+        <text x="12" y="34" class="txt" font-size="12" font-weight="600">Tailwind + shadcn setup</text>
+        <text x="12" y="48" class="muted" font-size="10">done · 1d ago</text>
+      </g>
+    </g>
+
+    <!-- Swimlane: Stage 1 -->
+    <g transform="translate(1176,388)">
+      <rect x="0" y="0" width="720" height="28" fill="#EAF2FB" rx="4"/>
+      <text x="10" y="18" fill="#2A4460" font-size="11" font-weight="700" letter-spacing="0.5">STAGE 1  ·  FEATURE SURFACES</text>
+      <text x="700" y="18" fill="#2A4460" font-size="11" font-weight="600" text-anchor="end">3 in progress</text>
+    </g>
+
+    <!-- Stage 1 In Progress -->
+    <g transform="translate(1176,424)">
+      <!-- mk-e2.3 -->
+      <g transform="translate(188,0)">
+        <rect width="168" height="80" rx="8" fill="#FFFFFF" stroke="#3B82C9"/>
+        <rect x="0" y="0" width="4" height="80" rx="2" fill="#3B82C9"/>
+        <text x="12" y="18" class="mono muted" font-size="10" font-weight="600">mk-e2.3</text>
+        <text x="12" y="34" class="txt" font-size="12" font-weight="600">BookmarkList</text>
+        <text x="12" y="48" class="txt" font-size="12" font-weight="600">component</text>
+        <circle cx="14" cy="64" r="4" fill="#3B5B7A"/>
+        <text x="22" y="68" class="muted" font-size="10">polecat <tspan class="mono" fill="#2A4460">obsidian</tspan></text>
+      </g>
+      <!-- mk-e2.4 (STALE) -->
+      <g transform="translate(188,86)">
+        <rect width="168" height="80" rx="8" fill="#FFFFFF" stroke="#D4A437" stroke-width="2"/>
+        <rect x="0" y="0" width="4" height="80" rx="2" fill="#D4A437"/>
+        <text x="12" y="18" class="mono muted" font-size="10" font-weight="600">mk-e2.4</text>
+        <text x="12" y="34" class="txt" font-size="12" font-weight="600">BookmarkDetail</text>
+        <text x="12" y="48" class="txt" font-size="12" font-weight="600">component</text>
+        <!-- Stale indicator -->
+        <g transform="translate(12,54)">
+          <circle cx="5" cy="10" r="5" fill="#D4A437"/>
+          <text x="5" y="13" fill="#FFFFFF" font-size="9" font-weight="700" text-anchor="middle">!</text>
+          <text x="15" y="14" fill="#8B6418" font-size="10" font-weight="600">stale · idle 14m</text>
+        </g>
+        <text x="12" y="74" class="muted" font-size="10">polecat <tspan class="mono" fill="#2A4460">jasper</tspan></text>
+      </g>
+      <!-- mk-e2.5 -->
+      <g transform="translate(188,172)">
+        <rect width="168" height="80" rx="8" fill="#FFFFFF" stroke="#3B82C9"/>
+        <rect x="0" y="0" width="4" height="80" rx="2" fill="#3B82C9"/>
+        <text x="12" y="18" class="mono muted" font-size="10" font-weight="600">mk-e2.5</text>
+        <text x="12" y="34" class="txt" font-size="12" font-weight="600">Search bar</text>
+        <circle cx="14" cy="64" r="4" fill="#3B5B7A"/>
+        <text x="22" y="68" class="muted" font-size="10">polecat <tspan class="mono" fill="#2A4460">onyx</tspan></text>
+      </g>
+    </g>
+
+    <!-- Swimlane: Stage 2 -->
+    <g transform="translate(1176,688)">
+      <rect x="0" y="0" width="720" height="28" fill="#F5EFE0" rx="4"/>
+      <text x="10" y="18" fill="#5A4519" font-size="11" font-weight="700" letter-spacing="0.5">STAGE 2  ·  POLISH</text>
+      <text x="700" y="18" fill="#5A4519" font-size="11" font-weight="600" text-anchor="end">2 ready</text>
+    </g>
+
+    <!-- Stage 2 Ready -->
+    <g transform="translate(1176,724)">
+      <g transform="translate(8,0)">
+        <rect width="168" height="60" rx="8" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <rect x="0" y="0" width="4" height="60" rx="2" fill="#6B6B6B"/>
+        <text x="12" y="18" class="mono muted" font-size="10" font-weight="600">mk-e2.6</text>
+        <text x="12" y="34" class="txt" font-size="12" font-weight="600">Keyboard navigation</text>
+        <text x="12" y="52" class="muted" font-size="10">ready · P1</text>
+      </g>
+      <g transform="translate(8,66)">
+        <rect width="168" height="60" rx="8" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <rect x="0" y="0" width="4" height="60" rx="2" fill="#6B6B6B"/>
+        <text x="12" y="18" class="mono muted" font-size="10" font-weight="600">mk-e2.7</text>
+        <text x="12" y="34" class="txt" font-size="12" font-weight="600">Empty states</text>
+        <text x="12" y="52" class="muted" font-size="10">ready · P1</text>
+      </g>
+    </g>
+
+    <!-- ===== TABS ===== -->
+    <g transform="translate(1176,880)">
+      <line x1="0" y1="32" x2="720" y2="32" stroke="#E5E0D5"/>
+      <g font-size="13" font-weight="600">
+        <!-- Description (active) -->
+        <g>
+          <text x="10" y="24" fill="#3B5B7A">Description</text>
+          <rect x="0" y="32" width="90" height="3" rx="1.5" fill="#3B5B7A"/>
+        </g>
+        <text x="110" y="24" class="muted">DoD</text>
+        <text x="160" y="24" class="muted">Activity</text>
+        <text x="230" y="24" class="muted">Comments</text>
+      </g>
+      <!-- Metadata chips right -->
+      <g transform="translate(460,4)" font-size="11">
+        <g>
+          <rect width="80" height="22" rx="6" fill="#F5EFE0"/>
+          <text x="10" y="15" fill="#6B4A1A" font-weight="600">💬 3 comments</text>
+        </g>
+        <g transform="translate(92,0)">
+          <rect width="86" height="22" rx="6" fill="#F5EFE0"/>
+          <text x="10" y="15" fill="#6B4A1A" font-weight="600">📎 2 evidence</text>
+        </g>
+        <g transform="translate(190,0)">
+          <rect width="70" height="22" rx="6" fill="#F5EFE0"/>
+          <text x="10" y="15" fill="#6B4A1A" font-weight="600">◷ 8 events</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- Description content -->
+    <g transform="translate(1176,932)">
+      <text x="0" y="16" class="txt" font-size="13" font-weight="400">
+        <tspan x="0" dy="0">Epic covers the browsable bookmark app UI: list, detail,</tspan>
+        <tspan x="0" dy="18">search, keyboard nav, and empty states. Tailwind + shadcn is</tspan>
+        <tspan x="0" dy="18">ratified as the component stack. Stage 0 is complete; Stage 1</tspan>
+        <tspan x="0" dy="18">is running 3-way in parallel group A.</tspan>
+      </text>
+
+      <g transform="translate(0,92)">
+        <text x="0" y="0" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">EPIC TOKEN BUDGET</text>
+        <rect x="0" y="8" width="540" height="8" rx="4" fill="#E5E0D5"/>
+        <rect x="0" y="8" width="334.8" height="8" rx="4" fill="#D4A437"/>
+        <text x="550" y="16" class="muted" font-size="11">62%  ·  ~87k / 140k</text>
+
+        <text x="0" y="42" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">ESTIMATED COMPLETION</text>
+        <text x="0" y="62" class="txt" font-size="13" font-weight="600">~4 hours wall-clock remaining  ·  $1.12 more spend</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ====== CURSOR ON STALE POPOVER ====== -->
+  <g id="cursor" transform="translate(1214,496)">
+    <!-- arrow pointing at mk-e2.4 stale dot -->
+    <path d="M0 0 L0 22 L6 17 L10 24 L13 22 L9 15 L17 15 Z" fill="#2B2B2B" stroke="#FFFFFF" stroke-width="1.2"/>
+    <!-- Popover -->
+    <g transform="translate(20,-10)">
+      <rect width="284" height="140" rx="10" fill="#2B2B2B"/>
+      <path d="M-8 14 L0 8 L0 20 Z" fill="#2B2B2B"/>
+      <text x="16" y="22" fill="#FFFFFF" font-size="12" font-weight="700">mk-e2.4 is stale</text>
+      <text x="16" y="40" fill="#B8B8B8" font-size="11">Worker <tspan class="mono" fill="#FFFFFF">jasper</tspan> idle 14m</text>
+      <line x1="16" y1="50" x2="268" y2="50" stroke="#444" />
+      <g font-size="12" font-weight="600">
+        <g transform="translate(12,58)">
+          <rect width="260" height="24" rx="4" fill="#3B5B7A"/>
+          <text x="130" y="16" fill="#FFFFFF" text-anchor="middle">Restart worker</text>
+        </g>
+        <g transform="translate(12,86)">
+          <rect width="260" height="24" rx="4" fill="transparent" stroke="#6B6B6B"/>
+          <text x="130" y="16" fill="#FFFFFF" text-anchor="middle">Peek session</text>
+        </g>
+        <g transform="translate(12,114)">
+          <rect width="260" height="22" rx="4" fill="transparent" stroke="#6B6B6B"/>
+          <text x="130" y="15" fill="#FFFFFF" text-anchor="middle">Escalate to Gemba walk</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

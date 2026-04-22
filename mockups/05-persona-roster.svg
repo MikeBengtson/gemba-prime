@@ -1,0 +1,588 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <title>Persona roster — 11 personas, Project Manager card expanded with drawer content visible.</title>
+  <defs>
+    <style>
+      .txt { fill: #2B2B2B; }
+      .muted { fill: #6B6B6B; }
+      .mono { font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', 'Consolas', monospace; }
+      .pcard { fill: #FFFFFF; stroke: #E5E0D5; }
+    </style>
+  </defs>
+
+  <rect width="1920" height="1200" fill="#FAFAF7"/>
+
+  <!-- =============== TOP BAR =============== -->
+  <g id="topbar">
+    <rect width="1920" height="56" fill="#FFFFFF"/>
+    <line x1="0" y1="56" x2="1920" y2="56" stroke="#E5E0D5"/>
+    <g transform="translate(18,18)">
+      <path d="M0 10 l6 -6 M0 10 l6 6 M0 10 h20" stroke="#6B6B6B" stroke-width="2" fill="none"/>
+    </g>
+    <g transform="translate(60,16)">
+      <rect width="140" height="24" rx="6" fill="#F5EFE0" stroke="#E5E0D5"/>
+      <text x="12" y="17" class="txt" font-size="13" font-weight="600">marker</text>
+      <path d="M120 10 l4 5 4 -5" stroke="#6B6B6B" stroke-width="1.5" fill="none"/>
+    </g>
+    <g transform="translate(212,16)">
+      <rect width="96" height="24" rx="12" fill="#EAF2FB" stroke="#3B82C9"/>
+      <circle cx="12" cy="12" r="4" fill="#3B82C9"/>
+      <text x="22" y="16" fill="#2A4460" font-size="12" font-weight="600">supervised</text>
+    </g>
+    <g transform="translate(316,16)">
+      <rect width="76" height="24" rx="12" fill="#F0EAE0" stroke="#C9A878"/>
+      <text x="12" y="16" fill="#5A4519" font-size="12" font-weight="600">building</text>
+    </g>
+    <g transform="translate(404,12)">
+      <text x="0" y="12" class="muted" font-size="10" font-weight="600" letter-spacing="0.5">AGENTS</text>
+      <rect x="0" y="16" width="120" height="6" rx="3" fill="#E5E0D5"/>
+      <rect x="0" y="16" width="27.6" height="6" rx="3" fill="#3B5B7A"/>
+      <text x="126" y="22" class="txt" font-size="11" font-weight="600">23%</text>
+      <text x="160" y="12" class="muted" font-size="10" font-weight="600" letter-spacing="0.5">ADVISORS</text>
+      <rect x="160" y="16" width="120" height="6" rx="3" fill="#E5E0D5"/>
+      <rect x="160" y="16" width="7.2" height="6" rx="3" fill="#8B6FB3"/>
+      <text x="286" y="22" class="txt" font-size="11" font-weight="600">6%</text>
+    </g>
+    <g transform="translate(1260,16)">
+      <rect width="240" height="24" rx="6" fill="#FAFAF7" stroke="#E5E0D5"/>
+      <circle cx="14" cy="12" r="5" fill="none" stroke="#6B6B6B" stroke-width="1.5"/>
+      <text x="32" y="16" class="muted" font-size="12">Search or jump to…</text>
+      <text x="200" y="16" class="muted mono" font-size="11">⌘K</text>
+    </g>
+    <g transform="translate(1520,16)">
+      <rect width="120" height="24" rx="6" fill="#FFF6D6" stroke="#D4A437"/>
+      <circle cx="13" cy="12" r="3" fill="#D4A437"/>
+      <text x="22" y="16" fill="#5A4519" font-size="12" font-weight="600">Walk active</text>
+      <circle cx="104" cy="12" r="9" fill="#C84747"/>
+      <text x="104" y="16" fill="#FFFFFF" font-size="11" font-weight="700" text-anchor="middle">3</text>
+    </g>
+    <g transform="translate(1656,16)">
+      <rect width="84" height="24" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="10" y="16" class="txt" font-size="12" font-weight="600">PM</text>
+      <rect x="40" y="7" width="18" height="10" rx="2" fill="none" stroke="#3B5B7A" stroke-width="1.5"/>
+      <rect x="40" y="13" width="18" height="4" rx="1" fill="#3B5B7A"/>
+    </g>
+    <g transform="translate(1856,16)">
+      <circle cx="12" cy="12" r="12" fill="#3B5B7A"/>
+      <text x="12" y="16" fill="#FFFFFF" font-size="12" font-weight="700" text-anchor="middle">M</text>
+    </g>
+  </g>
+
+  <!-- =============== EXPANDED SIDEBAR =============== -->
+  <g id="sidebar">
+    <rect x="0" y="56" width="220" height="1144" fill="#F5EFE0"/>
+    <line x1="220" y1="56" x2="220" y2="1200" stroke="#E5E0D5"/>
+    <g font-size="13" font-weight="600">
+      <g transform="translate(16,76)">
+        <g transform="translate(12,10)" stroke="#2B2B2B" stroke-width="2" fill="none">
+          <rect x="0" y="0" width="6" height="20"/><rect x="7" y="0" width="6" height="20"/><rect x="14" y="0" width="6" height="20"/>
+        </g>
+        <text x="48" y="26" class="txt">Board</text>
+      </g>
+      <g transform="translate(16,124)">
+        <rect width="188" height="40" rx="8" fill="#FFF6D6"/>
+        <g transform="translate(12,10)" stroke="#5A4519" stroke-width="2" fill="none">
+          <circle cx="10" cy="10" r="9"/>
+          <path d="M10 3 v7 l5 3"/>
+        </g>
+        <text x="48" y="26" fill="#5A4519">Gemba walks</text>
+        <circle cx="166" cy="20" r="9" fill="#D4A437"/>
+        <text x="166" y="24" fill="#FFFFFF" font-size="11" font-weight="700" text-anchor="middle">1</text>
+      </g>
+      <g transform="translate(16,172)">
+        <g transform="translate(12,10)" stroke="#2B2B2B" stroke-width="2" fill="none">
+          <rect x="0" y="1" width="20" height="18" rx="2"/>
+          <line x1="4" y1="6" x2="16" y2="6"/><line x1="4" y1="11" x2="16" y2="11"/>
+        </g>
+        <text x="48" y="26" class="txt">Backlog</text>
+      </g>
+      <g transform="translate(16,220)">
+        <g transform="translate(12,10)" stroke="#2B2B2B" stroke-width="2" fill="none">
+          <rect x="0" y="0" width="8" height="8"/><rect x="12" y="0" width="8" height="8"/>
+          <rect x="0" y="12" width="8" height="8"/><rect x="12" y="12" width="8" height="8"/>
+        </g>
+        <text x="48" y="26" class="txt">Grid</text>
+      </g>
+      <g transform="translate(16,268)">
+        <g transform="translate(12,10)" stroke="#2B2B2B" stroke-width="2" fill="none">
+          <path d="M10 0 L20 18 L0 18 Z"/>
+          <line x1="10" y1="7" x2="10" y2="13"/>
+        </g>
+        <text x="48" y="26" class="txt">Escalations</text>
+        <circle cx="182" cy="20" r="9" fill="#C84747"/>
+        <text x="182" y="24" fill="#FFFFFF" font-size="11" font-weight="700" text-anchor="middle">3</text>
+      </g>
+      <g transform="translate(16,316)">
+        <g transform="translate(12,10)" stroke="#2B2B2B" stroke-width="2" fill="none">
+          <circle cx="10" cy="10" r="4"/>
+          <path d="M10 0 v3 M10 17 v3 M0 10 h3 M17 10 h3"/>
+        </g>
+        <text x="48" y="26" class="txt">Project Config</text>
+      </g>
+      <g transform="translate(16,364)">
+        <g transform="translate(12,10)" stroke="#2B2B2B" stroke-width="2" fill="none">
+          <circle cx="10" cy="10" r="3"/>
+          <circle cx="10" cy="10" r="8" stroke-dasharray="2 2"/>
+        </g>
+        <text x="48" y="26" class="txt">Settings</text>
+      </g>
+      <line x1="16" y1="428" x2="204" y2="428" stroke="#E5E0D5"/>
+      <text x="16" y="448" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">DEEP LINKS</text>
+      <g transform="translate(16,460)"><text x="16" y="22" class="muted">Plan</text></g>
+      <g transform="translate(16,492)"><text x="16" y="22" class="muted">Insights</text></g>
+      <g transform="translate(16,524)"><text x="16" y="22" class="muted">Graph</text></g>
+      <g transform="translate(16,556)"><text x="16" y="22" class="muted">Capabilities</text></g>
+      <!-- Personas (active) -->
+      <g transform="translate(16,588)">
+        <rect width="188" height="34" rx="6" fill="#3B5B7A"/>
+        <text x="16" y="22" fill="#FFFFFF">Personas</text>
+      </g>
+      <g transform="translate(16,628)"><text x="16" y="22" class="muted">Checkpoints</text></g>
+      <g transform="translate(16,660)"><text x="16" y="22" class="muted">QA Health</text></g>
+      <g transform="translate(16,692)"><text x="16" y="22" class="muted">QA Gates</text></g>
+      <g transform="translate(16,724)"><text x="16" y="22" class="muted">Packs</text></g>
+    </g>
+  </g>
+
+  <!-- =============== CONTENT =============== -->
+  <g id="content">
+
+    <!-- Header -->
+    <g transform="translate(252,80)">
+      <text x="0" y="24" class="txt" font-size="28" font-weight="700">Personas</text>
+      <text x="152" y="28" class="muted" font-size="14">configurable Coaches and Managers — the expertise you don't have time to personally deliver</text>
+
+      <g transform="translate(1500,0)">
+        <rect width="168" height="40" rx="8" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="12" y="25" class="txt" font-size="13" font-weight="600">+ Add persona</text>
+        <text x="150" y="25" class="muted" font-size="11" text-anchor="end">⌘N</text>
+      </g>
+    </g>
+
+    <!-- Filter/stats strip -->
+    <g transform="translate(252,132)">
+      <text x="0" y="18" class="muted" font-size="12">filter:</text>
+      <g transform="translate(40,0)">
+        <rect width="64" height="22" rx="11" fill="#3B5B7A"/>
+        <text x="32" y="15" fill="#FFFFFF" font-size="11" font-weight="600" text-anchor="middle">all 11</text>
+      </g>
+      <g transform="translate(110,0)">
+        <rect width="92" height="22" rx="11" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="46" y="15" class="txt" font-size="11" font-weight="600" text-anchor="middle">Coaches · 6</text>
+      </g>
+      <g transform="translate(208,0)">
+        <rect width="100" height="22" rx="11" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="50" y="15" class="txt" font-size="11" font-weight="600" text-anchor="middle">Managers · 5</text>
+      </g>
+      <g transform="translate(314,0)">
+        <rect width="92" height="22" rx="11" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="46" y="15" class="txt" font-size="11" font-weight="600" text-anchor="middle">enabled · 11</text>
+      </g>
+    </g>
+
+    <!-- ============ GRID OF CARDS ============ -->
+    <!-- 4 per row, 3 rows. card 380 wide, 16 gutter. 252 + 4*380 + 3*16 = 252 + 1520 + 48 = 1820. -->
+    <!-- card height: 120 collapsed -->
+
+    <!-- Row 1 -->
+    <!-- PM (expanded = highlighted with active state, normal size + connector below) -->
+    <g id="pm-card" transform="translate(252,168)">
+      <rect width="380" height="120" rx="12" fill="#FFFFFF" stroke="#3B5B7A" stroke-width="2"/>
+      <circle cx="46" cy="46" r="24" fill="#F0EAE0"/>
+      <text x="46" y="54" font-size="26" text-anchor="middle">📋</text>
+      <text x="82" y="38" class="txt" font-size="15" font-weight="700">Project Manager</text>
+      <text x="82" y="56" class="muted" font-size="11">the orchestrator</text>
+      <!-- Variety badge: Manager -->
+      <g transform="translate(82,66)">
+        <rect width="72" height="22" rx="11" fill="#EAF2FB" stroke="#3B5B7A"/>
+        <circle cx="14" cy="11" r="4" fill="#3B5B7A"/>
+        <text x="22" y="15" fill="#2A4460" font-size="11" font-weight="700">Manager</text>
+      </g>
+      <!-- Active usage -->
+      <text x="82" y="105" class="muted" font-size="10">2m ago · $0.73 today · <tspan class="mono" fill="#2A4460">claude-opus-4-7</tspan></text>
+      <!-- Enabled toggle -->
+      <g transform="translate(320,20)">
+        <rect width="40" height="22" rx="11" fill="#5A9E6F"/>
+        <circle cx="29" cy="11" r="8" fill="#FFFFFF"/>
+      </g>
+      <!-- Expanded caret -->
+      <g transform="translate(336,96)">
+        <path d="M0 8 L8 0 L16 8" stroke="#3B5B7A" stroke-width="2" fill="none"/>
+      </g>
+    </g>
+
+    <!-- Architect (Coach) -->
+    <g transform="translate(648,168)">
+      <rect width="380" height="120" rx="12" class="pcard"/>
+      <circle cx="46" cy="46" r="24" fill="#EDE5F2"/>
+      <text x="46" y="54" font-size="26" text-anchor="middle">📐</text>
+      <text x="82" y="38" class="txt" font-size="15" font-weight="700">Architect</text>
+      <text x="82" y="56" class="muted" font-size="11">system design + prior art</text>
+      <g transform="translate(82,66)">
+        <rect width="58" height="22" rx="11" fill="#EDE5F2" stroke="#8B6FB3"/>
+        <circle cx="14" cy="11" r="4" fill="#8B6FB3"/>
+        <text x="22" y="15" fill="#5F4F8F" font-size="11" font-weight="700">Coach</text>
+      </g>
+      <text x="82" y="105" class="muted" font-size="10">18m ago · $0.24 today · <tspan class="mono" fill="#2A4460">claude-opus-4-7</tspan></text>
+      <g transform="translate(320,20)">
+        <rect width="40" height="22" rx="11" fill="#5A9E6F"/>
+        <circle cx="29" cy="11" r="8" fill="#FFFFFF"/>
+      </g>
+    </g>
+
+    <!-- Code Reviewer (Coach) -->
+    <g transform="translate(1044,168)">
+      <rect width="380" height="120" rx="12" class="pcard"/>
+      <circle cx="46" cy="46" r="24" fill="#EDE5F2"/>
+      <text x="46" y="54" font-size="26" text-anchor="middle">🔍</text>
+      <text x="82" y="38" class="txt" font-size="15" font-weight="700">Code Reviewer</text>
+      <text x="82" y="56" class="muted" font-size="11">diff read · style · risk</text>
+      <g transform="translate(82,66)">
+        <rect width="58" height="22" rx="11" fill="#EDE5F2" stroke="#8B6FB3"/>
+        <circle cx="14" cy="11" r="4" fill="#8B6FB3"/>
+        <text x="22" y="15" fill="#5F4F8F" font-size="11" font-weight="700">Coach</text>
+      </g>
+      <text x="82" y="105" class="muted" font-size="10">1h ago · $0.11 today · <tspan class="mono" fill="#2A4460">claude-sonnet-4-6</tspan></text>
+      <g transform="translate(320,20)">
+        <rect width="40" height="22" rx="11" fill="#5A9E6F"/>
+        <circle cx="29" cy="11" r="8" fill="#FFFFFF"/>
+      </g>
+    </g>
+
+    <!-- UX Expert (Coach) -->
+    <g transform="translate(1440,168)">
+      <rect width="380" height="120" rx="12" class="pcard"/>
+      <circle cx="46" cy="46" r="24" fill="#EDE5F2"/>
+      <text x="46" y="54" font-size="26" text-anchor="middle">🎨</text>
+      <text x="82" y="38" class="txt" font-size="15" font-weight="700">UX Expert</text>
+      <text x="82" y="56" class="muted" font-size="11">copy · surfaces · flow</text>
+      <g transform="translate(82,66)">
+        <rect width="58" height="22" rx="11" fill="#EDE5F2" stroke="#8B6FB3"/>
+        <circle cx="14" cy="11" r="4" fill="#8B6FB3"/>
+        <text x="22" y="15" fill="#5F4F8F" font-size="11" font-weight="700">Coach</text>
+      </g>
+      <text x="82" y="105" class="muted" font-size="10">4h ago · $0.07 today · <tspan class="mono" fill="#2A4460">claude-opus-4-7</tspan></text>
+      <g transform="translate(320,20)">
+        <rect width="40" height="22" rx="11" fill="#5A9E6F"/>
+        <circle cx="29" cy="11" r="8" fill="#FFFFFF"/>
+      </g>
+    </g>
+
+    <!-- Row 2 -->
+    <!-- QA (Manager) -->
+    <g transform="translate(252,304)">
+      <rect width="380" height="120" rx="12" class="pcard"/>
+      <circle cx="46" cy="46" r="24" fill="#F0EAE0"/>
+      <text x="46" y="54" font-size="26" text-anchor="middle">✅</text>
+      <text x="82" y="38" class="txt" font-size="15" font-weight="700">QA</text>
+      <text x="82" y="56" class="muted" font-size="11">gates release transitions</text>
+      <g transform="translate(82,66)">
+        <rect width="72" height="22" rx="11" fill="#EAF2FB" stroke="#3B5B7A"/>
+        <circle cx="14" cy="11" r="4" fill="#3B5B7A"/>
+        <text x="22" y="15" fill="#2A4460" font-size="11" font-weight="700">Manager</text>
+      </g>
+      <text x="82" y="105" class="muted" font-size="10">12m ago · $0.18 today · <tspan class="mono" fill="#2A4460">claude-sonnet-4-6</tspan></text>
+      <g transform="translate(320,20)">
+        <rect width="40" height="22" rx="11" fill="#5A9E6F"/>
+        <circle cx="29" cy="11" r="8" fill="#FFFFFF"/>
+      </g>
+    </g>
+
+    <!-- Technical Writer (Coach) -->
+    <g transform="translate(648,304)">
+      <rect width="380" height="120" rx="12" class="pcard"/>
+      <circle cx="46" cy="46" r="24" fill="#EDE5F2"/>
+      <text x="46" y="54" font-size="26" text-anchor="middle">✍️</text>
+      <text x="82" y="38" class="txt" font-size="15" font-weight="700">Technical Writer</text>
+      <text x="82" y="56" class="muted" font-size="11">copy · docs · release notes</text>
+      <g transform="translate(82,66)">
+        <rect width="58" height="22" rx="11" fill="#EDE5F2" stroke="#8B6FB3"/>
+        <circle cx="14" cy="11" r="4" fill="#8B6FB3"/>
+        <text x="22" y="15" fill="#5F4F8F" font-size="11" font-weight="700">Coach</text>
+      </g>
+      <text x="82" y="105" class="muted" font-size="10">6h ago · $0.02 today · <tspan class="mono" fill="#2A4460">claude-haiku-4-5</tspan></text>
+      <g transform="translate(320,20)">
+        <rect width="40" height="22" rx="11" fill="#5A9E6F"/>
+        <circle cx="29" cy="11" r="8" fill="#FFFFFF"/>
+      </g>
+    </g>
+
+    <!-- DevOps/SRE (Manager) -->
+    <g transform="translate(1044,304)">
+      <rect width="380" height="120" rx="12" class="pcard"/>
+      <circle cx="46" cy="46" r="24" fill="#F0EAE0"/>
+      <text x="46" y="54" font-size="26" text-anchor="middle">🛠️</text>
+      <text x="82" y="38" class="txt" font-size="15" font-weight="700">DevOps / SRE</text>
+      <text x="82" y="56" class="muted" font-size="11">pipelines · reliability</text>
+      <g transform="translate(82,66)">
+        <rect width="72" height="22" rx="11" fill="#EAF2FB" stroke="#3B5B7A"/>
+        <circle cx="14" cy="11" r="4" fill="#3B5B7A"/>
+        <text x="22" y="15" fill="#2A4460" font-size="11" font-weight="700">Manager</text>
+      </g>
+      <text x="82" y="105" class="muted" font-size="10">2d ago · $0.03 today · <tspan class="mono" fill="#2A4460">claude-sonnet-4-6</tspan></text>
+      <g transform="translate(320,20)">
+        <rect width="40" height="22" rx="11" fill="#5A9E6F"/>
+        <circle cx="29" cy="11" r="8" fill="#FFFFFF"/>
+      </g>
+    </g>
+
+    <!-- Deployment Engineer (Manager) -->
+    <g transform="translate(1440,304)">
+      <rect width="380" height="120" rx="12" class="pcard"/>
+      <circle cx="46" cy="46" r="24" fill="#F0EAE0"/>
+      <text x="46" y="54" font-size="26" text-anchor="middle">🚢</text>
+      <text x="82" y="38" class="txt" font-size="15" font-weight="700">Deployment Engineer</text>
+      <text x="82" y="56" class="muted" font-size="11">release mechanics</text>
+      <g transform="translate(82,66)">
+        <rect width="72" height="22" rx="11" fill="#EAF2FB" stroke="#3B5B7A"/>
+        <circle cx="14" cy="11" r="4" fill="#3B5B7A"/>
+        <text x="22" y="15" fill="#2A4460" font-size="11" font-weight="700">Manager</text>
+      </g>
+      <text x="82" y="105" class="muted" font-size="10">never · $0.00 today · <tspan class="mono" fill="#2A4460">claude-sonnet-4-6</tspan></text>
+      <g transform="translate(320,20)">
+        <rect width="40" height="22" rx="11" fill="#5A9E6F"/>
+        <circle cx="29" cy="11" r="8" fill="#FFFFFF"/>
+      </g>
+    </g>
+
+    <!-- Row 3 -->
+    <!-- Security (Manager) -->
+    <g transform="translate(252,440)">
+      <rect width="380" height="120" rx="12" class="pcard"/>
+      <circle cx="46" cy="46" r="24" fill="#F0EAE0"/>
+      <text x="46" y="54" font-size="26" text-anchor="middle">🔒</text>
+      <text x="82" y="38" class="txt" font-size="15" font-weight="700">Security</text>
+      <text x="82" y="56" class="muted" font-size="11">Purview on auth-labeled work</text>
+      <g transform="translate(82,66)">
+        <rect width="72" height="22" rx="11" fill="#EAF2FB" stroke="#3B5B7A"/>
+        <circle cx="14" cy="11" r="4" fill="#3B5B7A"/>
+        <text x="22" y="15" fill="#2A4460" font-size="11" font-weight="700">Manager</text>
+      </g>
+      <text x="82" y="105" class="muted" font-size="10">1h ago · $0.09 today · <tspan class="mono" fill="#2A4460">claude-opus-4-7</tspan></text>
+      <g transform="translate(320,20)">
+        <rect width="40" height="22" rx="11" fill="#5A9E6F"/>
+        <circle cx="29" cy="11" r="8" fill="#FFFFFF"/>
+      </g>
+    </g>
+
+    <!-- Documentarian (Coach) -->
+    <g transform="translate(648,440)">
+      <rect width="380" height="120" rx="12" class="pcard"/>
+      <circle cx="46" cy="46" r="24" fill="#EDE5F2"/>
+      <text x="46" y="54" font-size="26" text-anchor="middle">📚</text>
+      <text x="82" y="38" class="txt" font-size="15" font-weight="700">Documentarian</text>
+      <text x="82" y="56" class="muted" font-size="11">decisions log · freshness</text>
+      <g transform="translate(82,66)">
+        <rect width="58" height="22" rx="11" fill="#EDE5F2" stroke="#8B6FB3"/>
+        <circle cx="14" cy="11" r="4" fill="#8B6FB3"/>
+        <text x="22" y="15" fill="#5F4F8F" font-size="11" font-weight="700">Coach</text>
+      </g>
+      <text x="82" y="105" class="muted" font-size="10">30m ago · $0.04 today · <tspan class="mono" fill="#2A4460">claude-sonnet-4-6</tspan></text>
+      <g transform="translate(320,20)">
+        <rect width="40" height="22" rx="11" fill="#5A9E6F"/>
+        <circle cx="29" cy="11" r="8" fill="#FFFFFF"/>
+      </g>
+    </g>
+
+    <!-- Onboarder (Coach) -->
+    <g transform="translate(1044,440)">
+      <rect width="380" height="120" rx="12" class="pcard"/>
+      <circle cx="46" cy="46" r="24" fill="#EDE5F2"/>
+      <text x="46" y="54" font-size="26" text-anchor="middle">👋</text>
+      <text x="82" y="38" class="txt" font-size="15" font-weight="700">Onboarder</text>
+      <text x="82" y="56" class="muted" font-size="11">first-run · bootstrap wizard</text>
+      <g transform="translate(82,66)">
+        <rect width="58" height="22" rx="11" fill="#EDE5F2" stroke="#8B6FB3"/>
+        <circle cx="14" cy="11" r="4" fill="#8B6FB3"/>
+        <text x="22" y="15" fill="#5F4F8F" font-size="11" font-weight="700">Coach</text>
+      </g>
+      <text x="82" y="105" class="muted" font-size="10">—   · $0.00 today · <tspan class="mono" fill="#2A4460">claude-sonnet-4-6</tspan></text>
+      <g transform="translate(320,20)">
+        <rect width="40" height="22" rx="11" fill="#5A9E6F"/>
+        <circle cx="29" cy="11" r="8" fill="#FFFFFF"/>
+      </g>
+    </g>
+
+    <!-- Empty slot (placeholder) -->
+    <g transform="translate(1440,440)">
+      <rect width="380" height="120" rx="12" fill="transparent" stroke="#E5E0D5" stroke-dasharray="6 4"/>
+      <text x="190" y="60" class="muted" font-size="13" text-anchor="middle">+ add another persona</text>
+      <text x="190" y="80" class="muted" font-size="11" text-anchor="middle" font-style="italic">or install a Role Pack</text>
+    </g>
+
+    <!-- Connector from PM card to expanded drawer below -->
+    <g transform="translate(272,288)">
+      <line x1="170" y1="0" x2="170" y2="18" stroke="#3B5B7A" stroke-width="2"/>
+      <polygon points="166,16 174,16 170,24" fill="#3B5B7A"/>
+    </g>
+
+    <!-- ============ EXPANDED DRAWER FOR PM ============ -->
+    <g id="pm-drawer" transform="translate(252,596)">
+      <rect width="1616" height="480" rx="14" fill="#FFFFFF" stroke="#3B5B7A" stroke-width="2"/>
+
+      <!-- Drawer header -->
+      <g transform="translate(24,20)">
+        <circle cx="32" cy="32" r="32" fill="#F0EAE0"/>
+        <text x="32" y="42" font-size="32" text-anchor="middle">📋</text>
+        <text x="80" y="24" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">EXPANDED CONFIG</text>
+        <text x="80" y="50" class="txt" font-size="24" font-weight="700">Project Manager</text>
+        <g transform="translate(80,60)">
+          <rect width="72" height="20" rx="10" fill="#EAF2FB" stroke="#3B5B7A"/>
+          <circle cx="12" cy="10" r="3.5" fill="#3B5B7A"/>
+          <text x="20" y="13" fill="#2A4460" font-size="11" font-weight="700">Manager</text>
+
+          <g transform="translate(80,0)">
+            <rect width="82" height="20" rx="10" fill="#F5EFE0"/>
+            <text x="8" y="13" fill="#6B4A1A" font-size="10" font-weight="600" class="mono">claude-opus-4-7</text>
+          </g>
+
+          <g transform="translate(170,0)">
+            <rect width="84" height="20" rx="10" fill="#E7F1EA"/>
+            <text x="42" y="13" fill="#24603C" font-size="10" font-weight="600" text-anchor="middle">$0.73 today</text>
+          </g>
+        </g>
+      </g>
+
+      <!-- Right-side actions -->
+      <g transform="translate(1400,24)">
+        <!-- Edit button (hovered — highlighted) -->
+        <g id="edit-btn">
+          <rect x="-3" y="-3" width="98" height="40" rx="8" fill="none" stroke="#D4A437" stroke-width="3"/>
+          <rect width="92" height="34" rx="6" fill="#3B5B7A"/>
+          <g transform="translate(12,8)" stroke="#FFFFFF" stroke-width="1.8" fill="none">
+            <path d="M0 14 L14 0 L18 4 L4 18 Z"/>
+            <path d="M11 3 L15 7"/>
+          </g>
+          <text x="62" y="22" fill="#FFFFFF" font-size="13" font-weight="700" text-anchor="middle">Edit</text>
+        </g>
+
+        <g transform="translate(104,0)">
+          <rect width="100" height="34" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+          <text x="50" y="22" class="txt" font-size="12" font-weight="600" text-anchor="middle">Duplicate</text>
+        </g>
+      </g>
+
+      <!-- Divider -->
+      <line x1="24" y1="100" x2="1592" y2="100" stroke="#E5E0D5"/>
+
+      <!-- Two-column content: LEFT = PPPP, RIGHT = Skills + Budget -->
+      <g transform="translate(32,116)">
+
+        <!-- Personality -->
+        <g>
+          <text x="0" y="0" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">PERSONALITY</text>
+          <rect x="0" y="8" width="760" height="58" rx="8" fill="#FAFAF7"/>
+          <text x="16" y="32" class="txt" font-size="13">Precise and economical. Doesn't over-explain; assumes</text>
+          <text x="16" y="52" class="txt" font-size="13">the operator is sharp.</text>
+        </g>
+
+        <!-- Perspective -->
+        <g transform="translate(0,88)">
+          <text x="0" y="0" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">PERSPECTIVE</text>
+          <rect x="0" y="8" width="760" height="58" rx="8" fill="#FAFAF7"/>
+          <text x="16" y="32" class="txt" font-size="13">Coordination, dep-graph awareness, budget discipline,</text>
+          <text x="16" y="52" class="txt" font-size="13">escalation triage.</text>
+        </g>
+
+        <!-- Purview -->
+        <g transform="translate(0,176)">
+          <text x="0" y="0" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">PURVIEW</text>
+          <rect x="0" y="8" width="760" height="48" rx="8" fill="#FAFAF7" stroke="#E5E0D5" stroke-dasharray="4 3"/>
+          <text x="16" y="28" class="muted" font-size="13" font-style="italic">(none — PM is orchestrator, not domain-owner)</text>
+          <text x="16" y="46" fill="#6B4A1A" font-size="10" font-weight="600">INVARIANT: PM never gates state transitions</text>
+        </g>
+
+        <!-- Prompt preview -->
+        <g transform="translate(0,248)">
+          <text x="0" y="0" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">PROMPT PREVIEW</text>
+          <rect x="0" y="8" width="760" height="76" rx="8" fill="#1F2933"/>
+          <text x="16" y="28" class="mono" fill="#D4A437" font-size="10">[SYSTEM]</text>
+          <text x="16" y="44" class="mono" fill="#B8D4EC" font-size="10">You are the Project Manager for workspace "marker".</text>
+          <text x="16" y="58" class="mono" fill="#B8D4EC" font-size="10">Values: INNOVATION · TRANSPARENCY · EXECUTION · EMPATHY.</text>
+          <text x="16" y="72" class="mono" fill="#8FA5B9" font-size="10">[CONTEXT] project_state, decisions_log, budget_gauge, open_escalations…</text>
+        </g>
+      </g>
+
+      <!-- RIGHT column -->
+      <g transform="translate(808,116)">
+        <text x="0" y="0" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">SKILLS OPT-IN  ·  12 ENABLED</text>
+        <g transform="translate(0,12)" font-size="11" font-weight="600">
+          <g><rect width="112" height="26" rx="13" fill="#EAF2FB" stroke="#3B5B7A"/><text x="56" y="17" fill="#2A4460" text-anchor="middle" class="mono">epic_order</text></g>
+          <g transform="translate(120,0)"><rect width="128" height="26" rx="13" fill="#EAF2FB" stroke="#3B5B7A"/><text x="64" y="17" fill="#2A4460" text-anchor="middle" class="mono">parallel_safety</text></g>
+          <g transform="translate(256,0)"><rect width="100" height="26" rx="13" fill="#EAF2FB" stroke="#3B5B7A"/><text x="50" y="17" fill="#2A4460" text-anchor="middle" class="mono">scope_trim</text></g>
+          <g transform="translate(364,0)"><rect width="128" height="26" rx="13" fill="#EAF2FB" stroke="#3B5B7A"/><text x="64" y="17" fill="#2A4460" text-anchor="middle" class="mono">epic_decompose</text></g>
+          <g transform="translate(500,0)"><rect width="112" height="26" rx="13" fill="#EAF2FB" stroke="#3B5B7A"/><text x="56" y="17" fill="#2A4460" text-anchor="middle" class="mono">epic_merge</text></g>
+          <g transform="translate(620,0)"><rect width="148" height="26" rx="13" fill="#EAF2FB" stroke="#3B5B7A"/><text x="74" y="17" fill="#2A4460" text-anchor="middle" class="mono">escalation_triage</text></g>
+
+          <g transform="translate(0,34)"><rect width="160" height="26" rx="13" fill="#EAF2FB" stroke="#3B5B7A"/><text x="80" y="17" fill="#2A4460" text-anchor="middle" class="mono">workspace_priority</text></g>
+          <g transform="translate(168,34)"><rect width="124" height="26" rx="13" fill="#EAF2FB" stroke="#3B5B7A"/><text x="62" y="17" fill="#2A4460" text-anchor="middle" class="mono">budget_replan</text></g>
+          <g transform="translate(300,34)"><rect width="120" height="26" rx="13" fill="#EAF2FB" stroke="#3B5B7A"/><text x="60" y="17" fill="#2A4460" text-anchor="middle" class="mono">what_remains</text></g>
+          <g transform="translate(428,34)"><rect width="136" height="26" rx="13" fill="#EAF2FB" stroke="#3B5B7A"/><text x="68" y="17" fill="#2A4460" text-anchor="middle" class="mono">add_to_backlog</text></g>
+          <g transform="translate(572,34)"><rect width="110" height="26" rx="13" fill="#EAF2FB" stroke="#3B5B7A"/><text x="55" y="17" fill="#2A4460" text-anchor="middle" class="mono">change_this</text></g>
+
+          <g transform="translate(0,68)"><rect width="168" height="26" rx="13" fill="#EAF2FB" stroke="#3B5B7A"/><text x="84" y="17" fill="#2A4460" text-anchor="middle" class="mono">dispatch_readiness</text></g>
+          <g transform="translate(176,68)"><rect width="110" height="26" rx="13" fill="#FFFFFF" stroke="#E5E0D5"/><text x="55" y="17" class="muted" text-anchor="middle">+ add skill</text></g>
+        </g>
+
+        <!-- Budget policy -->
+        <g transform="translate(0,140)">
+          <text x="0" y="0" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">BUDGET POLICY</text>
+          <rect x="0" y="8" width="780" height="88" rx="8" fill="#FAFAF7"/>
+          <text x="16" y="30" class="txt" font-size="12"><tspan font-weight="700">Per-invocation cap:</tspan> $0.25  ·  enforced by PromptEnvelope</text>
+          <text x="16" y="50" class="txt" font-size="12"><tspan font-weight="700">Daily cap:</tspan> $20.00  ·  separate from sprint budget</text>
+          <text x="16" y="70" class="txt" font-size="12"><tspan font-weight="700">Spent today:</tspan> $0.73  ·  cap-pressure: 3.7%</text>
+          <rect x="16" y="80" width="748" height="4" rx="2" fill="#E5E0D5"/>
+          <rect x="16" y="80" width="28" height="4" rx="2" fill="#5A9E6F"/>
+        </g>
+
+        <!-- Context providers -->
+        <g transform="translate(0,248)">
+          <text x="0" y="0" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">CONTEXT PROVIDERS  ·  5 OF 7 OPTED IN</text>
+          <g transform="translate(0,12)" font-size="11" font-weight="600">
+            <g><rect width="108" height="22" rx="11" fill="#E7F1EA" stroke="#5A9E6F"/><text x="54" y="15" fill="#24603C" text-anchor="middle">✓ project_state</text></g>
+            <g transform="translate(116,0)"><rect width="120" height="22" rx="11" fill="#E7F1EA" stroke="#5A9E6F"/><text x="60" y="15" fill="#24603C" text-anchor="middle">✓ decisions_log</text></g>
+            <g transform="translate(244,0)"><rect width="84" height="22" rx="11" fill="#E7F1EA" stroke="#5A9E6F"/><text x="42" y="15" fill="#24603C" text-anchor="middle">✓ issues_log</text></g>
+            <g transform="translate(336,0)"><rect width="110" height="22" rx="11" fill="#E7F1EA" stroke="#5A9E6F"/><text x="55" y="15" fill="#24603C" text-anchor="middle">✓ budget_gauge</text></g>
+            <g transform="translate(454,0)"><rect width="130" height="22" rx="11" fill="#E7F1EA" stroke="#5A9E6F"/><text x="65" y="15" fill="#24603C" text-anchor="middle">✓ open_escalations</text></g>
+
+            <g transform="translate(0,30)"><rect width="108" height="22" rx="11" fill="#F5EFE0" stroke="#CFC8B8"/><text x="54" y="15" class="muted" text-anchor="middle">code_summary</text></g>
+            <g transform="translate(116,30)"><rect width="108" height="22" rx="11" fill="#F5EFE0" stroke="#CFC8B8"/><text x="54" y="15" class="muted" text-anchor="middle">call_graph</text></g>
+          </g>
+        </g>
+      </g>
+    </g>
+
+    <!-- ============ Bottom stats bar ============ -->
+    <g transform="translate(252,1100)">
+      <rect width="1616" height="64" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="24" y="24" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">ROSTER</text>
+      <text x="24" y="48" class="txt" font-size="16" font-weight="700">11 personas  ·  6 Coaches  ·  5 Managers</text>
+
+      <g transform="translate(440,18)">
+        <text x="0" y="6" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">ADVISOR SPEND TODAY</text>
+        <text x="0" y="30" class="txt" font-size="16" font-weight="700">$1.51</text>
+        <text x="60" y="30" class="muted" font-size="12">of $20.00 daily cap per persona</text>
+      </g>
+
+      <g transform="translate(900,18)">
+        <text x="0" y="6" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">ACTIVE PACK</text>
+        <text x="0" y="30" class="txt" font-size="16" font-weight="700">CTO pack</text>
+        <text x="90" y="30" class="muted" font-size="12">+ Security extension  ·  installed 3d ago</text>
+      </g>
+
+      <g transform="translate(1420,18)">
+        <rect width="172" height="32" rx="6" fill="#FFFFFF" stroke="#3B5B7A"/>
+        <text x="86" y="22" fill="#3B5B7A" font-size="13" font-weight="700" text-anchor="middle">Browse Packs →</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ============ Cursor on Edit button ============ -->
+  <g id="cursor" transform="translate(1712,632)">
+    <path d="M0 0 L0 22 L6 17 L10 24 L13 22 L9 15 L17 15 Z" fill="#2B2B2B" stroke="#FFFFFF" stroke-width="1.2"/>
+    <g transform="translate(22,18)">
+      <rect width="180" height="32" rx="6" fill="#2B2B2B"/>
+      <text x="90" y="14" fill="#FFFFFF" font-size="11" font-weight="600" text-anchor="middle">Open TOML editor</text>
+      <text x="90" y="27" fill="#B8B8B8" font-size="10" text-anchor="middle">.gemba/personas/pm.toml</text>
+    </g>
+  </g>
+</svg>
