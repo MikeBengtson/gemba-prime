@@ -188,3 +188,59 @@ To re-render against updated specs:
 - **Resolves (via visual proof):** DD-17 UI vocabulary · DD-19 / DD-20 personas · DD-21 checkpoints chrome · DD-34 PPPP axes
 - **Formula:** `mol-polecat-work` · `base_branch=main`
 - **Polecat session:** jasper @ 2026-04-22
+
+---
+
+## Animated mockups audit (gm-gst · 2026-04-22)
+
+Four autoplay-looping SVG + CSS animations augment the static set under `animated/`, integrated below the matching static embed in `index.html`. Authored by polecat **obsidian** in a single session against bead `gm-gst`.
+
+### Files
+
+| # | File | Augments | Loop | Size |
+|---|---|---|---|---|
+| A1 | `animated/01-board-drag.svg` | `01-gemba-board.svg` | 4.0s | 19.3 KB |
+| A2 | `animated/02-walk-ratify.svg` | `02-gemba-walk.svg` | 5.0s | 19.6 KB |
+| A3 | `animated/03-pm-consult.svg` | `01-gemba-board.svg` (second motion block on Screen 1) | 5.0s | 15.9 KB |
+| A4 | `animated/04-drawer-stale.svg` | `03-epic-drawer.svg` | 3.0s | 14.0 KB |
+
+All four are under the 50 KB-per-file budget. No external resources; no `<script>`; no GIF/APNG/MP4.
+
+### Audit findings (static verification — no live browser observation in the authoring session)
+
+| Check | A1 | A2 | A3 | A4 |
+|---|---|---|---|---|
+| File renders as well-formed XML | **pass** | **pass** | **pass** | **pass** |
+| viewBox `0 0 1920 1200` matches static | **pass** | **pass** | **pass** | **pass** |
+| Uses only CSS `@keyframes` + `animation-iteration-count: infinite` | **pass** | **pass** | **pass** | **pass** |
+| `prefers-reduced-motion` freezes to a coherent end state | **pass** | **pass** | **pass** | **pass** |
+| Color tokens reused verbatim from the matching static SVG | **pass** | **pass** | **pass** | **pass** |
+| Font stack matches (`Inter` body, `JetBrains Mono` mono) | **pass** | **pass** | **pass** | **pass** |
+| `<object>` carries a descriptive `aria-label` (in `index.html`) | **pass** | **pass** | **pass** | **pass** |
+| Text caption explains the animation | **pass** | **pass** | **pass** | **pass** |
+| Served over `python3 -m http.server` (HTTP 200) | **pass** | **pass** | **pass** | **pass** |
+
+Known limitation: the authoring session verified XML, token reuse, and serving, but **did not run a browser** to confirm loop smoothness at the cycle boundary or confirm reduced-motion rendering visually. Downstream reviewer should spot-check:
+
+- A1 ghost outline returns in sync with the dragged card reset.
+- A2 agenda item 3 `active → decided` transition and item 4 `queued → active` promotion line up with the executed-action row and PM follow-up.
+- A3 caret blink continues smoothly across the typing→sent boundary; cost ticker hand-off is visible.
+- A4 pulse cycle (2s) is gentle, not strobing.
+
+### Integration into `index.html`
+
+Each motion block sits below its matching static SVG frame, using the structure specified in bead `gm-gst`:
+
+- Screen 1 (The Gemba) has **two** motion blocks — A1 (board drag) then A3 (PM consult).
+- Screen 2 (Gemba walk) has A2 (walk ratify).
+- Screen 3 (Epic drawer) has A4 (drawer stale popover).
+- Screens 4 and 5 have no motion block in this round (deferred per bead scope).
+
+Styling: new `.motion-block` + `.svg-frame-motion` + `.motion-caption` + `.motion-hint` rules, keyed to the existing `--border` / `--navy-700` / `--muted` tokens so the treatment inherits the dark-mode palette automatically.
+
+### What is NOT in this round (deferred to v1.2)
+
+- Motion block on Screen 4 (Plan view) — the "drag mk-e5 between parallel-groups" interaction is a natural next animation.
+- Motion block on Screen 5 (Persona roster) — expanding the PM card's PPPP drawer would visualize §3.4 Ask/Consult well.
+- Play / pause / restart controls — deliberately omitted per bead scope; autoplay + loop + reduced-motion fallback is sufficient for v1.
+- Audio / video / GIF / APNG — none used; SVG + CSS only.

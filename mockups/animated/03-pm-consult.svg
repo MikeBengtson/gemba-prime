@@ -1,0 +1,338 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <title>Animated: consult the PM. Bottom panel expands, operator types "What remains on the board right now?", PM streams a response, cost ticker updates, panel collapses. Loops every 5s.</title>
+  <desc>PM panel starts collapsed (~48px). Cursor clicks the expand toggle; panel slides up to full height. Operator's question types out character by character. Send pressed; PM response streams in. Daily cost ticker updates. Panel collapses.</desc>
+
+  <defs>
+    <style>
+      .txt { fill: #2B2B2B; }
+      .muted { fill: #6B6B6B; }
+      .mono { font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', 'Consolas', monospace; }
+
+      /* Panel expand: height grows from 48 -> 320 */
+      #pm-panel-collapsed { animation: collapsed-state 5s infinite; }
+      #pm-panel-expanded  { animation: expanded-state 5s infinite; }
+
+      @keyframes collapsed-state {
+        0%, 10%   { opacity: 1; }
+        14%, 94%  { opacity: 0; }
+        100%      { opacity: 1; }
+      }
+      @keyframes expanded-state {
+        0%, 10%   { opacity: 0; transform: translateY(20px); }
+        18%       { opacity: 1; transform: translateY(0); }
+        94%       { opacity: 1; transform: translateY(0); }
+        100%      { opacity: 0; transform: translateY(20px); }
+      }
+
+      /* Cursor movement */
+      #cursor { animation: cursor-path 5s infinite; }
+      @keyframes cursor-path {
+        0%        { transform: translate(1750px, 1160px); opacity: 0; }
+        4%        { opacity: 1; }
+        10%       { transform: translate(1660px, 1170px); }
+        14%       { transform: translate(1660px, 1130px); }
+        22%       { transform: translate(520px, 900px); }
+        28%, 58%  { transform: translate(520px, 900px); }
+        64%       { transform: translate(1420px, 890px); }
+        94%       { transform: translate(1420px, 890px); opacity: 1; }
+        100%      { transform: translate(1750px, 1160px); opacity: 0; }
+      }
+
+      /* Input typing reveal via clip-path width */
+      #type-reveal-rect { animation: type-reveal 5s infinite; }
+      @keyframes type-reveal {
+        0%, 22%   { width: 0; }
+        52%       { width: 900px; }
+        58%       { width: 900px; }
+        60%       { width: 0; }
+        94%, 100% { width: 0; }
+      }
+
+      /* Blinking caret in input */
+      #type-caret { animation: caret-blink 0.8s steps(2) infinite, caret-pos 5s infinite; }
+      @keyframes caret-blink { 0% { opacity: 1; } 50% { opacity: 0; } }
+      @keyframes caret-pos {
+        0%, 22%   { transform: translateX(18px); opacity: 0; }
+        26%       { opacity: 1; }
+        30%       { transform: translateX(110px); }
+        36%       { transform: translateX(250px); }
+        42%       { transform: translateX(400px); }
+        48%       { transform: translateX(550px); }
+        54%       { transform: translateX(680px); }
+        58%       { transform: translateX(680px); opacity: 1; }
+        60%       { opacity: 0; }
+        100%      { transform: translateX(18px); opacity: 0; }
+      }
+
+      /* Enter key indicator flash */
+      #enter-flash { animation: enter-flash 5s infinite; }
+      @keyframes enter-flash {
+        0%, 58%   { opacity: 0; }
+        60%, 64%  { opacity: 1; }
+        68%, 100% { opacity: 0; }
+      }
+
+      /* Spinner appears after send */
+      #send-spinner { animation: send-spinner 5s infinite; transform-origin: 1455px 885px; }
+      @keyframes send-spinner {
+        0%, 60%   { opacity: 0; }
+        62%, 72%  { opacity: 1; transform: rotate(360deg); }
+        74%       { opacity: 0; }
+        100%      { opacity: 0; }
+      }
+
+      /* Clear the typed question after send */
+      #typed-question { animation: clear-input 5s infinite; }
+      @keyframes clear-input {
+        0%, 58%   { opacity: 1; }
+        62%, 100% { opacity: 0; }
+      }
+
+      /* PM response stream reveal */
+      #response-reveal-rect { animation: response-reveal 5s infinite; }
+      @keyframes response-reveal {
+        0%, 66%   { width: 0; }
+        86%       { width: 1400px; }
+        94%       { width: 1400px; }
+        96%, 100% { width: 0; }
+      }
+      #pm-response-bubble { animation: response-show 5s infinite; }
+      @keyframes response-show {
+        0%, 64%   { opacity: 0; }
+        68%, 94%  { opacity: 1; }
+        96%, 100% { opacity: 0; }
+      }
+
+      /* Cost ticker swap */
+      #cost-before { animation: cost-before 5s infinite; }
+      #cost-after  { animation: cost-after 5s infinite; }
+      @keyframes cost-before {
+        0%, 78%   { opacity: 1; }
+        82%, 94%  { opacity: 0; }
+        100%      { opacity: 1; }
+      }
+      @keyframes cost-after {
+        0%, 78%   { opacity: 0; }
+        82%, 94%  { opacity: 1; }
+        100%      { opacity: 0; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #pm-panel-collapsed, #pm-panel-expanded, #cursor,
+        #type-reveal-rect, #type-caret, #enter-flash, #send-spinner,
+        #typed-question, #response-reveal-rect, #pm-response-bubble,
+        #cost-before, #cost-after {
+          animation: none;
+        }
+        #pm-panel-collapsed { opacity: 0; }
+        #pm-panel-expanded { opacity: 1; transform: translateY(0); }
+        #cursor { transform: translate(1420px, 890px); opacity: 1; }
+        #type-reveal-rect { width: 900px; }
+        #type-caret { opacity: 0; }
+        #enter-flash { opacity: 0; }
+        #send-spinner { opacity: 0; }
+        #typed-question { opacity: 1; }
+        #response-reveal-rect { width: 1400px; }
+        #pm-response-bubble { opacity: 1; }
+        #cost-before { opacity: 0; }
+        #cost-after { opacity: 1; }
+      }
+    </style>
+
+    <clipPath id="type-clip">
+      <rect id="type-reveal-rect" x="0" y="0" width="0" height="100"/>
+    </clipPath>
+    <clipPath id="response-clip">
+      <rect id="response-reveal-rect" x="0" y="0" width="0" height="300"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1200" fill="#FAFAF7"/>
+
+  <!-- Board background (dimmed slice) -->
+  <g id="board-dim" opacity="0.55">
+    <rect width="1920" height="56" fill="#FFFFFF"/>
+    <line x1="0" y1="56" x2="1920" y2="56" stroke="#E5E0D5"/>
+
+    <g transform="translate(60,16)">
+      <rect width="140" height="24" rx="6" fill="#F5EFE0" stroke="#E5E0D5"/>
+      <text x="12" y="17" class="txt" font-size="13" font-weight="600">marker</text>
+    </g>
+    <g transform="translate(212,16)">
+      <rect width="96" height="24" rx="12" fill="#EAF2FB" stroke="#3B82C9"/>
+      <circle cx="12" cy="12" r="4" fill="#3B82C9"/>
+      <text x="22" y="16" fill="#2A4460" font-size="12" font-weight="600">supervised</text>
+    </g>
+    <g transform="translate(316,16)">
+      <rect width="76" height="24" rx="12" fill="#F0EAE0" stroke="#C9A878"/>
+      <text x="12" y="16" fill="#5A4519" font-size="12" font-weight="600">building</text>
+    </g>
+
+    <!-- Cost ticker in top bar (will update) -->
+    <g transform="translate(1160,16)" font-size="12" font-weight="600">
+      <text id="cost-before" x="280" y="16" class="muted" text-anchor="end">$18.42 agent  ·  $1.51 advisor today</text>
+      <text id="cost-after"  x="280" y="16" fill="#2A4460" text-anchor="end" opacity="0">$18.42 agent  ·  $1.514 advisor · 1 turn</text>
+    </g>
+
+    <g transform="translate(1856,16)">
+      <circle cx="12" cy="12" r="12" fill="#3B5B7A"/>
+      <text x="12" y="16" fill="#FFFFFF" font-size="12" font-weight="700" text-anchor="middle">M</text>
+    </g>
+
+    <!-- Sidebar rail -->
+    <rect x="0" y="56" width="56" height="780" fill="#F5EFE0"/>
+    <line x1="56" y1="56" x2="56" y2="836" stroke="#E5E0D5"/>
+    <g transform="translate(8,68)">
+      <rect width="40" height="40" rx="8" fill="#3B5B7A"/>
+      <g transform="translate(10,10)" stroke="#FFFFFF" stroke-width="2" fill="none">
+        <rect x="0" y="0" width="6" height="20"/>
+        <rect x="7" y="0" width="6" height="20"/>
+        <rect x="14" y="0" width="6" height="20"/>
+      </g>
+    </g>
+
+    <!-- Column headers + a few cards as context -->
+    <g font-size="13" font-weight="700" fill="#2B2B2B">
+      <g transform="translate(72,152)"><rect width="300" height="32" rx="8" fill="#F0EAE0"/><text x="14" y="21">Backlog</text></g>
+      <g transform="translate(378,152)"><rect width="300" height="32" rx="8" fill="#F0EAE0"/><text x="14" y="21">Next Up</text></g>
+      <g transform="translate(684,152)"><rect width="300" height="32" rx="8" fill="#EAF2FB"/><text x="14" y="21">Staged</text></g>
+      <g transform="translate(990,152)"><rect width="300" height="32" rx="8" fill="#EAF2FB"/><text x="14" y="21">In Progress</text></g>
+      <g transform="translate(1296,152)"><rect width="300" height="32" rx="8" fill="#E7F1EA"/><text x="14" y="21">Done</text></g>
+      <g transform="translate(1602,152)"><rect width="300" height="32" rx="8" fill="#F5EFE0"/><text x="14" y="21">Canceled</text></g>
+    </g>
+
+    <!-- Placeholder card shapes -->
+    <g fill="#FFFFFF" stroke="#E5E0D5">
+      <rect x="72" y="196" width="300" height="108" rx="12"/>
+      <rect x="72" y="320" width="300" height="96" rx="12"/>
+      <rect x="378" y="196" width="300" height="120" rx="12"/>
+      <rect x="684" y="196" width="300" height="140" rx="12"/>
+      <rect x="990" y="196" width="300" height="160" rx="12"/>
+      <rect x="1296" y="196" width="300" height="130" rx="12"/>
+    </g>
+    <text x="130" y="260" class="muted" font-size="12" font-weight="600">mk-e6 · Pocket import</text>
+    <text x="432" y="260" class="muted" font-size="12" font-weight="600">mk-e4 · Browser extension</text>
+    <text x="734" y="260" class="muted" font-size="12" font-weight="600">mk-e3 · CLI</text>
+    <text x="1042" y="260" class="muted" font-size="12" font-weight="600">mk-e2 · Web UI</text>
+    <text x="1348" y="260" class="muted" font-size="12" font-weight="600">mk-e1 · Core API</text>
+
+    <!-- Scrim covers the board while panel is expanded; actually simpler: permanent subtle scrim -->
+    <rect x="56" y="56" width="1864" height="780" fill="#1A2430" opacity="0.08"/>
+  </g>
+
+  <!-- =============== PM PANEL (collapsed — bottom bar) =============== -->
+  <g id="pm-panel-collapsed">
+    <rect x="56" y="840" width="1864" height="48" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <g transform="translate(72,852)">
+      <rect width="36" height="24" rx="6" fill="#F0EAE0"/>
+      <text x="18" y="17" fill="#5A4519" font-size="14" font-weight="700" text-anchor="middle">📋</text>
+      <text x="50" y="17" class="muted" font-size="13" font-style="italic">Ask a Coach or consult a Manager…</text>
+    </g>
+    <g transform="translate(1790,848)">
+      <rect width="100" height="28" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="14" y="18" class="txt" font-size="11" font-weight="600">Expand</text>
+      <text x="70" y="18" class="muted mono" font-size="11">⌘P</text>
+    </g>
+  </g>
+
+  <!-- =============== PM PANEL (expanded) =============== -->
+  <g id="pm-panel-expanded" opacity="0">
+    <rect x="56" y="840" width="1864" height="320" fill="#FFFFFF" stroke="#E5E0D5"/>
+
+    <!-- Header row -->
+    <g transform="translate(72,852)">
+      <rect width="36" height="24" rx="6" fill="#F0EAE0"/>
+      <text x="18" y="17" fill="#5A4519" font-size="14" font-weight="700" text-anchor="middle">📋</text>
+      <text x="48" y="17" class="txt" font-size="13" font-weight="700">Project Manager</text>
+      <rect x="170" y="2" width="88" height="20" rx="10" fill="#EDE5F2" stroke="#8B6FB3"/>
+      <text x="214" y="16" fill="#5F4F8F" font-size="11" font-weight="600" text-anchor="middle">Coach</text>
+      <text x="276" y="17" class="muted" font-size="12">context: Board</text>
+      <g transform="translate(1780,0)">
+        <rect width="30" height="22" rx="4" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <path d="M8 12 l7 -5 l7 5" stroke="#6B6B6B" stroke-width="1.5" fill="none"/>
+      </g>
+    </g>
+
+    <!-- Quick actions -->
+    <g transform="translate(72,900)" font-size="13" font-weight="600">
+      <text x="0" y="-8" class="muted" font-size="11" letter-spacing="0.5" font-weight="600">QUICK ACTIONS · BOARD CONTEXT</text>
+      <g transform="translate(0,0)">
+        <rect width="180" height="36" rx="8" fill="#FFFFFF" stroke="#3B5B7A"/>
+        <text x="14" y="23" class="txt">Recommend order</text>
+      </g>
+      <g transform="translate(190,0)">
+        <rect width="180" height="36" rx="8" fill="#FFFFFF" stroke="#3B5B7A"/>
+        <text x="14" y="23" class="txt">What remains</text>
+      </g>
+      <g transform="translate(380,0)">
+        <rect width="180" height="36" rx="8" fill="#FFFFFF" stroke="#3B5B7A"/>
+        <text x="14" y="23" class="txt">Trim to budget</text>
+      </g>
+      <g transform="translate(570,0)">
+        <rect width="180" height="36" rx="8" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="14" y="23" class="txt">Dispatch readiness</text>
+      </g>
+    </g>
+
+    <!-- Input field -->
+    <g transform="translate(72,960)">
+      <rect width="1776" height="44" rx="10" fill="#FAFAF7" stroke="#3B82C9" stroke-width="2"/>
+      <g clip-path="url(#type-clip)">
+        <text id="typed-question" x="18" y="28" class="txt" font-size="15">What remains on the board right now?</text>
+      </g>
+      <rect id="type-caret" x="0" y="12" width="2" height="22" fill="#3B5B7A"/>
+
+      <g transform="translate(1700,8)">
+        <rect width="64" height="28" rx="6" fill="#3B5B7A"/>
+        <text x="20" y="18" fill="#FFFFFF" font-size="11" font-weight="600">Send</text>
+        <g id="enter-flash" transform="translate(48,4)" opacity="0">
+          <rect width="12" height="20" rx="2" fill="#FFFFFF"/>
+          <text x="6" y="15" fill="#3B5B7A" font-size="10" font-weight="700" text-anchor="middle">↵</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- Sent user turn (appears after typing clears) -->
+    <g transform="translate(72,1020)">
+      <g transform="translate(1408,0)">
+        <rect width="32" height="32" rx="16" fill="#3B5B7A"/>
+        <text x="16" y="22" fill="#FFFFFF" font-size="13" font-weight="700" text-anchor="middle">M</text>
+      </g>
+      <g id="pm-response-bubble" opacity="0">
+        <g transform="translate(0,0)">
+          <rect width="32" height="32" rx="16" fill="#F0EAE0"/>
+          <text x="16" y="22" fill="#5A4519" font-size="16" font-weight="700" text-anchor="middle">📋</text>
+        </g>
+        <text x="44" y="14" class="txt" font-size="12" font-weight="700">PM <tspan class="muted" font-weight="400">· just now · $0.004</tspan></text>
+        <g transform="translate(44,22)">
+          <rect width="1340" height="112" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+          <g clip-path="url(#response-clip)">
+            <g transform="translate(20,20)" fill="#2B2B2B" font-size="13">
+              <text x="0" y="0">105 open beads across 8 Epics. Marker is in the building phase, supervised mode.</text>
+              <text x="0" y="22" class="muted">Running now: mk-e2 Web UI (parallel group A, 62% budget, one stale session on mk-e2.4).</text>
+              <text x="0" y="44" class="muted">Staged: mk-e3 CLI (group A, ready to co-dispatch).</text>
+              <text x="0" y="66" class="muted">Escalating: mk-e6 Pocket adaptor_degraded (HIGH) · mk-e8 Purview violation (HIGH).</text>
+              <text x="0" y="88" class="muted">Next-Up ready: mk-e4, mk-e5. Suggest: resolve mk-e6 before staging mk-e4.</text>
+            </g>
+          </g>
+        </g>
+      </g>
+      <!-- Send spinner placeholder -->
+      <g id="send-spinner" opacity="0" transform="translate(1450,880)">
+        <circle cx="0" cy="0" r="10" fill="none" stroke="#3B5B7A" stroke-width="2" stroke-dasharray="16 10"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Cursor -->
+  <g id="cursor" opacity="0">
+    <path d="M0 0 L0 22 L6 17 L10 24 L13 22 L9 15 L17 15 Z" fill="#2B2B2B" stroke="#FFFFFF" stroke-width="1.2"/>
+  </g>
+
+  <!-- Caption ribbon -->
+  <g transform="translate(72,1170)">
+    <rect width="1720" height="22" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <text x="20" y="16" class="muted" font-size="12">Open the PM panel · ask a Board-context question · response streams · cost ticks from $1.51 → $1.514 · one turn, nonce-free.</text>
+  </g>
+</svg>

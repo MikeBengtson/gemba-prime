@@ -224,6 +224,45 @@
     height: auto;
   }
 
+  /* Motion blocks — animated SVG demos of key interactions */
+  .motion-block {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--border);
+  }
+  .motion-block h3 {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--navy-700);
+  }
+  .motion-block .motion-caption {
+    margin: 0 0 12px;
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .svg-frame-motion {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(42,68,96,0.04);
+  }
+  .svg-frame-motion object {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .motion-hint {
+    margin: 6px 0 0;
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
   .commentary {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -388,6 +427,25 @@
   <h2>1 · The Gemba — home / Epic Kanban</h2>
   <p class="tagline">The factory-floor view. Six columns, cards are Epics, drag-to-stage as the primary action.</p>
   <div class="svg-frame"><object data="01-gemba-board.svg" type="image/svg+xml" aria-label="Gemba Board mockup"></object></div>
+
+  <div class="motion-block">
+    <h3>See this in motion · drag to Stage</h3>
+    <p class="motion-caption">Mike grabs <code>mk-e4</code> from Next Up and drops it into Staged. The Staged column header tints navy while the card crosses the boundary to confirm it&rsquo;s a valid drop zone; column counts update on release.</p>
+    <div class="svg-frame svg-frame-motion">
+      <object data="animated/01-board-drag.svg" type="image/svg+xml" aria-label="Animated: drag mk-e4 from Next Up into Staged; column counts update on release"></object>
+    </div>
+    <p class="motion-hint">Loops · no controls · pauses with prefers-reduced-motion</p>
+  </div>
+
+  <div class="motion-block">
+    <h3>See this in motion · PM panel consult</h3>
+    <p class="motion-caption">The PM panel is always a keystroke away. It expands from the bottom rail, Mike types a Board-context question, and the PM streams a one-turn answer. The advisor-spend ticker updates in the top bar.</p>
+    <div class="svg-frame svg-frame-motion">
+      <object data="animated/03-pm-consult.svg" type="image/svg+xml" aria-label="Animated: expand PM panel, type question, PM streams response, cost updates, panel collapses"></object>
+    </div>
+    <p class="motion-hint">Loops · no controls · pauses with prefers-reduced-motion</p>
+  </div>
+
   <div class="commentary">
     <div>
       <div class="seg">
@@ -423,6 +481,16 @@
   <h2>2 · Gemba walk — active decisioning</h2>
   <p class="tagline">Agenda-left, chat-right. The PM frames an adaptor-degraded escalation; the operator ratifies.</p>
   <div class="svg-frame"><object data="02-gemba-walk.svg" type="image/svg+xml" aria-label="Gemba walk mockup"></object></div>
+
+  <div class="motion-block">
+    <h3>See this in motion · ratify + auto-promote</h3>
+    <p class="motion-caption">Mike clicks the navy <strong>Ratify (a)</strong> CTA. An <em>ExecutedAction</em> row fades in confirming the scope update, agenda item 3 transitions from Active to Decided, and the PM auto-promotes the next queued item (<code>mk-e8</code> Security Purview) into Active with fresh framing.</p>
+    <div class="svg-frame svg-frame-motion">
+      <object data="animated/02-walk-ratify.svg" type="image/svg+xml" aria-label="Animated: ratify PM option (a), executed action row appears, agenda transitions Active→Decided, next queued item auto-promotes"></object>
+    </div>
+    <p class="motion-hint">Loops · no controls · pauses with prefers-reduced-motion</p>
+  </div>
+
   <div class="commentary">
     <div>
       <div class="seg">
@@ -458,6 +526,16 @@
   <h2>3 · Epic drawer — drill into mk-e2</h2>
   <p class="tagline">Right-side overlay on a dimmed Board. Mini-kanban sliced by stage swimlanes.</p>
   <div class="svg-frame"><object data="03-epic-drawer.svg" type="image/svg+xml" aria-label="Epic drawer mockup"></object></div>
+
+  <div class="motion-block">
+    <h3>See this in motion · stale-session popover</h3>
+    <p class="motion-caption">The stale indicator on <code>mk-e2.4</code> pulses to draw attention. Hovering it surfaces the Witness-triaged triage options — <strong>Restart worker</strong> primary, with <strong>Peek session</strong> and <strong>Escalate to Gemba walk</strong> as secondaries — without forcing a full drill-in.</p>
+    <div class="svg-frame svg-frame-motion">
+      <object data="animated/04-drawer-stale.svg" type="image/svg+xml" aria-label="Animated: hover the pulsing stale indicator on mk-e2.4, a dark popover scales in with Restart worker / Peek session / Escalate to Gemba walk"></object>
+    </div>
+    <p class="motion-hint">Loops · no controls · pauses with prefers-reduced-motion</p>
+  </div>
+
   <div class="commentary">
     <div>
       <div class="seg">
