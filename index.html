@@ -66,6 +66,12 @@ html, body { margin: 0; padding: 0; }
     color: var(--muted);
     font-size: 13px;
   }
+  header.site .sub a {
+    text-decoration: none;
+  }
+  header.site .sub a:hover code {
+    background: var(--tan-200, #E6D5B8);
+  }
   header.site .sub code, .kanji code {
     font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
     background: var(--tan-100);
@@ -337,7 +343,7 @@ html, body { margin: 0; padding: 0; }
 
 <header class="site">
   <h1>Gemba UI Mockups · Marker example project</h1>
-  <p class="sub">Five-screen set · Rendered against <code>ui-spec.md</code> + <code>product-description.md</code> · Copy drawn from <code>gist.md</code></p>
+  <p class="sub">Five-screen set · Rendered against <a href="https://github.com/MikeBengtson/gemba-prime/blob/main/ui-spec.md" target="_blank" rel="noopener"><code>ui-spec.md</code></a> + <a href="https://github.com/MikeBengtson/gemba-prime/blob/main/product-description.md" target="_blank" rel="noopener"><code>product-description.md</code></a> · Copy drawn from <a href="https://github.com/MikeBengtson/gemba-prime/blob/main/gist.md" target="_blank" rel="noopener"><code>gist.md</code></a></p>
   <nav class="strip">
     <a class="primary" href="https://gist.github.com/MikeBengtson/52fa46fe24156a7ef78245930a5dfe5f" target="_blank" rel="noopener">Learn more →</a>
     <a href="#intro">Intro</a>
