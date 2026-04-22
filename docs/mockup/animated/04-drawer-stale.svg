@@ -1,0 +1,208 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <title>Animated: hover over mk-e2.4 stale indicator reveals popover with Restart / Peek / Escalate. 3s loop.</title>
+  <defs>
+    <style>
+      .txt { fill: #2B2B2B; }
+      .muted { fill: #6B6B6B; }
+      .mono { font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace; }
+
+      @keyframes pulsestale {
+        0%,100% { transform: scale(1); opacity: 0.85; }
+        50%     { transform: scale(1.25); opacity: 1; }
+      }
+      @keyframes cursorstale {
+        0%,10%  { transform: translate(1850px, 1150px); }
+        25%,30% { transform: translate(1155px, 670px); }
+        85%     { transform: translate(1155px, 670px); }
+        100%    { transform: translate(1850px, 1150px); }
+      }
+      @keyframes popovershow {
+        0%,32%  { opacity: 0; transform: scale(0.96); }
+        40%,80% { opacity: 1; transform: scale(1); }
+        90%,100% { opacity: 0; transform: scale(0.96); }
+      }
+
+      .pulse    { animation: pulsestale 2s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+      .cursor   { animation: cursorstale 3s ease-in-out infinite; }
+      .popover  { animation: popovershow 3s ease-in-out infinite; transform-origin: top left; transform-box: fill-box; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .pulse, .cursor, .popover { animation: none; }
+        .popover { opacity: 1; transform: none; }
+      }
+    </style>
+  </defs>
+
+  <!-- Background (dimmed board) -->
+  <rect width="1920" height="1200" fill="#FAFAF7"/>
+  <rect x="0" y="0" width="1920" height="1200" fill="#2A4460" opacity="0.15"/>
+
+  <!-- Drawer (right side, 40% width = ~760px, but we'll make it wider for legibility) -->
+  <rect x="520" y="56" width="1400" height="1144" fill="#FFFFFF"/>
+  <line x1="520" y1="56" x2="520" y2="1200" stroke="#E5E0D5"/>
+
+  <!-- Drawer header -->
+  <g transform="translate(560, 96)">
+    <text y="8" font-size="11" class="mono muted">mk-e2</text>
+    <text y="36" font-size="22" font-weight="700" class="txt">Web UI (Next.js + Tailwind)</text>
+    <!-- In Progress pill -->
+    <g transform="translate(0, 50)">
+      <rect width="96" height="24" rx="12" fill="#EAF2FB" stroke="#3B82C9"/>
+      <circle cx="12" cy="12" r="4" fill="#3B82C9"/>
+      <text x="22" y="16" fill="#2A4460" font-size="11" font-weight="600">In Progress</text>
+    </g>
+    <!-- P0 -->
+    <g transform="translate(108, 50)">
+      <rect width="36" height="24" rx="6" fill="#FCE6E6" stroke="#C94A4A"/>
+      <text x="18" y="16" fill="#7A2A2A" font-size="11" font-weight="700" text-anchor="middle">P0</text>
+    </g>
+    <!-- parallel-group A glyph -->
+    <g transform="translate(156, 52)">
+      <circle cx="10" cy="10" r="10" fill="#C9A878" stroke="#A4874D"/>
+      <text x="10" y="14" font-size="11" font-weight="700" fill="#2A4460" text-anchor="middle">A</text>
+    </g>
+  </g>
+
+  <!-- Actions toolbar -->
+  <g transform="translate(560, 190)">
+    <g>
+      <rect width="80" height="32" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="40" y="20" font-size="12" font-weight="600" fill="#2A4460" text-anchor="middle">Stage</text>
+    </g>
+    <g transform="translate(90,0)">
+      <rect width="80" height="32" rx="6" fill="#3B5B7A"/>
+      <text x="40" y="20" font-size="12" font-weight="600" fill="#FFFFFF" text-anchor="middle">Start</text>
+    </g>
+    <g transform="translate(180,0)" opacity="0.4">
+      <rect width="96" height="32" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="48" y="20" font-size="12" font-weight="600" fill="#6B6B6B" text-anchor="middle">Complete</text>
+    </g>
+    <g transform="translate(286,0)">
+      <rect width="76" height="32" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <text x="38" y="20" font-size="12" font-weight="600" fill="#6B6B6B" text-anchor="middle">Defer</text>
+    </g>
+  </g>
+
+  <!-- Mini-kanban header -->
+  <g transform="translate(560, 260)">
+    <text y="18" font-size="14" font-weight="700" class="txt">Members</text>
+    <text x="88" y="18" font-size="12" class="muted">7 total · 2/7 done · 3 in-progress · 2 ready</text>
+  </g>
+
+  <!-- Stage swimlanes -->
+  <g transform="translate(560, 300)">
+    <!-- Stage 0 -->
+    <text y="14" font-size="12" font-weight="700" class="muted mono">Stage 0 — Scaffolding</text>
+    <g transform="translate(0, 24)">
+      <!-- 4 mini-kanban column headers -->
+      <rect width="320" height="100" rx="6" fill="#F5F1E8"/>
+      <text x="12" y="20" font-size="11" font-weight="700" fill="#6B6B6B">Ready</text>
+      <rect x="330" width="320" height="100" rx="6" fill="#F5F1E8"/>
+      <text x="342" y="20" font-size="11" font-weight="700" fill="#6B6B6B">In Progress</text>
+      <rect x="660" width="320" height="100" rx="6" fill="#F5F1E8"/>
+      <text x="672" y="20" font-size="11" font-weight="700" fill="#6B6B6B">Review</text>
+      <rect x="990" width="320" height="100" rx="6" fill="#F5F1E8"/>
+      <text x="1002" y="20" font-size="11" font-weight="700" fill="#6B6B6B">Done</text>
+
+      <!-- mk-e2.1 in Done -->
+      <g transform="translate(1000, 30)">
+        <rect width="300" height="60" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="12" y="20" font-size="10" class="mono muted">mk-e2.1</text>
+        <text x="12" y="40" font-size="12" font-weight="600" class="txt">Next.js app scaffold</text>
+      </g>
+      <!-- mk-e2.2 in Done (second slot) - squeezed, skip to keep visual clean -->
+    </g>
+
+    <!-- Stage 1 -->
+    <text y="158" font-size="12" font-weight="700" class="muted mono">Stage 1 — Feature surfaces</text>
+    <g transform="translate(0, 168)">
+      <rect width="320" height="160" rx="6" fill="#F5F1E8"/>
+      <rect x="330" width="320" height="160" rx="6" fill="#F5F1E8"/>
+      <rect x="660" width="320" height="160" rx="6" fill="#F5F1E8"/>
+      <rect x="990" width="320" height="160" rx="6" fill="#F5F1E8"/>
+
+      <!-- mk-e2.3 In Progress (obsidian) -->
+      <g transform="translate(340, 30)">
+        <rect width="300" height="60" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="12" y="20" font-size="10" class="mono muted">mk-e2.3</text>
+        <text x="12" y="40" font-size="12" font-weight="600" class="txt">BookmarkList component</text>
+        <text x="12" y="54" font-size="10" class="muted">worker: obsidian · healthy</text>
+        <circle cx="286" cy="12" r="4" fill="#5BA46A"/>
+      </g>
+
+      <!-- mk-e2.4 In Progress (jasper, STALE) -->
+      <g transform="translate(340, 96)" id="stale-card">
+        <rect width="300" height="60" rx="6" fill="#FFFFFF" stroke="#D99C2E" stroke-width="1.5"/>
+        <text x="12" y="20" font-size="10" class="mono muted">mk-e2.4</text>
+        <text x="12" y="40" font-size="12" font-weight="600" class="txt">BookmarkDetail component</text>
+        <text x="12" y="54" font-size="10" class="muted">worker: jasper · idle 14m</text>
+        <!-- stale indicator (pulsing) -->
+        <g transform="translate(282, 12)">
+          <circle cx="4" cy="0" r="5" fill="#D99C2E" class="pulse"/>
+        </g>
+      </g>
+
+      <!-- mk-e2.5 In Progress (onyx) -->
+      <g transform="translate(340, 162)">
+        <rect width="300" height="60" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="12" y="20" font-size="10" class="mono muted">mk-e2.5</text>
+        <text x="12" y="40" font-size="12" font-weight="600" class="txt">Search bar</text>
+        <text x="12" y="54" font-size="10" class="muted">worker: onyx · healthy</text>
+        <circle cx="286" cy="12" r="4" fill="#5BA46A"/>
+      </g>
+    </g>
+
+    <!-- Stage 2 -->
+    <text y="362" font-size="12" font-weight="700" class="muted mono">Stage 2 — Polish</text>
+    <g transform="translate(0, 374)">
+      <rect width="320" height="100" rx="6" fill="#F5F1E8"/>
+      <rect x="330" width="320" height="100" rx="6" fill="#F5F1E8"/>
+      <rect x="660" width="320" height="100" rx="6" fill="#F5F1E8"/>
+      <rect x="990" width="320" height="100" rx="6" fill="#F5F1E8"/>
+
+      <!-- mk-e2.6 in Ready -->
+      <g transform="translate(10, 20)">
+        <rect width="300" height="60" rx="6" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="12" y="20" font-size="10" class="mono muted">mk-e2.6</text>
+        <text x="12" y="40" font-size="12" font-weight="600" class="txt">Keyboard navigation</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ============ POPOVER (appears over stale indicator) ============ -->
+  <g transform="translate(1180, 510)" class="popover">
+    <!-- Arrow -->
+    <path d="M-10 14 L0 8 L0 20 Z" fill="#2A4460"/>
+    <rect width="310" height="124" rx="10" fill="#2A4460"/>
+    <text x="16" y="26" font-size="12" font-weight="700" fill="#FFFFFF">jasper has been idle 14 minutes</text>
+    <text x="16" y="46" font-size="11" fill="#C9D5E3">Last event: test-run step · no stdout since 10:24</text>
+
+    <!-- Action buttons -->
+    <g transform="translate(16, 60)">
+      <rect width="276" height="16" rx="4" fill="transparent"/>
+    </g>
+    <g transform="translate(16, 64)">
+      <rect width="86" height="28" rx="6" fill="#3B5B7A" stroke="#6B8CAE"/>
+      <text x="43" y="18" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Restart</text>
+    </g>
+    <g transform="translate(110, 64)">
+      <rect width="86" height="28" rx="6" fill="#3B5B7A" stroke="#6B8CAE"/>
+      <text x="43" y="18" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">Peek</text>
+    </g>
+    <g transform="translate(204, 64)">
+      <rect width="92" height="28" rx="6" fill="transparent" stroke="#6B8CAE"/>
+      <text x="46" y="18" font-size="11" font-weight="600" fill="#C9D5E3" text-anchor="middle">Escalate</text>
+    </g>
+  </g>
+
+  <!-- Cursor -->
+  <g class="cursor">
+    <path d="M0 0 L0 18 L5 14 L8 20 L10 19 L7 13 L13 13 Z"
+          fill="#2B2B2B" stroke="#FFFFFF" stroke-width="1"/>
+  </g>
+
+  <!-- Caption -->
+  <g transform="translate(100, 1160)">
+    <text font-size="12" class="mono muted">// Hover stale indicator → popover with Restart / Peek / Escalate · 3s loop</text>
+  </g>
+</svg>

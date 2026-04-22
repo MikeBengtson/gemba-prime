@@ -1,0 +1,271 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <title>Animated: Mike ratifies option (a); agenda item 3 moves Active → Decided; item 4 auto-promotes. 5s loop.</title>
+  <defs>
+    <style>
+      .txt { fill: #2B2B2B; }
+      .muted { fill: #6B6B6B; }
+      .mono { font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace; }
+
+      /* Cursor moves to button, clicks */
+      @keyframes cursorwalk {
+        0%,5%    { transform: translate(1500px, 980px); }
+        30%      { transform: translate(1240px, 660px); }
+        35%      { transform: translate(1240px, 660px) scale(0.9); }
+        40%      { transform: translate(1240px, 660px) scale(1); }
+        100%     { transform: translate(1240px, 660px) scale(1); }
+      }
+      /* Button hover + click flash */
+      @keyframes btnhover {
+        0%,25%   { fill: #3B5B7A; }
+        30%,35%  { fill: #2A4460; }
+        36%,40%  { fill: #5BA46A; }
+        42%,100% { fill: #2A4460; }
+      }
+      /* Executed-action row fades in */
+      @keyframes execshow {
+        0%,42%  { opacity: 0; transform: translateY(-6px); }
+        48%,100% { opacity: 1; transform: translateY(0); }
+      }
+      /* Agenda item 3: active → decided */
+      @keyframes item3active {
+        0%,50%  { opacity: 1; }
+        55%,100% { opacity: 0; }
+      }
+      @keyframes item3decided {
+        0%,50%  { opacity: 0; }
+        55%,100% { opacity: 1; }
+      }
+      /* Agenda item 4: queued → active */
+      @keyframes item4queued {
+        0%,58%  { opacity: 1; }
+        62%,100% { opacity: 0; }
+      }
+      @keyframes item4active {
+        0%,58%  { opacity: 0; }
+        62%,100% { opacity: 1; }
+      }
+      /* PM next message fades in */
+      @keyframes pmnext {
+        0%,65%   { opacity: 0; transform: translateY(8px); }
+        72%,100% { opacity: 1; transform: translateY(0); }
+      }
+
+      .cursor    { animation: cursorwalk 5s ease-in-out infinite; }
+      .btn       { animation: btnhover 5s ease-in-out infinite; }
+      .execrow   { animation: execshow 5s ease-in-out infinite; transform-origin: left; }
+      .item3-active  { animation: item3active 5s steps(1) infinite; }
+      .item3-decided { animation: item3decided 5s steps(1) infinite; }
+      .item4-queued  { animation: item4queued 5s steps(1) infinite; }
+      .item4-active  { animation: item4active 5s steps(1) infinite; }
+      .pmnext    { animation: pmnext 5s ease-in-out infinite; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .cursor, .btn, .execrow, .item3-active, .item3-decided,
+        .item4-queued, .item4-active, .pmnext { animation: none; }
+        .execrow, .pmnext { opacity: 1; transform: none; }
+        .item3-active, .item4-queued { opacity: 0; }
+        .item3-decided, .item4-active { opacity: 1; }
+      }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1200" fill="#FAFAF7"/>
+
+  <!-- Top bar -->
+  <rect x="0" y="0" width="1920" height="56" fill="#FFFFFF"/>
+  <line x1="0" y1="56" x2="1920" y2="56" stroke="#E5E0D5" stroke-width="1"/>
+  <g transform="translate(60,16)">
+    <rect width="140" height="24" rx="6" fill="#F5EFE0" stroke="#E5E0D5"/>
+    <text x="12" y="17" class="txt" font-size="13" font-weight="600">marker</text>
+  </g>
+
+  <!-- Active Gemba-walk banner -->
+  <rect x="64" y="56" width="1856" height="36" fill="#FFF8E6" stroke="#E5D8A8" stroke-width="0" opacity="0.7"/>
+  <line x1="64" y1="92" x2="1920" y2="92" stroke="#E5D8A8"/>
+  <circle cx="100" cy="74" r="5" fill="#D99C2E"/>
+  <text x="116" y="78" font-size="13" font-weight="600" fill="#7A5A1A">Gemba walk active</text>
+  <text x="262" y="78" font-size="13" class="muted">· 2 of 5 decided</text>
+
+  <!-- Sidebar rail (collapsed) -->
+  <rect x="0" y="56" width="64" height="1144" fill="#FFFFFF"/>
+  <line x1="64" y1="56" x2="64" y2="1200" stroke="#E5E0D5"/>
+
+  <!-- =================== AGENDA PANE =================== -->
+  <rect x="64" y="92" width="360" height="1108" fill="#FFFFFF"/>
+  <line x1="424" y1="92" x2="424" y2="1200" stroke="#E5E0D5"/>
+
+  <text x="84" y="130" font-size="15" font-weight="700" class="txt">Agenda</text>
+  <text x="84" y="150" font-size="12" class="muted">5 items · 2 decided · 1 active</text>
+
+  <!-- Item 1: decided -->
+  <g transform="translate(84, 170)">
+    <rect width="320" height="72" rx="8" fill="#F8F5EE" stroke="#E5E0D5"/>
+    <circle cx="16" cy="20" r="8" fill="#5BA46A"/>
+    <path d="M12 20 L15 23 L21 17" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+    <text x="34" y="24" font-size="12" font-weight="600" class="txt">mk-e2.4 session stale</text>
+    <text x="34" y="42" font-size="10" class="muted">stale_session · MEDIUM · decided</text>
+    <text x="34" y="58" font-size="10" class="muted" opacity="0.7">restarted worker (obsidian)</text>
+  </g>
+  <!-- Item 2: decided -->
+  <g transform="translate(84, 252)">
+    <rect width="320" height="72" rx="8" fill="#F8F5EE" stroke="#E5E0D5"/>
+    <circle cx="16" cy="20" r="8" fill="#5BA46A"/>
+    <path d="M12 20 L15 23 L21 17" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+    <text x="34" y="24" font-size="12" font-weight="600" class="txt">Sprint placement for mk-e5</text>
+    <text x="34" y="42" font-size="10" class="muted">hitl_question · PM · decided</text>
+    <text x="34" y="58" font-size="10" class="muted" opacity="0.7">placed in current sprint</text>
+  </g>
+
+  <!-- Item 3: active → decided (two states, animated) -->
+  <g transform="translate(84, 334)">
+    <!-- Active state -->
+    <g class="item3-active">
+      <rect width="320" height="80" rx="8" fill="#FFF8E6" stroke="#D99C2E" stroke-width="2"/>
+      <circle cx="16" cy="22" r="8" fill="#D99C2E"/>
+      <text x="16" y="26" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">!</text>
+      <text x="34" y="24" font-size="13" font-weight="700" class="txt">mk-e6 Pocket API v1 deprecated</text>
+      <text x="34" y="42" font-size="10" class="muted">adaptor_degraded · HIGH · active</text>
+      <rect x="34" y="50" width="54" height="16" rx="4" fill="#C94A4A"/>
+      <text x="61" y="61" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle">HIGH</text>
+    </g>
+    <!-- Decided state -->
+    <g class="item3-decided">
+      <rect width="320" height="72" rx="8" fill="#F8F5EE" stroke="#E5E0D5"/>
+      <circle cx="16" cy="20" r="8" fill="#5BA46A"/>
+      <path d="M12 20 L15 23 L21 17" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+      <text x="34" y="24" font-size="12" font-weight="600" class="txt">mk-e6 Pocket API v1 deprecated</text>
+      <text x="34" y="42" font-size="10" class="muted">adaptor_degraded · HIGH · decided</text>
+      <text x="34" y="58" font-size="10" class="muted" opacity="0.7">ratified: update mk-e6 to v2</text>
+    </g>
+  </g>
+
+  <!-- Item 4: queued → active -->
+  <g transform="translate(84, 424)">
+    <g class="item4-queued">
+      <rect width="320" height="72" rx="8" fill="#FFFFFF" stroke="#E5E0D5"/>
+      <circle cx="16" cy="20" r="8" fill="#C0B5A0"/>
+      <text x="34" y="24" font-size="12" font-weight="600" class="txt">mk-e8 auth Security Purview</text>
+      <text x="34" y="42" font-size="10" class="muted">purview_violation · HIGH · queued</text>
+      <rect x="34" y="50" width="54" height="16" rx="4" fill="#C94A4A"/>
+      <text x="61" y="61" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle">HIGH</text>
+    </g>
+    <g class="item4-active">
+      <rect width="320" height="80" rx="8" fill="#FFF8E6" stroke="#D99C2E" stroke-width="2"/>
+      <circle cx="16" cy="22" r="8" fill="#D99C2E"/>
+      <text x="16" y="26" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">!</text>
+      <text x="34" y="24" font-size="13" font-weight="700" class="txt">mk-e8 auth Security Purview</text>
+      <text x="34" y="42" font-size="10" class="muted">purview_violation · HIGH · active</text>
+      <rect x="34" y="50" width="54" height="16" rx="4" fill="#C94A4A"/>
+      <text x="61" y="61" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle">HIGH</text>
+    </g>
+  </g>
+
+  <!-- Item 5 -->
+  <g transform="translate(84, 514)">
+    <rect width="320" height="60" rx="8" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <circle cx="16" cy="20" r="8" fill="#C0B5A0"/>
+    <text x="16" y="24" font-size="10" font-weight="700" fill="#FFFFFF" text-anchor="middle">★</text>
+    <text x="34" y="24" font-size="12" font-weight="600" class="txt">Review mk-e2 Web UI progress</text>
+    <text x="34" y="42" font-size="10" class="muted">user-added · queued</text>
+  </g>
+
+  <!-- =================== CHAT PANE =================== -->
+  <!-- Framing -->
+  <g transform="translate(460, 120)">
+    <rect width="1420" height="40" rx="8" fill="#EAF2FB" stroke="#3B82C9"/>
+    <text x="16" y="26" font-size="13" font-weight="600" fill="#2A4460">Agenda #3 · mk-e6 Pocket API v1 deprecated · adaptor_degraded / HIGH</text>
+  </g>
+
+  <!-- PM turn: framing + options -->
+  <g transform="translate(460, 180)">
+    <rect width="1420" height="420" rx="12" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <!-- Speaker label -->
+    <g transform="translate(20,20)">
+      <circle cx="12" cy="12" r="12" fill="#EDE6F5"/>
+      <text x="12" y="17" font-size="14" text-anchor="middle">📋</text>
+      <text x="34" y="16" font-size="13" font-weight="700" class="txt">Project Manager</text>
+      <text x="34" y="32" font-size="10" class="muted mono">Coach · manager variety · opus 4.7</text>
+    </g>
+    <text x="20" y="92" font-size="13" class="txt">Pocket retired their v1 API last week. mk-e6 as scoped assumes v1. Options I see:</text>
+    <text x="20" y="118" font-size="13" class="txt">(a) update mk-e6 to target v2 (adds ~8k tokens to the epic);</text>
+    <text x="20" y="142" font-size="13" class="txt">(b) defer mk-e6 and focus on Raindrop-only import first (smaller scope, ships sooner);</text>
+    <text x="20" y="166" font-size="13" class="txt">(c) cancel mk-e6 and add a raindrop_import epic.</text>
+
+    <!-- Inline perspectives -->
+    <g transform="translate(20, 200)" opacity="0.75">
+      <rect x="0" y="0" width="4" height="60" fill="#EDE6F5"/>
+      <text x="16" y="16" font-size="12" class="muted">Architect · perspective</text>
+      <text x="16" y="36" font-size="12" class="txt">"Option (a) keeps scope discipline; Pocket v2 has similar shape."</text>
+    </g>
+    <g transform="translate(20, 268)" opacity="0.75">
+      <rect x="0" y="0" width="4" height="60" fill="#EAF2FB"/>
+      <text x="16" y="16" font-size="12" class="muted">Deployment Engineer · perspective</text>
+      <text x="16" y="36" font-size="12" class="txt">"Option (b) ships faster but fragments the import story."</text>
+    </g>
+
+    <!-- Ratify buttons -->
+    <g transform="translate(20, 350)">
+      <g>
+        <rect width="220" height="40" rx="8" class="btn"/>
+        <text x="110" y="25" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">Ratify (a): update to v2</text>
+      </g>
+      <g transform="translate(240,0)">
+        <rect width="180" height="40" rx="8" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="90" y="25" font-size="13" font-weight="600" fill="#2A4460" text-anchor="middle">Ratify (b): defer</text>
+      </g>
+      <g transform="translate(436,0)">
+        <rect width="100" height="40" rx="8" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="50" y="25" font-size="13" font-weight="600" fill="#6B6B6B" text-anchor="middle">Modify</text>
+      </g>
+      <g transform="translate(552,0)">
+        <rect width="100" height="40" rx="8" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="50" y="25" font-size="13" font-weight="600" fill="#6B6B6B" text-anchor="middle">Reject</text>
+      </g>
+      <g transform="translate(668,0)">
+        <rect width="100" height="40" rx="8" fill="#FFFFFF" stroke="#E5E0D5"/>
+        <text x="50" y="25" font-size="13" font-weight="600" fill="#6B6B6B" text-anchor="middle">Defer</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Executed-action row -->
+  <g transform="translate(460, 620)" class="execrow">
+    <rect width="1420" height="48" rx="8" fill="#E8F2E8" stroke="#5BA46A"/>
+    <circle cx="26" cy="24" r="10" fill="#5BA46A"/>
+    <path d="M21 24 L25 28 L33 20" stroke="#FFFFFF" stroke-width="2.4" fill="none"/>
+    <text x="48" y="30" font-size="13" font-weight="600" fill="#1E5227">Applied: mk-e6 scope updated to Pocket v2. Token estimate +8k.</text>
+  </g>
+
+  <!-- PM next message (item 4) -->
+  <g transform="translate(460, 684)" class="pmnext">
+    <rect width="1420" height="120" rx="12" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <g transform="translate(20,20)">
+      <circle cx="12" cy="12" r="12" fill="#EDE6F5"/>
+      <text x="12" y="17" font-size="14" text-anchor="middle">📋</text>
+      <text x="34" y="16" font-size="13" font-weight="700" class="txt">Project Manager</text>
+    </g>
+    <text x="20" y="74" font-size="13" class="txt">Next: mk-e8 auth-surface Security Purview. This is blocking Stage transition.</text>
+    <text x="20" y="96" font-size="13" class="txt">Options: (a) consult Security now; (b) hold mk-e8 for a sprint…</text>
+  </g>
+
+  <!-- PM panel dock at bottom -->
+  <rect x="64" y="1144" width="1856" height="56" fill="#FFFFFF" stroke="#E5E0D5"/>
+  <g transform="translate(94, 1162)">
+    <circle cx="10" cy="10" r="10" fill="#EDE6F5"/>
+    <text x="10" y="15" font-size="12" text-anchor="middle">📋</text>
+    <text x="32" y="14" font-size="12" class="muted mono">walk chat · 3 of 5 decided</text>
+    <text x="1780" y="14" font-size="12" class="muted mono" text-anchor="end">$0.04 · 6m elapsed</text>
+  </g>
+
+  <!-- Cursor -->
+  <g class="cursor">
+    <path d="M0 0 L0 18 L5 14 L8 20 L10 19 L7 13 L13 13 Z"
+          fill="#2B2B2B" stroke="#FFFFFF" stroke-width="1"/>
+  </g>
+
+  <!-- Caption -->
+  <g transform="translate(100, 1130)">
+    <text font-size="11" class="mono muted">// Ratify (a) → agenda item 3 decided · item 4 auto-promotes · 5s loop</text>
+  </g>
+</svg>

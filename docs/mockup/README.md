@@ -8,6 +8,8 @@ This is a self-contained, offline-openable visual artifact of Gemba's five prima
 
 The intent is a **human-reviewable visual proof of the ratified `ui-spec.md`**. Deviations should be caught in this artifact before component implementation beads dispatch.
 
+_Updated 2026-04-22 (gm-gst): added 4 animated SVG interaction demos. See "Animated mockups" below._
+
 ## Screen inventory
 
 | # | File | Purpose |
@@ -155,6 +157,35 @@ The mockups resolve several `PROPOSED` items in `ui-spec.md` by picking specific
 - **§6.4 primary-CTA rule for empty states** — Canceled-column empty state is intentionally a reflective sentence (no CTA) because cancellation is not an action-target for a user on the Gemba; mk-e7 "Next candidate" has an "Add DoD" CTA per the rule. Treat as preliminary; UX Expert review welcome.
 
 ---
+
+## Animated mockups (gm-gst)
+
+Four CSS-animated SVGs augment the static set. Each autoplays + loops, freezes under `prefers-reduced-motion`, and uses the same color tokens and font stacks as the static version it complements. No JavaScript, no external resources.
+
+| File | Augments | Duration | Interaction |
+|---|---|---|---|
+| `animated/01-board-drag.svg` | `01-gemba-board.svg` | 4s loop | Mike drags `mk-e4` from Next Up → Staged. Lane tints navy, ghost remains at origin, counts update on drop. |
+| `animated/02-walk-ratify.svg` | `02-gemba-walk.svg` | 5s loop | Ratify option (a) on the Pocket API agenda item. Executed-action banner fades in; item 3 → decided; item 4 auto-promotes; PM surfaces next topic. |
+| `animated/03-pm-consult.svg` | `01-gemba-board.svg` | 5s loop | PM panel expands from collapsed state; user types "What remains?"; PM response streams in; cost ticks. |
+| `animated/04-drawer-stale.svg` | `03-epic-drawer.svg` | 3s loop | Hover `mk-e2.4`'s pulsing stale indicator; popover reveals Restart / Peek / Escalate. |
+
+### Audit — animated set
+
+**A1 · 01-board-drag — Pass.** Primary drag-first interaction rendered with correct visual tokens (navy stroke on dragged card, tan tint on drop zone, card counts update in sync). Ghost outline at origin uses the same dashed navy border as the static spec implies. Loop is seamless; prefers-reduced-motion leaves a coherent still at origin.
+
+**A2 · 02-walk-ratify — Pass.** Three-beat choreography (click → executed-action banner → item transitions) reads without ambiguity. The Architect + Deployment Engineer perspective insets are present throughout (consistent with gm-9rv PPPP volunteering semantics). Green "Applied" banner matches the reserved Green = passed / healthy semantic from ui-spec §1.2.
+
+**A3 · 03-pm-consult — Pass with 1 minor polish note.** The panel open animation reveals the expanded drawer with the correct quick-action-buttons row ("Recommend order" / "What remains" / "Trim to budget"). Typed input + streaming reply both use the monospace stack. **Minor note:** the spinner at (808, 1020) overlaps the end of the send button in a way that could be clearer at smaller renders; acceptable at 1920×1200.
+
+**A4 · 04-drawer-stale — Pass.** Pulsing stale indicator (2s pulse) continues independently of the 3s hover-reveal loop, which matches the "persistent condition with transient recovery affordance" pattern. Popover styling — dark navy background with light text and bordered buttons — reads against the white drawer consistently.
+
+### Visual-consistency cross-check
+
+All four animations use: `#FAFAF7` (background), `#FFFFFF` (surface), `#E5E0D5` (border), `#2B2B2B` (text), `#6B6B6B` (muted), `#3B5B7A` / `#2A4460` (navy / navy-700), `#3B82C9` (info blue), `#C94A4A` (red / blocked), `#D99C2E` (warning yellow), `#5BA46A` (success green), `#F5EFE0` / `#C9A878` (tan variants). Extracted from `01-gemba-board.svg`; no new hues introduced.
+
+### Integration into `index.html`
+
+Four motion blocks added below the static SVG embeds for Screens 1, 2, 3 (Screen 1 gets two: A1 + A3). Each motion block includes: header ("See this in motion"), caption (2-3 sentences explaining what the animation shows in Marker context), the embedded `<object>` with aria-label, and a mono-styled hint noting loop duration + reduced-motion behavior. Dashed-border `.svg-frame.motion` variant distinguishes animated from static visually.
 
 ## Known limitations / deferrals (v1.1)
 

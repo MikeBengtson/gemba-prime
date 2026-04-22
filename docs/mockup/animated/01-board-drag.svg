@@ -1,0 +1,249 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1200" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <title>Animated: drag mk-e4 from Next Up to Staged. Loops every 4 seconds.</title>
+  <defs>
+    <style>
+      .txt { fill: #2B2B2B; }
+      .muted { fill: #6B6B6B; }
+      .mono { font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', 'Consolas', monospace; }
+
+      /* Card movement: 4s loop. Origin at (680,260). Target at (1020,400). */
+      @keyframes dragcard {
+        0%,   10% { transform: translate(0, 0) scale(1); opacity: 1; }
+        15%       { transform: translate(0, 0) scale(1.03); }
+        25%,30%   { transform: translate(0, 0) scale(1.03); }
+        55%       { transform: translate(340px, 140px) scale(1.03); }
+        65%       { transform: translate(340px, 140px) scale(1.0); }
+        68%,90%   { transform: translate(340px, 140px) scale(1.0); opacity: 1; }
+        100%      { transform: translate(0, 0) scale(1); opacity: 1; }
+      }
+      @keyframes cursormove {
+        0%,10%   { transform: translate(720px, 300px); }
+        15%      { transform: translate(720px, 300px) scale(0.9); }
+        55%      { transform: translate(1060px, 440px) scale(0.9); }
+        65%      { transform: translate(1060px, 440px) scale(1); }
+        100%     { transform: translate(1060px, 440px) scale(1); }
+      }
+      @keyframes ghostshow {
+        0%,12%   { opacity: 0; }
+        15%,55%  { opacity: 0.35; }
+        60%,100% { opacity: 0; }
+      }
+      @keyframes stagedtint {
+        0%,40%   { fill: #FAFAF7; }
+        45%,60%  { fill: #EAF2FB; }
+        65%,100% { fill: #FAFAF7; }
+      }
+      @keyframes countnextup {
+        0%,60%   { opacity: 1; }
+        62%,100% { opacity: 0; }
+      }
+      @keyframes countnextupnew {
+        0%,60%   { opacity: 0; }
+        62%,100% { opacity: 1; }
+      }
+      @keyframes countstaged {
+        0%,62%   { opacity: 1; }
+        64%,100% { opacity: 0; }
+      }
+      @keyframes countstagednew {
+        0%,62%   { opacity: 0; }
+        64%,100% { opacity: 1; }
+      }
+
+      .dragcard { animation: dragcard 4s ease-in-out infinite; transform-origin: center; }
+      .cursor   { animation: cursormove 4s ease-in-out infinite; }
+      .ghost    { animation: ghostshow 4s ease-in-out infinite; }
+      .tintzone { animation: stagedtint 4s ease-in-out infinite; }
+      .count-nu-old  { animation: countnextup 4s steps(1) infinite; }
+      .count-nu-new  { animation: countnextupnew 4s steps(1) infinite; }
+      .count-st-old  { animation: countstaged 4s steps(1) infinite; }
+      .count-st-new  { animation: countstagednew 4s steps(1) infinite; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .dragcard, .cursor, .ghost, .tintzone,
+        .count-nu-old, .count-nu-new, .count-st-old, .count-st-new {
+          animation: none;
+        }
+        .ghost { opacity: 0; }
+        .count-nu-old, .count-st-old { opacity: 1; }
+        .count-nu-new, .count-st-new { opacity: 0; }
+      }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1200" fill="#FAFAF7"/>
+
+  <!-- Simplified top bar -->
+  <rect x="0" y="0" width="1920" height="56" fill="#FFFFFF"/>
+  <line x1="0" y1="56" x2="1920" y2="56" stroke="#E5E0D5" stroke-width="1"/>
+  <g transform="translate(18,18)">
+    <rect width="20" height="2" y="3" fill="#6B6B6B" rx="1"/>
+    <rect width="20" height="2" y="9" fill="#6B6B6B" rx="1"/>
+    <rect width="20" height="2" y="15" fill="#6B6B6B" rx="1"/>
+  </g>
+  <g transform="translate(60,16)">
+    <rect width="140" height="24" rx="6" fill="#F5EFE0" stroke="#E5E0D5"/>
+    <text x="12" y="17" class="txt" font-size="13" font-weight="600">marker</text>
+  </g>
+  <g transform="translate(212,16)">
+    <rect width="96" height="24" rx="12" fill="#EAF2FB" stroke="#3B82C9"/>
+    <circle cx="12" cy="12" r="4" fill="#3B82C9"/>
+    <text x="22" y="16" fill="#2A4460" font-size="12" font-weight="600">supervised</text>
+  </g>
+  <g transform="translate(320,16)">
+    <rect width="80" height="24" rx="12" fill="#F5EFE0" stroke="#E5E0D5"/>
+    <text x="12" y="16" class="txt" font-size="12" font-weight="600">building</text>
+  </g>
+
+  <!-- Sidebar rail (collapsed) -->
+  <rect x="0" y="56" width="64" height="1144" fill="#FFFFFF"/>
+  <line x1="64" y1="56" x2="64" y2="1200" stroke="#E5E0D5" stroke-width="1"/>
+  <g fill="#6B6B6B">
+    <rect x="22" y="88" width="20" height="16" rx="2"/>
+    <rect x="22" y="128" width="20" height="16" rx="2"/>
+    <rect x="22" y="168" width="20" height="16" rx="2"/>
+    <rect x="22" y="208" width="20" height="16" rx="2"/>
+    <rect x="22" y="248" width="20" height="16" rx="2"/>
+    <rect x="22" y="288" width="20" height="16" rx="2"/>
+    <rect x="22" y="328" width="20" height="16" rx="2"/>
+  </g>
+
+  <!-- ============ COLUMN HEADERS ============ -->
+  <g font-size="14" font-weight="700" fill="#2B2B2B">
+    <text x="140"  y="120">Backlog</text>
+    <text x="440"  y="120">Next Up</text>
+    <text x="780"  y="120">Staged</text>
+    <text x="1100" y="120">In Progress</text>
+    <text x="1420" y="120">Done</text>
+    <text x="1700" y="120">Canceled</text>
+  </g>
+  <g font-size="12" fill="#6B6B6B">
+    <text x="220"  y="120">3</text>
+    <!-- Next Up count: old=2, new=1 -->
+    <text x="520"  y="120" class="count-nu-old">2</text>
+    <text x="520"  y="120" class="count-nu-new">1</text>
+    <!-- Staged count: old=1, new=2 -->
+    <text x="850"  y="120" class="count-st-old">1</text>
+    <text x="850"  y="120" class="count-st-new">2</text>
+    <text x="1200" y="120">1</text>
+    <text x="1490" y="120">1</text>
+    <text x="1790" y="120">0</text>
+  </g>
+
+  <!-- ============ COLUMN LANES ============ -->
+  <g>
+    <!-- Backlog lane -->
+    <rect x="100" y="140" width="280" height="1000" fill="#FAFAF7" rx="6"/>
+    <!-- Next Up lane -->
+    <rect x="400" y="140" width="320" height="1000" fill="#FAFAF7" rx="6"/>
+    <!-- Staged lane -->
+    <rect x="740" y="140" width="320" height="1000" fill="#FAFAF7" rx="6" class="tintzone"/>
+    <!-- In Progress lane -->
+    <rect x="1080" y="140" width="300" height="1000" fill="#FAFAF7" rx="6"/>
+    <!-- Done lane -->
+    <rect x="1400" y="140" width="280" height="1000" fill="#FAFAF7" rx="6"/>
+    <!-- Canceled lane -->
+    <rect x="1700" y="140" width="200" height="1000" fill="#FAFAF7" rx="6"/>
+  </g>
+
+  <!-- ============ STATIC CARDS ============ -->
+  <!-- Backlog cards: mk-e6, mk-e7, mk-e8 -->
+  <g transform="translate(120,170)">
+    <rect width="240" height="92" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <rect x="0" y="0" width="3" height="92" rx="2" fill="#C94A4A"/>
+    <text x="18" y="26" font-size="12" class="mono muted">mk-e6</text>
+    <text x="18" y="48" font-size="14" font-weight="600" class="txt">Pocket / Raindrop import</text>
+    <text x="18" y="70" font-size="11" class="muted">4 members · 0/4 ready</text>
+    <circle cx="220" cy="22" r="5" fill="#C94A4A"/>
+  </g>
+  <g transform="translate(120,282)">
+    <rect width="240" height="84" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <rect x="0" y="0" width="3" height="84" rx="2" fill="#BFA360"/>
+    <text x="18" y="26" font-size="12" class="mono muted">mk-e7</text>
+    <text x="18" y="48" font-size="14" font-weight="600" class="txt">PWA / mobile polish</text>
+    <text x="18" y="68" font-size="11" class="muted">6 members · 0/6 ready</text>
+  </g>
+  <g transform="translate(120,386)">
+    <rect width="240" height="92" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <rect x="0" y="0" width="3" height="92" rx="2" fill="#BFA360"/>
+    <text x="18" y="26" font-size="12" class="mono muted">mk-e8</text>
+    <text x="18" y="48" font-size="14" font-weight="600" class="txt">Team sharing</text>
+    <text x="18" y="70" font-size="11" class="muted">4 members · 0/4 ready</text>
+    <circle cx="220" cy="22" r="5" fill="#D99C2E" stroke="#A46F1A"/>
+  </g>
+
+  <!-- Next Up static: mk-e5 (mk-e4 is the animated one — rendered separately below) -->
+  <g transform="translate(420,292)">
+    <rect width="280" height="92" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <rect x="0" y="0" width="3" height="92" rx="2" fill="#3B82C9"/>
+    <text x="18" y="26" font-size="12" class="mono muted">mk-e5</text>
+    <text x="18" y="48" font-size="14" font-weight="600" class="txt">Full-text search</text>
+    <text x="18" y="70" font-size="11" class="muted">3 members · 3/3 ready</text>
+  </g>
+
+  <!-- Staged: mk-e3 -->
+  <g transform="translate(760,170)">
+    <rect width="280" height="92" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <rect x="0" y="0" width="3" height="92" rx="2" fill="#3B82C9"/>
+    <text x="18" y="26" font-size="12" class="mono muted">mk-e3</text>
+    <text x="18" y="48" font-size="14" font-weight="600" class="txt">CLI (marker binary)</text>
+    <text x="18" y="70" font-size="11" class="muted">4 members · 4/4 ready</text>
+    <!-- Parallel-group A glyph -->
+    <circle cx="255" cy="22" r="9" fill="#C9A878" stroke="#A4874D"/>
+    <text x="255" y="26" font-size="11" font-weight="700" fill="#2A4460" text-anchor="middle">A</text>
+  </g>
+
+  <!-- In Progress: mk-e2 -->
+  <g transform="translate(1100,170)">
+    <rect width="260" height="104" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <rect x="0" y="0" width="3" height="104" rx="2" fill="#C94A4A"/>
+    <text x="18" y="26" font-size="12" class="mono muted">mk-e2</text>
+    <text x="18" y="48" font-size="14" font-weight="600" class="txt">Web UI</text>
+    <text x="18" y="68" font-size="11" class="muted">7 members · 2/7 done · 3 in-prog</text>
+    <!-- budget gauge -->
+    <rect x="18" y="80" width="220" height="6" rx="3" fill="#F0E8D8"/>
+    <rect x="18" y="80" width="137" height="6" rx="3" fill="#3B82C9"/>
+    <text x="244" y="87" font-size="10" class="muted" text-anchor="end">62%</text>
+    <!-- parallel glyph -->
+    <circle cx="235" cy="22" r="9" fill="#C9A878" stroke="#A4874D"/>
+    <text x="235" y="26" font-size="11" font-weight="700" fill="#2A4460" text-anchor="middle">A</text>
+  </g>
+
+  <!-- Done: mk-e1 -->
+  <g transform="translate(1420,170)" opacity="0.75">
+    <rect width="260" height="84" rx="10" fill="#FFFFFF" stroke="#E5E0D5"/>
+    <rect x="0" y="0" width="3" height="84" rx="2" fill="#5BA46A"/>
+    <text x="18" y="26" font-size="12" class="mono muted">mk-e1</text>
+    <text x="18" y="48" font-size="14" font-weight="600" class="txt">Core API + persistence</text>
+    <text x="18" y="68" font-size="11" class="muted">5 members · 5/5 done</text>
+  </g>
+
+  <!-- ============ GHOST (at Next Up origin, shown mid-drag) ============ -->
+  <g transform="translate(420,170)" class="ghost">
+    <rect width="280" height="92" rx="10" fill="none" stroke="#3B5B7A" stroke-width="1.5" stroke-dasharray="6 4"/>
+  </g>
+
+  <!-- ============ ANIMATED CARD: mk-e4 ============ -->
+  <g transform="translate(420,170)">
+    <g class="dragcard">
+      <rect x="4" y="4" width="280" height="92" rx="10" fill="rgba(42,68,96,0.12)"/>
+      <rect width="280" height="92" rx="10" fill="#FFFFFF" stroke="#3B5B7A" stroke-width="1.5"/>
+      <rect x="0" y="0" width="3" height="92" rx="2" fill="#3B82C9"/>
+      <text x="18" y="26" font-size="12" class="mono muted">mk-e4</text>
+      <text x="18" y="48" font-size="14" font-weight="600" class="txt">Browser extension</text>
+      <text x="18" y="70" font-size="11" class="muted">5 members · 3/5 ready · 2 blocked</text>
+    </g>
+  </g>
+
+  <!-- ============ CURSOR ============ -->
+  <g class="cursor">
+    <path d="M0 0 L0 18 L5 14 L8 20 L10 19 L7 13 L13 13 Z"
+          fill="#2B2B2B" stroke="#FFFFFF" stroke-width="1"/>
+  </g>
+
+  <!-- ============ CAPTION / hint ============ -->
+  <g transform="translate(100, 1160)">
+    <text font-size="12" class="mono muted">// Drag mk-e4 from Next Up → Staged · 4s loop · primary interaction pattern</text>
+  </g>
+</svg>

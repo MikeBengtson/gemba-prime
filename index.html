@@ -262,6 +262,38 @@ html, body { margin: 0; padding: 0; }
     height: auto;
   }
 
+  .motion-block {
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px dashed var(--border);
+  }
+  .motion-block h3 {
+    margin: 0 0 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--navy-700);
+  }
+  .motion-caption {
+    margin: 0 0 14px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+    max-width: 820px;
+  }
+  .svg-frame.motion {
+    border-style: dashed;
+    border-color: var(--navy-700);
+    background: color-mix(in srgb, var(--navy) 4%, var(--surface));
+  }
+  .motion-hint {
+    margin: 8px 0 0;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  }
+
   .commentary {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -461,6 +493,21 @@ html, body { margin: 0; padding: 0; }
       </ul>
     </div>
   </div>
+
+  <div class="motion-block">
+    <h3>See this in motion</h3>
+    <p class="motion-caption">Mike drags <code>mk-e4</code> (Browser extension) from <strong>Next Up</strong> into <strong>Staged</strong>. The lane tints navy as a valid drop zone, a ghost outline remains at the origin, and the column counts update on release. Drag-to-stage is the ratified primary action on the Gemba.</p>
+    <div class="svg-frame motion"><object data="docs/mockup/animated/01-board-drag.svg" type="image/svg+xml" aria-label="Animation: drag mk-e4 to Staged"></object></div>
+    <p class="motion-hint">// Loops every 4s · autoplay · freezes with <code>prefers-reduced-motion</code></p>
+  </div>
+
+  <div class="motion-block">
+    <h3>See this in motion</h3>
+    <p class="motion-caption">The PM panel lives at the bottom of the Gemba as a collapsible drawer. Mike taps <code>⌘P</code>, types <em>"What remains on the board right now?"</em>, and the Project Manager Manager streams a structured reply. Every consult is logged, costed, and auditable — <code>$0.004</code> per turn is not a typo.</p>
+    <div class="svg-frame motion"><object data="docs/mockup/animated/03-pm-consult.svg" type="image/svg+xml" aria-label="Animation: PM panel opens and streams a reply"></object></div>
+    <p class="motion-hint">// Loops every 5s · autoplay · freezes with <code>prefers-reduced-motion</code></p>
+  </div>
+
 </section>
 
 <section class="screen" id="s2">
@@ -496,6 +543,14 @@ html, body { margin: 0; padding: 0; }
       </ul>
     </div>
   </div>
+
+  <div class="motion-block">
+    <h3>See this in motion</h3>
+    <p class="motion-caption">The Pocket API deprecation is the active agenda item. Mike ratifies <strong>option (a)</strong> — update <code>mk-e6</code> to target Pocket v2. The action executes as a nonce-gated mutation (you see the green banner appear), item 3 transitions from <em>active</em> to <em>decided</em>, item 4 auto-promotes to <em>active</em>, and the PM frames the next topic. A Gemba walk is a running conversation that advances the project, not a passive dashboard.</p>
+    <div class="svg-frame motion"><object data="docs/mockup/animated/02-walk-ratify.svg" type="image/svg+xml" aria-label="Animation: ratify option (a) on the Pocket API agenda item"></object></div>
+    <p class="motion-hint">// Loops every 5s · autoplay · freezes with <code>prefers-reduced-motion</code></p>
+  </div>
+
 </section>
 
 <section class="screen" id="s3">
@@ -530,6 +585,14 @@ html, body { margin: 0; padding: 0; }
       </ul>
     </div>
   </div>
+
+  <div class="motion-block">
+    <h3>See this in motion</h3>
+    <p class="motion-caption">Mike hovers the pulsing yellow stale indicator on <code>mk-e2.4</code>. A popover reveals the three recovery affordances: <strong>Restart</strong> the worker, <strong>Peek</strong> the session, or <strong>Escalate</strong> to a Gemba walk. Recovery stays one click from the work; nothing forces you to leave the drawer to diagnose.</p>
+    <div class="svg-frame motion"><object data="docs/mockup/animated/04-drawer-stale.svg" type="image/svg+xml" aria-label="Animation: hover the stale indicator to reveal recovery options"></object></div>
+    <p class="motion-hint">// Loops every 3s · autoplay · freezes with <code>prefers-reduced-motion</code></p>
+  </div>
+
 </section>
 
 <section class="screen" id="s4">
