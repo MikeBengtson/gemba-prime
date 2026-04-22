@@ -184,8 +184,8 @@
         <text x="36" y="32" font-size="11" class="muted mono">Manager · opus 4.7 · consulting</text>
 
         <!-- Cost in header: old + new -->
-        <text x="1780" y="10" font-size="11" class="muted mono" text-anchor="end" class="cost-old">$0.00 this session</text>
-        <text x="1780" y="10" font-size="11" class="muted mono" text-anchor="end" class="cost-new">$0.004 · 1 turn</text>
+        <text x="1780" y="10" font-size="11" text-anchor="end" class="muted mono cost-old">$0.00 this session</text>
+        <text x="1780" y="10" font-size="11" text-anchor="end" class="muted mono cost-new">$0.004 · 1 turn</text>
         <text x="1780" y="28" font-size="10" class="muted mono" text-anchor="end">⌘P to collapse</text>
       </g>
 
