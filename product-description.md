@@ -49,6 +49,28 @@ Every workspace pairs exactly one Work Coordination Plane adaptor with exactly o
  Beads · Jira · Linear · ...               Gas Town · LangGraph · ...
 ```
 
+### The Milestone construct — Gemba's one augmentation above Beads
+
+Beads, Jira, Linear, and GitHub Projects all model epics, tasks, and stories cleanly. None of them natively model the **project-level stage gate** — the thing a PM or founder cares about most: *"is the MVP demo-ready?"*, *"is the beta launch ready?"*, *"did we hit Q1 compliance certification?"*. Gemba makes exactly one augmentation above the raw tracker to fill that gap: the **Milestone**.
+
+A Milestone is a testable, stage-gated goal that groups multiple Epics. It carries its own acceptance criteria and readiness posture; its state derives from the rollup of its member Epics. Milestones are the frame the PM persona reasons in by default — the Gemba walk agenda groups escalations by the Milestone they affect, release-readiness Skills are Milestone-scoped, Checkpoints auto-fire on Milestone entry and exit, and `/insights` reports burn-down against Milestones rather than raw epic velocity.
+
+**Encoding.** Milestones are adaptor-portable by design:
+
+- **Label-based, not a new entity type.** An epic in the underlying tracker carrying `type:milestone` is projected into Gemba as `core.KindMilestone`.
+- **No title munging.** Gemba never rewrites the tracker's epic title, description, or hierarchy; the label alone carries the signal. Strip the label and the tracker sees a normal epic.
+- **Flexible hierarchy.** Milestones may contain Epics directly, or contain other Milestones in a nested stage-gate tree. Gemba imposes no required depth.
+
+Adaptors with richer native stage-gate concepts (Jira Fix Versions, GitHub Milestones) may project *those* as `core.KindMilestone` via their capability manifest, so Gemba talks to each tracker in its own idiom while the core type stays stable.
+
+**Example.** A Gemba v1 project might declare a Milestone called **"MVP visual demo"** — stage gate, acceptance criterion *"the product-walk video records cleanly end-to-end with real agents."* Under it sit the epics for capability-manifest rendering, the Plan view, the Epic Kanban, the Gemba walk, and mockup retirement. Each of those stays a normal epic in Beads; the Milestone ties them together so the PM persona, the operator, and the Checkpoints timeline can all reason at the stage-gate grain — *"are we demo-ready yet?"* — without reconstructing it from individual epic status every time.
+
+**Relationships.**
+
+- **Product vision** — Milestones are the grain at which *"side-of-the-desk project with minimal cognitive load"* is measured. They are what **Execution** (one of the four seed values) converges toward.
+- **Adaptors** — The label-based encoding keeps Milestones *inside* the Work Coordination Plane contract, not bolted on beside it. Any adaptor that supports labels on epics supports Milestones with zero extra work; no backend-specific vocabulary leaks into core.
+- **PM persona** — Milestones are the PM's default lexicon. Gemba walks, release-readiness, escalation triage, and retros are all Milestone-scoped unless the operator drills in.
+
 ### The Gemba — the main view
 
 The home screen is **the Gemba** itself — the factory-floor rendering of your project. Its primary layout is an Epic-granular Kanban where **cards are Epics**, not individual stories. Each Epic card surfaces: readiness counts (how many members are ready, blocked, in-progress), critical-path length, parallel-group membership, escalation state, and token-budget posture. Double-click drills into the member WorkItems in stage order.
